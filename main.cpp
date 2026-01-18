@@ -331,23 +331,25 @@ class Sprite
 
 struct MoveCollision
 {
-  glm::ivec2 position;
+  glm::vec2 position;
   glm::ivec2 cancelVec;
 };
 
-MoveCollision move(glm::vec2 position, glm::vec2 move, Rect hitbox, Level& level)
+MoveCollision move(glm::vec2 position, glm::vec2 move, fRect hitbox, Level& level)
 {
   //Horizontal Move
-  fRect previousRect = fRect(hitbox)+position;
+  fRect previousRect = hitbox+position;
   fRect newRect = previousRect+glm::vec2(move.x, 0);
   resolvedCollision collision;
   collision = level.resolveCollision(previousRect, newRect, false);
+  int xCol = collision.cancelVec.x;
   
   previousRect = collision.newRect;
   newRect = previousRect+glm::vec2(0, move.y);
   collision = level.resolveCollision(previousRect, newRect, true);
+  int yCol = collision.cancelVec.y;
   
-  return {{collision.newRect.x, collision.newRect.y}, collision.cancelVec};
+  return {{collision.newRect.x, collision.newRect.y}, {xCol, yCol}};
 }
 
 class Engine;
@@ -358,7 +360,7 @@ class Player{
   public:
   glm::vec2 velocity;
   glm::vec2 position;
-  Rect hitbox;
+  fRect hitbox;
   
   
   Player()
@@ -393,8 +395,8 @@ class Player{
 
     MoveCollision collision = move(position, velocity, hitbox, level);
     position = collision.position;
-    if (collision.cancelVec.x!=0) velocity.x = 0;
-    if (collision.cancelVec.y!=0) velocity.y = 0;
+    if (collision.cancelVec.x!=0) {velocity.x = 0; std::cout << "CollisionX: " << collision.cancelVec.x << std::endl;}
+    if (collision.cancelVec.y!=0) {velocity.y = 0; std::cout << "CollisionY: " << collision.cancelVec.y << std::endl;}
     velocity += glm::vec2(0.0f, 0.01f);
     if (std::abs(velocity.x) >= 0.11f)
     {
