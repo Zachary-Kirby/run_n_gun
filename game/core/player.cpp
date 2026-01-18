@@ -39,6 +39,8 @@ void Player::update(Level &level)
 
   MoveCollision collision = move(position, velocity, hitbox, level);
   position = collision.position;
+  if (collision.cancelVec.x != 0) velocity.x = 0;
+  if (collision.cancelVec.y != 0) velocity.y = 0;
   velocity += glm::vec2(0.0f, 0.01f);
   if (std::abs(velocity.x) >= 0.11f)
   {
