@@ -1,0 +1,54 @@
+{
+  "configurations": [
+    {
+      "preLaunchTask": "Build with make",
+      "name": "RunGun",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/build/rungun",
+      "args": [],
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}",
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+          {
+              "description": "Enable pretty-printing for gdb",
+              "text": "-enable-pretty-printing",
+              "ignoreFailures": true
+          },
+          {
+              "description": "Set Disassembly Flavor to Intel",
+              "text": "-gdb-set disassembly-flavor intel",
+              "ignoreFailures": true
+          }
+      ]
+    },
+  {
+    "preLaunchTask": "Build with make",
+    "name": "LevelEdit",
+    "type": "cppdbg",
+    "request": "launch",
+    "program": "${workspaceFolder}/build/levelEdit",
+    "args": [],
+    "stopAtEntry": false,
+    "cwd": "${workspaceFolder}",
+    "environment": [],
+    "externalConsole": false,
+    "MIMode": "gdb",
+    "setupCommands": [
+        {
+            "description": "Enable pretty-printing for gdb",
+            "text": "-enable-pretty-printing",
+            "ignoreFailures": true
+        },
+        {
+            "description": "Set Disassembly Flavor to Intel",
+            "text": "-gdb-set disassembly-flavor intel",
+            "ignoreFailures": true
+        }
+    ]
+  }
+  ]
+}
