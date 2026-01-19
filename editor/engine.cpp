@@ -17,6 +17,7 @@ Engine::Engine()
   level.init(atlas, collisionAtlas, tileEditArea);
   screenTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, windowWidth/windowScale, windowHeight/windowScale);
   std::cout << "Current path: " << std::filesystem::current_path() << std::endl;
+  SDL_StopTextInput();
 }
 
 void Engine::run()
