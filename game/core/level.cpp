@@ -7,52 +7,60 @@ void Level::init(SDL_Texture *loadedAtlas)
   atlas = loadedAtlas;
 }
 
-void Level::set(int x, int y, int tile)
+void Level::set(int x, int y, int tile, int layer = 0)
 {
-  if (x<0 || x>=width || y<0 || y>=height) return;
-  data[x+y*width] = tile;
+  if (x<0 || x>=width || y<0 || y>=height || layer<0 || layer>=layerCount) return;
+  data[x+y*width+layer*width*height] = tile;
 }
 
-int Level::get(int x, int y)
+int Level::get(int x, int y, int layer = 0)
 {
-  if (x<0 || x>=width || y<0 || y>=height) return 0;
-  return data[x+y*width];
+  if (x<0 || x>=width || y<0 || y>=height || layer<0 || layer>=layerCount) return 0;
+  return data[x+y*width+layer*width*height];
 }
 
-int Level::uget(int x, int y)
+int Level::uget(int x, int y, int layer = 0)
 {
   //unsafe version of get
-  return data[x+y*width];
+  return data[x+y*width+layer*width*height];
 }
 
 void Level::draw(SDL_Renderer *renderer, int offsetX, int offsetY, int cameraX, int cameraY)
 {
   //TODO optimize drawing area to only tiles on screen
   SDL_Rect drawRect {0, 0, tileSize*scale, tileSize*scale};
-  for (int y=0; y<height; y++)
+  
+  SDL_Texture* layerAtlas = atlas; 
+  for (int layer=0; layer<layerCount; layer++)
   {
-    for (int x=0; x<width; x++)
+    if (layer == 1 ) continue;
+    
+    for (int y=0; y<height; y++)
     {
-      int tile = uget(x, y);
-      if (tile == 0) continue;
-      
-      drawRect.x = x*tileSize*scale+offsetX - cameraX;
-      drawRect.y = y*tileSize*scale+offsetY - cameraY;
-      SDL_Rect srcRect {
-        (tile % tileSize)*tileSize,
-        (tile / tileSize)*tileSize,
-        tileSize,
-        tileSize
-      };
-      
-      
-      SDL_RenderCopy(renderer, atlas, &srcRect, &drawRect);
+      for (int x=0; x<width; x++)
+      {
+        int tile = uget(x, y, layer);
+        if (tile == 0) continue;
+        
+        drawRect.x = x*tileSize*scale+offsetX - cameraX;
+        drawRect.y = y*tileSize*scale+offsetY - cameraY;
+        SDL_Rect srcRect {
+          (tile % tileSize)*tileSize,
+          (tile / tileSize)*tileSize,
+          tileSize,
+          tileSize
+        };
+        
+        
+        SDL_RenderCopy(renderer, layerAtlas, &srcRect, &drawRect);
+      }
     }
   }
 }
 
 void Level::save(char *levelName)
 {
+  //TODO remove or update
   char* path = new char[strlen(levelName)+5];
   strcpy(path, "levels/");
   strcat(path, levelName);
@@ -61,11 +69,14 @@ void Level::save(char *levelName)
   if (file.is_open())
   {
     //file << (unsigned int)width << (unsigned int) height;
-    for (int y=0; y<height; y++)
+    for (int layer=0; layer<layerCount; layer++)
     {
-      for (int x=0; x<width; x++)
+      for (int y=0; y<height; y++)
       {
-        file << (unsigned char)uget(x,y);
+        for (int x=0; x<width; x++)
+        {
+          file << (unsigned char)uget(x,y,layer);
+        }
       }
     }
     file.close();
@@ -78,21 +89,29 @@ void Level::load(const char *levelName)
   strcpy(path, "levels/");
   strcat(path, levelName);
   std::ifstream file(path, std::ios_base::binary);
+  delete[] path;
   if (file.is_open())
   {
-    char* buffer = new char[width * height];
-    file.read(buffer, width * height);
-    for (int y=0; y<height; y++)
+    char* buffer = new char[width * height * layerCount];
+    file.read(buffer, width * height * layerCount);
+    for (int layer=0; layer<layerCount; layer++)
     {
-      for (int x=0; x<width; x++)
+      for (int y=0; y<height; y++)
       {
-        set(x,y,(unsigned char)buffer[y * width + x]);
+        for (int x=0; x<width; x++)
+        {
+          set(x,y,(unsigned char)buffer[y * width + x + layer * width * height], layer);
+        }
       }
     }
-    delete buffer;
+    delete[] buffer;
     file.close();
   }
 }
+
+//sides of a rectangle are controlled by these flags, later it could be verts on a square.
+//flags: water left right up down
+const unsigned char tileFlags[] = {0b00000, 0b01111, 0b00010, 0b10000};
 
 resolvedCollision Level::resolveCollision(fRect previousRect, fRect rect, bool verticalMove)
 {
@@ -109,7 +128,10 @@ resolvedCollision Level::resolveCollision(fRect previousRect, fRect rect, bool v
   {
     for (int x=left; x <= right; x++)
     {
-      if (get(x,y))
+      int tile = get(x,y,1);
+      if (tile >= 4) continue;
+      unsigned char flags = tileFlags[tile];
+      if (tile)
       {
         Rect tileRect{x*tileSize, y*tileSize, tileSize, tileSize};
         if (rect.collide(tileRect) && !previousRect.collide(tileRect))
@@ -117,30 +139,30 @@ resolvedCollision Level::resolveCollision(fRect previousRect, fRect rect, bool v
           
           if (verticalMove)
           {
-            if (rect.y < previousRect.y)
+            if (rect.y < previousRect.y && (flags & 0b00001))
             {
-              //Collision above
+              //Collision above player
               rect.y = tileRect.y + tileRect.h;
               yCancel = -1;
             }
-            else
+            else if ( rect.y > previousRect.y && (flags & 0b00010))
             {
-              //Collision below
+              //Collision below player
               rect.y = tileRect.y - rect.h;
               yCancel = 1;
             }
           }
           else
           {
-            if (rect.x < previousRect.x)
+            if (rect.x < previousRect.x && (flags & 0b01000))
             {
-              //Collision left
+              //Collision left player
               rect.x = tileRect.x + tileRect.w;
               xCancel = 1;
             }
-            else
+            else if (rect.x > previousRect.x && (flags & 0b00100))
             {
-              //Collision right
+              //Collision right player
               rect.x = tileRect.x - rect.w;
               xCancel = -1;
             }

@@ -1,6 +1,6 @@
 #pragma once
 #include "rect.hpp"
-
+#include <memory>
 
 struct resolvedCollision
 {
@@ -17,18 +17,19 @@ class Level
 public:
   int width = 512;
   int height = 256;
-  int data[512*256]{0};
+  int layerCount = 2;
+  std::unique_ptr<int[]> data = std::make_unique<int[]>(width * height * layerCount);
   SDL_Texture* atlas;
   int tileSize = 8;
   int scale = 1;
   
   void init(SDL_Texture* loadedAtlas);
   
-  void set(int x, int y, int tile);
+  void set(int x, int y, int tile, int layer);
   
-  int get(int x, int y);
+  int get(int x, int y, int layer);
   
-  int uget(int x, int y);
+  int uget(int x, int y, int layer);
   
   void draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, int cameraY);
   

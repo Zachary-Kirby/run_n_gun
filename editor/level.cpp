@@ -11,13 +11,13 @@ void Level::init(SDL_Texture *loadedAtlas, SDL_Texture *loadedCollisionAtlas, SD
 
 void Level::set(int x, int y, int tile, int layer)
 {
-  if (x<0 || x>=width || y<0 || y>=height) return;
+  if (x<0 || x>=width || y<0 || y>=height || layer<0 || layer>=layerCount) return;
   data[x+y*width+layer*width*height] = tile;
 }
 
 int Level::get(int x, int y, int layer = 0)
 {
-  if (x<0 || x>=width || y<0 || y>=height) return 0;
+  if (x<0 || x>=width || y<0 || y>=height || layer<0 || layer>=layerCount) return 0;
   return data[x+y*width+layer*width*height];
 }
 
@@ -61,8 +61,9 @@ void Level::draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, 
   }
 }
 
-void Level::save(char* levelName)
+void Level::save(char *levelName)
 {
+  //TODO remove or update
   char* path = new char[strlen(levelName)+5];
   strcpy(path, "levels/");
   strcat(path, levelName);
@@ -71,11 +72,14 @@ void Level::save(char* levelName)
   if (file.is_open())
   {
     //file << (unsigned int)width << (unsigned int) height;
-    for (int y=0; y<height; y++)
+    for (int layer=0; layer<layerCount; layer++)
     {
-      for (int x=0; x<width; x++)
+      for (int y=0; y<height; y++)
       {
-        file << (unsigned char)uget(x,y);
+        for (int x=0; x<width; x++)
+        {
+          file << (unsigned char)uget(x,y,layer);
+        }
       }
     }
     file.close();
