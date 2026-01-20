@@ -177,7 +177,7 @@ void Engine::input()
       //Safe to use keydown since textinput is disabled
       else
       {
-        std::cout << "normal keydown" << std::endl;
+        
         if (event.key.keysym.sym == SDLK_UP)
         {
           selectedLayer++;
