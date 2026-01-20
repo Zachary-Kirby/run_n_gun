@@ -102,8 +102,8 @@ void Engine::input()
   
   if (collideRect(level.tileEditArea, mousePos.x, mousePos.y))
   {
-    if (mouseState & SDL_BUTTON(1)) {level.set((mousePos.x+camera.x)/16, (mousePos.y+camera.y)/16, pallete.selectedTile); noInteractionsYet=false;};
-    if (mouseState & SDL_BUTTON(3)) {level.set((mousePos.x+camera.x)/16, (mousePos.y+camera.y)/16, 0); noInteractionsYet=false;};
+    if (mouseState & SDL_BUTTON(1)) {level.set((mousePos.x+camera.x)/16, (mousePos.y+camera.y)/16, pallete.selectedTile, selectedLayer); noInteractionsYet=false;};
+    if (mouseState & SDL_BUTTON(3)) {level.set((mousePos.x+camera.x)/16, (mousePos.y+camera.y)/16, 0, selectedLayer); noInteractionsYet=false;};
     if (mouseState & SDL_BUTTON(2)) 
     {
       //Camera Movement
@@ -138,6 +138,13 @@ void Engine::input()
         pallete.enabled = true;
         pallete.x = clamp(mousePos.x - (pallete.atlasWidth * pallete.scale) / 2, 0, windowWidth/windowScale - (pallete.atlasWidth * pallete.scale));
         pallete.y = clamp(mousePos.y - (pallete.atlasHeight * pallete.scale) / 2, 0, windowHeight/windowScale - (pallete.atlasHeight * pallete.scale));
+      }
+      
+      if (event.key.keysym.sym == SDLK_ESCAPE)
+      {
+        loadDialogueEnabled = false;
+        saveDialogueEnabled = false;
+        SDL_StopTextInput();
       }
       
       

@@ -31,9 +31,13 @@ void Level::draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, 
 {
   //TODO optimize drawing area to only tiles on screen
   SDL_Rect drawRect {0, 0, tileSize*scale, tileSize*scale};
+  
+  SDL_Texture* layerAtlas = atlas; 
   for (int layer=0; layer<layerCount; layer++)
   {
+    if (layer == 1 ) layerAtlas = collisionAtlas; else layerAtlas = atlas;
     if (layer == 1 && selectedLayer != 1) continue; //skip collision layer if selected layer is not collision layer
+    
     for (int y=0; y<height; y++)
     {
       for (int x=0; x<width; x++)
@@ -51,7 +55,7 @@ void Level::draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, 
         };
         
         
-        SDL_RenderCopy(renderer, atlas, &srcRect, &drawRect);
+        SDL_RenderCopy(renderer, layerAtlas, &srcRect, &drawRect);
       }
     }
   }
