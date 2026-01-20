@@ -2,6 +2,28 @@
 
 #include <SDL2/SDL.h>
 #include <memory>
+#include <string>
+
+struct levelPoint{
+  int x = 0;
+  int y = 0;
+  //type could be anything spawnpoint, or savepoint, etc.
+  std::string type;
+  //parameters could be anything like health for a spawnpoint
+  //it will need to be parsed by the game however.
+  std::string parameters;
+  char* serialize()
+  {
+    char* data = new char[sizeof(x)+sizeof(y)+sizeof(int)+type.size()+sizeof(int)+parameters.size()];
+    memcpy(data, &x, sizeof(x));
+    memcpy(data+sizeof(x), &y, sizeof(y));
+    (*(data+sizeof(x)+sizeof(y))) = type.size();
+    memcpy(data+sizeof(x)+sizeof(y)+sizeof(int), type.c_str(), type.size());
+    (*(data+sizeof(x)+sizeof(y)+sizeof(int)+type.size())) = parameters.size();
+    memcpy(data+sizeof(x)+sizeof(y)+sizeof(int)+type.size()+sizeof(int), parameters.c_str(), parameters.size());
+    return data;
+  }
+};
 
 class Level
 {

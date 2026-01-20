@@ -2,6 +2,19 @@
 
 #include <fstream>
 
+/*
+what the level structure should be like:
+
+int width
+int height
+char[width*height] tiles
+[int pointByteCount
+point ...]
+[int rectByteCount
+rect ...]
+*/
+
+
 void Level::init(SDL_Texture *loadedAtlas, SDL_Texture *loadedCollisionAtlas, SDL_Rect editArea)
 {
   tileEditArea = editArea;
