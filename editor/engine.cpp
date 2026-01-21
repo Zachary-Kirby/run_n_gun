@@ -192,6 +192,10 @@ void Engine::input()
         {
           selectedLayer--;
         }
+        if (event.key.keysym.sym == SDLK_e)
+        { 
+          level.addPoint(LevelPoint{(mousePos.x + camera.x), (mousePos.y + camera.y), "bird", ""});
+        }
       }
       
       

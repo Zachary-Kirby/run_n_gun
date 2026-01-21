@@ -88,7 +88,23 @@ const int circleIndices[16*3] = {
   15, 0, 16
 };
 
-void Level::draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, int cameraY, int selectedLayer)
+/*
+ * Remove all points within a certain radius of (x, y)
+ */
+void Level::removePoint(int x, int y)
+{
+  //TODO implement
+}
+
+/*
+ * Remove all rects that contain the point (x, y)
+ */
+void Level::removeRect(int x, int y)
+{
+  //TODO implement
+}
+
+void Level::draw(SDL_Renderer *renderer, int offsetX, int offsetY, int cameraX, int cameraY, int selectedLayer)
 {
   //TODO optimize drawing area to only tiles on screen
   SDL_Rect drawRect {0, 0, tileSize*scale, tileSize*scale};
@@ -121,10 +137,13 @@ void Level::draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, 
     }
   }
   SDL_Vertex transformedCirclePoints[17];
-  memcpy(transformedCirclePoints, circlePoints, sizeof(circlePoints));
-  transform(transformedCirclePoints, 17, 8.0f, 16, 16);
-  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-  SDL_RenderGeometry(renderer, NULL, transformedCirclePoints, 17, circleIndices, 16*3);
+  for (int i=0; i<points.size(); i++)
+  {
+    memcpy(transformedCirclePoints, circlePoints, sizeof(circlePoints));
+    transform(transformedCirclePoints, 17, 8.0f, points[i].x-cameraX, points[i].y-cameraY);
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderGeometry(renderer, NULL, transformedCirclePoints, 17, circleIndices, 16*3);
+  }
 }
 
 void Level::save(char *levelName)
@@ -147,6 +166,12 @@ void Level::save(char *levelName)
           file << (unsigned char)uget(x,y,layer);
         }
       }
+    }
+    //serialize points and rects
+    for (int i=0; i<points.size(); i++)
+    {
+      std::string pointData = points[i].serialize();
+      file.write(pointData.data(), pointData.size());
     }
     file.close();
   }
@@ -173,6 +198,24 @@ void Level::load(char* levelName)
       }
     }
     delete buffer;
+    //deserialize points and rects
+    points.clear();
+    rects.clear();
+    while (file.peek() != EOF)
+    {
+      char header;
+      file.read(&header, sizeof(char));
+      if (header == 'P')
+      {
+        //It's a point
+        char pointBuffer[sizeof(int)*2 + sizeof(int) + 256 + sizeof(int) + 256]; //max size of point, should be enough
+        file.read(pointBuffer, sizeof(pointBuffer));
+        LevelPoint point;
+        point.deserialize(std::string_view(pointBuffer, sizeof(pointBuffer)));
+        points.push_back(point);
+      }
+      //TODO implement rect loading
+    }
     file.close();
   }
 }

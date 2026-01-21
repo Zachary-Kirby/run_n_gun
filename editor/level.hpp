@@ -6,6 +6,7 @@
 #include <string_view>
 #include <vector>
 
+//header byte is P
 struct LevelPoint{
   int x = 0;
   int y = 0;
@@ -15,6 +16,7 @@ struct LevelPoint{
   void deserialize(std::string_view data);
 };
 
+//header byte is R
 struct LevelRect
 {
   int left;
@@ -47,6 +49,10 @@ class Level
   void set(int x, int y, int tile, int layer = 0);
   int get(int x, int y, int layer);
   int uget(int x, int y, int layer);
+  void addPoint(LevelPoint point) {points.push_back(point);};
+  void addRect(LevelRect rect) {rects.push_back(rect);};
+  void removePoint(int x, int y);
+  void removeRect(int x, int y);
   void draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, int cameraY, int selectedLayer);
   void save(char* levelName);
   void load(char* levelName);
