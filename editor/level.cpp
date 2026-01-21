@@ -40,6 +40,44 @@ int Level::uget(int x, int y, int layer = 0)
   return data[x+y*width+layer*width*height];
 }
 
+const SDL_Vertex circlePoints[17] = {
+  {1.0f, 0.0f}, 
+  {0.924f, -0.0f}, 
+  {0.707f, -0.0f}, 
+  {0.383f, -0.001f}, 
+  {0.0f, -0.001f}, 
+  {-0.383f, -0.001f},
+  {-0.707f, -0.001f},
+  {-0.924f, -0.001f},
+  {-1.0f, -0.001f},
+  {-0.924f, -0.002f},
+  {-0.707f, -0.002f},
+  {-0.383f, -0.002f},
+  {-0.0f, -0.002f},
+  {0.383f, -0.002f},
+  {0.707f, -0.003f},
+  {0.924f, -0.003f},
+  {0.0f, 0.0f}
+};
+
+const int circleIndices[16*3]
+{
+  0, 1, 16,
+  1, 2, 16,
+  2, 3, 16,
+  3, 4, 16,
+  5, 6, 16,
+  6, 7, 16,
+  7, 8, 16,
+  8, 9, 16,
+  9, 10, 16,
+  10, 11, 16,
+  11, 12, 16,
+  12, 13, 16,
+  13, 14, 16,
+  14, 15, 16,
+};
+
 void Level::draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, int cameraY, int selectedLayer)
 {
   //TODO optimize drawing area to only tiles on screen
@@ -72,6 +110,9 @@ void Level::draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, 
       }
     }
   }
+  
+  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+  SDL_RenderGeometry(renderer, NULL, circlePoints, 17, circleIndices, 16*3);
 }
 
 void Level::save(char *levelName)
