@@ -47,7 +47,13 @@ void Engine::run()
     SDL_SetRenderTarget(renderer, NULL);
     SDL_RenderCopy(renderer, screenTexture, NULL, NULL);
     
-    if (noInteractionsYet) textRenderer.draw(renderer, "Run And Gun Level Editor\nLeft Click: Place Tile\nRight Click: Erase Tile\nTAB: Open Pallete\nMiddle Click: Drag Camera", 4, 4, windowWidth - 8, 2);
+    if (noInteractionsYet) textRenderer.draw(renderer, 
+      "Run And Gun Level Editor\n"
+      "Left Click: Place Tile\n"
+      "Right Click: Erase Tile\n"
+      "TAB: Open Pallete\n"
+      "Middle Click: Drag Camera"
+      , 4, 4, windowWidth - 8, 2);
     
     if (saveDialogueEnabled) 
     {
