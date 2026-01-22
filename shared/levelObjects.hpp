@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <fstream>
 
 //header byte is P
 struct LevelPoint{
@@ -8,7 +9,7 @@ struct LevelPoint{
   std::string type;
   std::string parameters;
   std::string serialize();
-  void deserialize(std::string_view data);
+  void deserialize(std::ifstream& data);
 };
 
 //header byte is R
@@ -21,5 +22,5 @@ struct LevelRect
   std::string type;
   std::string parameters;
   std::string serialize();
-  void deserialize(std::string_view data);
+  void deserialize(char* data); //TODO change this to using a stream too
 };

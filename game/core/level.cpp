@@ -105,6 +105,18 @@ void Level::load(const char *levelName)
       }
     }
     delete[] buffer;
+    while (file.peek() != EOF)
+    {
+      std::vector<char> buffer(sizeof(int) * 4 + 256 + 256); //should be enough space for rects and points
+      char header;
+      file.read(&header, 1);
+      if (header == 'P')
+      {
+        LevelPoint point;
+        point.deserialize(file);
+        points.push_back(point);
+      }
+    }
     file.close();
   }
 }

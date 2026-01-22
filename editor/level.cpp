@@ -203,18 +203,16 @@ void Level::load(char* levelName)
     rects.clear();
     while (file.peek() != EOF)
     {
+      std::vector<char> buffer(sizeof(int) * 4 + 256 + 256); //should be enough space for rects and points
       char header;
-      file.read(&header, sizeof(char));
+      file.read(&header, 1);
       if (header == 'P')
       {
-        //It's a point
-        char pointBuffer[sizeof(int)*2 + sizeof(int) + 256 + sizeof(int) + 256]; //max size of point, should be enough
-        file.read(pointBuffer, sizeof(pointBuffer));
         LevelPoint point;
-        point.deserialize(std::string_view(pointBuffer, sizeof(pointBuffer)));
+        point.deserialize(file);
         points.push_back(point);
       }
-      //TODO implement rect loading
+      //TODO implement RECT loading
     }
     file.close();
   }

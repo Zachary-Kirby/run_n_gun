@@ -22,15 +22,18 @@ std::string LevelPoint::serialize()
   return data;
 }
 
-void LevelPoint::deserialize(std::string_view data)
+void LevelPoint::deserialize(std::ifstream& file)
 {
-  int cursor = 0;
-  x = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(x);
-  y = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(y);
-  int typeSize = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(typeSize);
-  type = std::string(data.data()+cursor, typeSize); cursor += type.size();
-  int paramSize = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(paramSize);
-  parameters = std::string(data.data()+cursor, paramSize);
+  file.read(reinterpret_cast<char*>(&x), sizeof(x));
+  file.read(reinterpret_cast<char*>(&y), sizeof(y));
+  int typeSize;
+  file.read(reinterpret_cast<char*>(&typeSize), sizeof(typeSize));
+  type.resize(typeSize);
+  file.read(type.data(), typeSize);
+  int paramSize;
+  file.read(reinterpret_cast<char*>(&paramSize), sizeof(paramSize));
+  parameters.resize(paramSize);
+  file.read(parameters.data(), paramSize);
 }
 
 std::string LevelRect::serialize()
@@ -57,15 +60,15 @@ std::string LevelRect::serialize()
   return data;
 }
 
-void LevelRect::deserialize(std::string_view data)
+void LevelRect::deserialize(char* data)
 {
   int cursor = 0;
-  left = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(left);
-  top = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(top);
-  right = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(right);
-  bottom = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(bottom);
-  int typeSize = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(typeSize);
-  type = std::string(data.data()+cursor, typeSize); cursor += type.size();
-  int paramSize = *reinterpret_cast<const int*>(data.data()+cursor); cursor += sizeof(paramSize);
-  parameters = std::string(data.data()+cursor, paramSize);
+  left = *reinterpret_cast<const int*>(data+cursor); cursor += sizeof(left);
+  top = *reinterpret_cast<const int*>(data+cursor); cursor += sizeof(top);
+  right = *reinterpret_cast<const int*>(data+cursor); cursor += sizeof(right);
+  bottom = *reinterpret_cast<const int*>(data+cursor); cursor += sizeof(bottom);
+  int typeSize = *reinterpret_cast<const int*>(data+cursor); cursor += sizeof(typeSize);
+  type = std::string(data+cursor, typeSize); cursor += type.size();
+  int paramSize = *reinterpret_cast<const int*>(data+cursor); cursor += sizeof(paramSize);
+  parameters = std::string(data+cursor, paramSize);
 }

@@ -1,6 +1,8 @@
 #pragma once
-#include "rect.hpp"
 #include <memory>
+#include <vector>
+#include "rect.hpp"
+#include "levelObjects.hpp"
 
 struct resolvedCollision
 {
@@ -14,6 +16,7 @@ class Level
   *  Convert tile coordinate to pixel coordinate
   */
   int PTT(int x){ return (x/tileSize); }
+  std::vector<LevelPoint> points;
 public:
   int width = 512;
   int height = 256;
