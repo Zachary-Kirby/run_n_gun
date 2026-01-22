@@ -9,6 +9,14 @@ project(rungun)
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 
+#Shared Library for Game and Editor
+add_library(rungun_shared STATIC
+  shared/levelObjects.cpp
+)
+#It makes it easier to share SDL with the rest of the project
+target_link_libraries(rungun_shared PUBLIC SDL2::SDL2 SDL2_image::SDL2_image)
+target_include_directories(rungun_shared PUBLIC shared)
+target_include_directories(rungun_shared PUBLIC libs/glm)
 
 
 #Main Game
@@ -19,8 +27,8 @@ add_executable(rungun
   game/core/player.cpp
   game/helper/sprite.cpp
 )
-target_link_libraries(rungun SDL2::SDL2 SDL2_image::SDL2_image)
-target_include_directories(rungun PRIVATE libs/glm)
+
+target_link_libraries(rungun rungun_shared)
 target_include_directories(rungun PRIVATE game/core game/helper)
 
 #Level Editor
@@ -31,5 +39,4 @@ add_executable(levelEdit
   editor/pallete.cpp
   editor/text.cpp
 )
-target_link_libraries(levelEdit SDL2::SDL2 SDL2_image::SDL2_image)
-target_include_directories(levelEdit PRIVATE libs/glm editor)
+target_link_libraries(levelEdit rungun_shared)

@@ -3,6 +3,7 @@
 #include <filesystem>
 
 #include "utility.hpp"
+#include "levelObjects.hpp"
 
 Engine::Engine()
 {
