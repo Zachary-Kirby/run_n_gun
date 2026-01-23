@@ -1,11 +1,14 @@
 #include "engine.hpp"
 
 #include <thread>
+#include <iostream>
 
 Engine::Engine()
 {
   SDL_Init(SDL_INIT_VIDEO);
   SDL_CreateWindowAndRenderer(640, 480, SDL_WINDOW_SHOWN, &window, &renderer);
+  
+  
   //Temporary to center on my left monitor
   SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(1), SDL_WINDOWPOS_CENTERED_DISPLAY(1));
   SDL_SetWindowTitle(window, "Run And Gun!");
@@ -27,9 +30,10 @@ void Engine::init()
   );
   
   level.init(atlas);
-  level.load("level.lvl");
+  level.load("test.lvl");
   
   
+  gameplayDrawTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
   
 }
 
@@ -42,17 +46,27 @@ void Engine::run()
     
     player.update(level);
     
+    //Draw gameplay
+    
+    
+
+    SDL_SetRenderTarget(renderer, gameplayDrawTexture);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
     
     player.draw(renderer);
     level.draw(renderer, 0, 0, 0, 0);
+    SDL_SetRenderTarget(renderer, NULL);
     
+    //TODO draw UI
+    
+    SDL_RenderCopy(renderer, gameplayDrawTexture, NULL, NULL);
+    SDL_RenderPresent(renderer);
     std::this_thread::sleep_until(last_frame_time + frame_time);
     last_frame_time = std::chrono::steady_clock().now();
     
-    SDL_RenderPresent(renderer);
+    //SDL_RenderPresent(renderer);
   }
 }
 
