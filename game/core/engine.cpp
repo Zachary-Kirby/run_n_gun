@@ -46,6 +46,18 @@ void Engine::run()
     
     player.update(level);
     
+    for (auto& levelPoint : level.points)
+    {
+      if (!levelPoint.active) continue;
+      if (levelPoint.type == "bird")
+      {
+        lastBirdIndex += 1;
+        Sprite birdSprite{atlas, 0, 7*8, 8, 8, 1};
+        birds[lastBirdIndex].init(birdSprite, {levelPoint.x, levelPoint.y});
+        levelPoint.active = false; // too lazy to just remove the point from the vector. Honestly it would be better as a linked list probably
+      }
+    }
+    
     //Draw gameplay
     
     
@@ -54,8 +66,9 @@ void Engine::run()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
-    
     player.draw(renderer);
+    for (auto bird : birds)
+      if (bird.active) bird.draw(renderer);
     level.draw(renderer, 0, 0, 0, 0);
     SDL_SetRenderTarget(renderer, NULL);
     

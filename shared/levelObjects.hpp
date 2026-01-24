@@ -8,6 +8,7 @@ struct LevelPoint{
   int y = 0;
   std::string type;
   std::string parameters;
+  bool active = true;
   std::string serialize();
   void deserialize(std::ifstream& data);
 };
@@ -21,6 +22,7 @@ struct LevelRect
   int bottom;
   std::string type;
   std::string parameters;
+  bool active = true;
   std::string serialize();
   void deserialize(char* data); //TODO change this to using a stream too
 };

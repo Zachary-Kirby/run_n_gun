@@ -26,10 +26,11 @@ add_executable(rungun
   game/core/main.cpp
   game/core/player.cpp
   game/helper/sprite.cpp
+  game/levelObjects/bird.cpp
 )
-
 target_link_libraries(rungun rungun_shared)
-target_include_directories(rungun PRIVATE game/core game/helper)
+target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects)
+
 
 #Level Editor
 add_executable(levelEdit 

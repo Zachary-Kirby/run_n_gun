@@ -7,7 +7,8 @@
 #include <vector>
 
 #include "levelObjects.hpp"
-  
+
+//TODO check if host cpu is big or little endian to ensure correct byte order when loading levels.
 
 class Level
 {

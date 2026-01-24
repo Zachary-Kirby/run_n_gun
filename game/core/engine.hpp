@@ -8,7 +8,7 @@
 #include "level.hpp"
 #include "player.hpp"
 #include <iostream>
-
+#include "bird.hpp"
 
 class Engine {
 public:
@@ -21,12 +21,14 @@ public:
   int windowHeight = 480;
   int gameplayDrawWidth = windowWidth / gameplayDrawScale;
   int gameplayDrawHeight = windowHeight / gameplayDrawScale;
-
+  
   std::chrono::steady_clock::time_point last_frame_time;
   std::chrono::duration<double, std::ratio<1, 240>> frame_time {1};
   
   Level level;
   Player player;
+  Bird birds[10]{};
+  int lastBirdIndex = -1;
   
   bool exit_game{false};
   
