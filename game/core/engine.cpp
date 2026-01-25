@@ -3,6 +3,8 @@
 #include <thread>
 #include <iostream>
 
+
+
 Engine::Engine()
 {
   SDL_Init(SDL_INIT_VIDEO);
@@ -58,6 +60,9 @@ void Engine::run()
       }
     }
     
+    for (Bullet& bullet : bullets)
+      if (bullet.active) bullet.update();
+    
     //Draw gameplay
     
     
@@ -66,9 +71,9 @@ void Engine::run()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
+    for (auto bullet : bullets) if (bullet.active) bullet.draw(renderer);
     player.draw(renderer);
-    for (auto bird : birds)
-      if (bird.active) bird.draw(renderer);
+    for (auto bird : birds) if (bird.active) bird.draw(renderer);
     level.draw(renderer, 0, 0, 0, 0);
     SDL_SetRenderTarget(renderer, NULL);
     
@@ -105,11 +110,29 @@ void Engine::input()
     {
       exit_game = true;
     }
-    if (event.type == SDL_KEYDOWN)
+    if (event.type == SDL_KEYDOWN && event.key.repeat == false)
     {
       if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
       {
         player.velocity.y = -1.0f;
+      }
+      if (event.key.keysym.scancode == SDL_SCANCODE_P)
+      {
+        int freeBullet = -1;
+        for (int i = 0; i<BULLETLIMIT; i++)
+        {
+          if (bullets[i].active == false)
+          {
+            freeBullet = i;
+            break;
+          }
+        }
+        std::cout << "free bullet " << freeBullet << std::endl;
+        if (freeBullet != -1)
+        {
+          bullets[freeBullet].init({atlas, 2*8, 4*8, 8, 8, 1}, player.position, {2.0f, 0.0f});
+        }
+        
       }
     }
     

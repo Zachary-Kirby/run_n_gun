@@ -9,6 +9,9 @@
 #include "player.hpp"
 #include <iostream>
 #include "bird.hpp"
+#include "bullet.hpp"
+
+#define BULLETLIMIT 50
 
 class Engine {
 public:
@@ -29,6 +32,7 @@ public:
   Player player;
   Bird birds[10]{};
   int lastBirdIndex = -1;
+  Bullet bullets[BULLETLIMIT]{};
   
   bool exit_game{false};
   
