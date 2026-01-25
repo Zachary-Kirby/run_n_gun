@@ -1,7 +1,8 @@
 {
+  "version": "0.2.0",
   "configurations": [
     {
-      "preLaunchTask": "Build with make",
+      "preLaunchTask": "Build rungun with make",
       "name": "RunGun",
       "type": "cppdbg",
       "request": "launch",
@@ -23,10 +24,11 @@
               "text": "-gdb-set disassembly-flavor intel",
               "ignoreFailures": true
           }
-      ]
+      ],
+      "miDebuggerPath": "/usr/bin/gdb"
     },
   {
-    "preLaunchTask": "Build with make",
+    "preLaunchTask": "Build levelEdit with make",
     "name": "LevelEdit",
     "type": "cppdbg",
     "request": "launch",
@@ -48,7 +50,8 @@
             "text": "-gdb-set disassembly-flavor intel",
             "ignoreFailures": true
         }
-    ]
+    ],
+    "miDebuggerPath": "/usr/bin/gdb"
   }
   ]
 }
