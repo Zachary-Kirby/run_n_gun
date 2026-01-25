@@ -93,13 +93,14 @@ void Engine::input()
   
   const unsigned char* keys = SDL_GetKeyboardState(NULL);
   
+  player.controlStickX = 0.0f;
   if (keys[SDL_SCANCODE_A])
   {
-    player.velocity.x += -0.15f;
+    player.controlStickX = -1.0f;
   }
   if (keys[SDL_SCANCODE_D])
   {
-    player.velocity.x += +0.15f;
+    player.controlStickX = 1.0f;
   }
   
   
@@ -114,7 +115,7 @@ void Engine::input()
     {
       if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
       {
-        player.velocity.y = -1.0f;
+        player.jump();
       }
       if (event.key.keysym.scancode == SDL_SCANCODE_P)
       {
@@ -135,7 +136,13 @@ void Engine::input()
         
       }
     }
-    
+    if (event.type == SDL_KEYUP && event.key.repeat == false)
+    {
+      if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
+      {
+        player.jumpLetGo();
+      }
+    }
   }
 }
 
