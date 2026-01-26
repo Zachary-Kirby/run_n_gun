@@ -16,7 +16,7 @@ void Bird::init(Sprite sprite, glm::vec2 position)
 void Bird::update(glm::vec2 target)
 {
   if (!active) return;
-  //TODO make bird dive at target if close enough
+  
 }
 
 void Bird::draw(SDL_Renderer *renderer)

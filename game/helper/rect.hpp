@@ -62,6 +62,9 @@ class fRect
   
   fRect(Rect other) : x(other.x), y(other.y), w(other.w), h(other.h){}
   
+  float centerX() { return (x + w / 2); }
+  float centerY() { return (y + h / 2); }
+  
   bool collide(Rect& other)
   {
     return (x < other.x + other.w && x + w > other.x && y < other.y + other.h && y + h > other.y);

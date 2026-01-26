@@ -195,7 +195,7 @@ void Engine::input()
         }
         if (event.key.keysym.sym == SDLK_e)
         { 
-          level.addPoint(LevelPoint{(mousePos.x + camera.x), (mousePos.y + camera.y), "bird", ""});
+          level.addPoint(LevelPoint{(int)(mousePos.x/(float)level.scale + camera.x), (int)(mousePos.y/(float)level.scale + camera.y), "bird", ""});
         }
       }
       

@@ -2,7 +2,7 @@
 
 #include <thread>
 #include <iostream>
-
+#include "constants.hpp"
 
 
 Engine::Engine()
@@ -14,6 +14,8 @@ Engine::Engine()
   //Temporary to center on my left monitor
   SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(1), SDL_WINDOWPOS_CENTERED_DISPLAY(1));
   SDL_SetWindowTitle(window, "Run And Gun!");
+  
+  SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
 void Engine::init()
@@ -66,7 +68,6 @@ void Engine::run()
     //Draw gameplay
     
     
-
     SDL_SetRenderTarget(renderer, gameplayDrawTexture);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -75,9 +76,18 @@ void Engine::run()
     player.draw(renderer);
     for (auto bird : birds) if (bird.active) bird.draw(renderer);
     level.draw(renderer, 0, 0, 0, 0);
+    
+    SDL_FPoint transformedCirclePoints[17];
+    memcpy(transformedCirclePoints, circlePoints, sizeof(circlePoints));
+    transformPoints(transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint), 2, player.position.x+player.hitbox.w/2.0f+aimPoint.x*8.0f, player.position.y+player.hitbox.h/2.0f+aimPoint.y*8.0f);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderDrawLinesF(renderer, transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint));
+    
+    
     SDL_SetRenderTarget(renderer, NULL);
     
     //TODO draw UI
+    
     
     SDL_RenderCopy(renderer, gameplayDrawTexture, NULL, NULL);
     SDL_RenderPresent(renderer);
@@ -90,6 +100,13 @@ void Engine::run()
 
 void Engine::input()
 {
+  int x, y;
+  unsigned int buttonState = SDL_GetMouseState(&x, &y);
+  if (buttonState & SDL_BUTTON_LEFT)
+  {
+  }
+    
+  
   
   const unsigned char* keys = SDL_GetKeyboardState(NULL);
   
@@ -117,7 +134,31 @@ void Engine::input()
       {
         player.jump();
       }
-      if (event.key.keysym.scancode == SDL_SCANCODE_P)
+      if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) exit_game = true;
+    }
+    if (event.type == SDL_KEYUP && event.key.repeat == false)
+    {
+      if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
+      {
+        player.jumpLetGo();
+      }
+    }
+    if (event.type == SDL_MOUSEMOTION)
+    {
+      if (true)//(glm::length(glm::vec2{event.motion.xrel, event.motion.yrel}) > 1.0f)
+      {
+        secretAimPoint.x += ((float)event.motion.xrel / 20.0f);
+        secretAimPoint.y += ((float)event.motion.yrel / 20.0f);
+        if (glm::length(secretAimPoint) > 0)
+        {
+          secretAimPoint = secretAimPoint / glm::length(secretAimPoint) * std::min(glm::length(secretAimPoint), 25.0f);
+          aimPoint = glm::normalize(secretAimPoint);  
+        }
+      }
+    }
+    if (event.type == SDL_MOUSEBUTTONDOWN)
+    {
+      if (event.button.button == SDL_BUTTON_LEFT)
       {
         int freeBullet = -1;
         for (int i = 0; i<BULLETLIMIT; i++)
@@ -128,19 +169,10 @@ void Engine::input()
             break;
           }
         }
-        std::cout << "free bullet " << freeBullet << std::endl;
         if (freeBullet != -1)
         {
-          bullets[freeBullet].init({atlas, 2*8, 4*8, 8, 8, 1}, player.position, {2.0f, 0.0f});
+          bullets[freeBullet].init({atlas, 2*8, 4*8, 8, 8, 1}, player.position+aimPoint*4.0f+glm::vec2{player.hitbox.w/2.0f-4, player.hitbox.h/2.0f-4}, {aimPoint.x*2, aimPoint.y*2});
         }
-        
-      }
-    }
-    if (event.type == SDL_KEYUP && event.key.repeat == false)
-    {
-      if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
-      {
-        player.jumpLetGo();
       }
     }
   }

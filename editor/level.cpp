@@ -1,6 +1,7 @@
 #include "level.hpp"
 
 #include <fstream>
+#include "constants.hpp"
 
 /*
 what the level structure should be like:
@@ -40,53 +41,9 @@ int Level::uget(int x, int y, int layer = 0)
   return data[x+y*width+layer*width*height];
 }
 
-void transform(SDL_Vertex* verticies, int count, float scale, float translateX, float translateY)
-{
-  for (int i=0; i<count; i++)
-  {
-    verticies[i].position.x = verticies[i].position.x * scale + translateX;
-    verticies[i].position.y = verticies[i].position.y * scale + translateY;
-  }
-}
 
-const SDL_Vertex circlePoints[17] = {
-  {1.0f, 0.0f, 255, 0, 0, 255},     
-  {0.9239f, 0.3827f, 255, 0, 0, 255},
-  {0.7071f, 0.7071f, 255, 0, 0, 255},
-  {0.3827f, 0.9239f, 255, 0, 0, 255},
-  {0.0f, 1.0f, 255, 0, 0, 255},     
-  {-0.3827f, 0.9239f, 255, 0, 0, 255},
-  {-0.7071f, 0.7071f, 255, 0, 0, 255},
-  {-0.9239f, 0.3827f, 255, 0, 0, 255},
-  {-1.0f, 0.0f, 255, 0, 0, 255},    
-  {-0.9239f, -0.3827f, 255, 0, 0, 255},
-  {-0.7071f, -0.7071f, 255, 0, 0, 255}, 
-  {-0.3827f, -0.9239f, 255, 0, 0, 255}, 
-  {0.0f, -1.0f, 255, 0, 0, 255},     
-  {0.3827f, -0.9239f, 255, 0, 0, 255}, 
-  {0.7071f, -0.7071f, 255, 0, 0, 255}, 
-  {0.9239f, -0.3827f, 255, 0, 0, 255}, 
-  {0.0f, 0.0f, 255, 0, 0, 255}          
-};
 
-const int circleIndices[16*3] = {
-  0, 1, 16,
-  1, 2, 16,
-  2, 3, 16,
-  3, 4, 16,
-  4, 5, 16,
-  5, 6, 16,
-  6, 7, 16,
-  7, 8, 16,
-  8, 9, 16,
-  9, 10, 16,
-  10, 11, 16,
-  11, 12, 16,
-  12, 13, 16,
-  13, 14, 16,
-  14, 15, 16,
-  15, 0, 16
-};
+
 
 /*
  * Remove all points within a certain radius of (x, y)
@@ -139,8 +96,8 @@ void Level::draw(SDL_Renderer *renderer, int offsetX, int offsetY, int cameraX, 
   SDL_Vertex transformedCirclePoints[17];
   for (int i=0; i<points.size(); i++)
   {
-    memcpy(transformedCirclePoints, circlePoints, sizeof(circlePoints));
-    transform(transformedCirclePoints, 17, 8.0f, points[i].x-cameraX, points[i].y-cameraY);
+    memcpy(transformedCirclePoints, circleVertexData, sizeof(circleVertexData));
+    transformVerticies(transformedCirclePoints, 17, 8.0f, points[i].x*scale-cameraX, points[i].y*scale-cameraY);
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_RenderGeometry(renderer, NULL, transformedCirclePoints, 17, circleIndices, 16*3);
   }
