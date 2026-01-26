@@ -26,5 +26,5 @@ class Player{
 
   void update(Level& level);
   
-  void draw(SDL_Renderer* renderer);
+  void draw(SDL_Renderer* renderer, glm::vec2 camera);
 };

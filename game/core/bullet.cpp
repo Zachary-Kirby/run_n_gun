@@ -22,8 +22,8 @@ void Bullet::update()
 }
 
 //TODO this is duplicate code
-void Bullet::draw(SDL_Renderer *renderer)
+void Bullet::draw(SDL_Renderer *renderer, glm::vec2 camera)
 {
-  sprite.setPostion(hitbox.x, hitbox.y);
+  sprite.setPostion(hitbox.x-camera.x, hitbox.y-camera.y);
   sprite.draw(renderer);
 }

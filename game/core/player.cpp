@@ -59,11 +59,12 @@ void Player::update(Level &level)
   if (collision.cancelVec.x != 0) velocity.x = 0;
   if (collision.cancelVec.y != 0) velocity.y = 0;
   if (collision.cancelVec.y > 0) grounded = true;
-  if (std::abs(controlStickX) < deadzone)
+  if (velocity.y > 0.0f) grounded = false;
+  if (std::abs(controlStickX) < deadzone && grounded)
   {
     if (std::abs(velocity.x) >= 0.11f)
     {
-      velocity.x = velocity.x - std::copysignf(0.1f, velocity.x);
+      velocity.x = velocity.x - std::copysignf(0.02f, velocity.x);
     }
     else
     {
@@ -72,16 +73,26 @@ void Player::update(Level &level)
   }
   else
   {
-    velocity.x += controlStickX * 0.04f;
+    if (velocity.y >= 0.0f)
+    {
+      //keep the player from accelerating more than a certain amount while not capping velocity from other sources
+      float cap = 0.7f*0.75f;
+      if (controlStickX > 0.0f && velocity.x < cap){velocity.x = std::min(velocity.x+controlStickX*0.02f, cap);}
+      if (controlStickX < 0.0f && velocity.x > -cap){velocity.x = std::max(velocity.x+controlStickX*0.02f, -cap);}
+      
+      //velocity.x += controlStickX * 0.02f;
+      
+    }
   }
+  
   velocity += glm::vec2(0.0f, 0.01f);
   
-  velocity.x = std::clamp(velocity.x, -0.7f, 0.7f);
+  
   
 }
 
-void Player::draw(SDL_Renderer *renderer)
+void Player::draw(SDL_Renderer *renderer, glm::vec2 camera)
 {
-  sprite.setPostion(position.x+spriteOffset.x, position.y+spriteOffset.y);
+  sprite.setPostion(position.x+spriteOffset.x-camera.x, position.y+spriteOffset.y-camera.y);
   sprite.draw(renderer);
 }

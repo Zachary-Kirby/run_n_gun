@@ -14,5 +14,5 @@ class Bullet{
   bool active = false;
   void init(Sprite sprite, glm::vec2 position, glm::vec2 velocity);
   void update();
-  void draw(SDL_Renderer* renderer);
+  void draw(SDL_Renderer* renderer, glm::vec2 camera);
 };

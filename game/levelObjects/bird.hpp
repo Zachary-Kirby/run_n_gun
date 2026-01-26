@@ -16,5 +16,5 @@ public:
   
   void init(Sprite sprite, glm::vec2 position);
   void update(glm::vec2 target);
-  void draw(SDL_Renderer* renderer);
+  void draw(SDL_Renderer* renderer, glm::vec2 camera);
 };

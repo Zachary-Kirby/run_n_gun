@@ -50,6 +50,11 @@ void Engine::run()
     
     player.update(level);
     
+    if (player.position.x > gameplayDrawWidth/2+player.hitbox.w*1+camera.x)
+      camera.x += player.position.x - (gameplayDrawWidth/2+player.hitbox.w*1+camera.x);
+    if (player.position.x < gameplayDrawWidth/2-player.hitbox.w*1+camera.x)
+      camera.x += player.position.x - (gameplayDrawWidth/2-player.hitbox.w*1+camera.x);
+    
     for (auto& levelPoint : level.points)
     {
       if (!levelPoint.active) continue;
@@ -72,15 +77,24 @@ void Engine::run()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
-    for (auto bullet : bullets) if (bullet.active) bullet.draw(renderer);
-    player.draw(renderer);
-    for (auto bird : birds) if (bird.active) bird.draw(renderer);
-    level.draw(renderer, 0, 0, 0, 0);
+    for (auto bullet : bullets) if (bullet.active) bullet.draw(renderer, camera);
+    player.draw(renderer, camera);
+    for (auto bird : birds) if (bird.active) bird.draw(renderer, camera);
+    level.draw(renderer, 0, 0, camera.x, camera.y);
     
     SDL_FPoint transformedCirclePoints[17];
     memcpy(transformedCirclePoints, circlePoints, sizeof(circlePoints));
-    transformPoints(transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint), 2, player.position.x+player.hitbox.w/2.0f+aimPoint.x*8.0f, player.position.y+player.hitbox.h/2.0f+aimPoint.y*8.0f);
+    transformPoints(transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint), 2, 
+      player.position.x+player.hitbox.w/2.0f+aimPoint.x*8.0f-camera.x, 
+      player.position.y+player.hitbox.h/2.0f+aimPoint.y*8.0f-camera.y);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+    SDL_RenderDrawLinesF(renderer, transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint));
+    
+    memcpy(transformedCirclePoints, circlePoints, sizeof(circlePoints));
+    transformPoints(transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint), 2, 
+      player.position.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
+      player.position.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y);
+    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 32);
     SDL_RenderDrawLinesF(renderer, transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint));
     
     
@@ -135,6 +149,7 @@ void Engine::input()
         player.jump();
       }
       if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) exit_game = true;
+      if (event.key.keysym.scancode == SDL_SCANCODE_R) {player.position.x = 0; player.position.y = 0; }
     }
     if (event.type == SDL_KEYUP && event.key.repeat == false)
     {
