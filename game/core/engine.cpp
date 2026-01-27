@@ -3,7 +3,7 @@
 #include <thread>
 #include <iostream>
 #include "constants.hpp"
-
+#include "renderCircle.hpp"
 
 Engine::Engine()
 {
@@ -82,20 +82,13 @@ void Engine::run()
     for (auto bird : birds) if (bird.active) bird.draw(renderer, camera);
     level.draw(renderer, 0, 0, camera.x, camera.y);
     
-    SDL_FPoint transformedCirclePoints[17];
-    memcpy(transformedCirclePoints, circlePoints, sizeof(circlePoints));
-    transformPoints(transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint), 2, 
-      player.position.x+player.hitbox.w/2.0f+aimPoint.x*8.0f-camera.x, 
-      player.position.y+player.hitbox.h/2.0f+aimPoint.y*8.0f-camera.y);
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    SDL_RenderDrawLinesF(renderer, transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint));
-    
-    memcpy(transformedCirclePoints, circlePoints, sizeof(circlePoints));
-    transformPoints(transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint), 2, 
+    renderCircle(renderer, {
+      player.position.x+player.hitbox.w/2.0f+aimPoint.x*8.0f-camera.x, 
+      player.position.y+player.hitbox.h/2.0f+aimPoint.y*8.0f-camera.y}, 2.0f);
+    renderCircle(renderer, {
       player.position.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
-      player.position.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y);
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 32);
-    SDL_RenderDrawLinesF(renderer, transformedCirclePoints, sizeof(circlePoints)/sizeof(SDL_FPoint));
+      player.position.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y}, 2.0f);
     
     
     SDL_SetRenderTarget(renderer, NULL);
