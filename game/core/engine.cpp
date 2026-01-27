@@ -153,16 +153,14 @@ void Engine::input()
     }
     if (event.type == SDL_MOUSEMOTION)
     {
-      if (true)//(glm::length(glm::vec2{event.motion.xrel, event.motion.yrel}) > 1.0f)
+      secretAimPoint.x += ((float)event.motion.xrel / 20.0f); //TODO make sensitivity variable
+      secretAimPoint.y += ((float)event.motion.yrel / 20.0f);
+      if (glm::length(secretAimPoint) > 0)
       {
-        secretAimPoint.x += ((float)event.motion.xrel / 20.0f);
-        secretAimPoint.y += ((float)event.motion.yrel / 20.0f);
-        if (glm::length(secretAimPoint) > 0)
-        {
-          secretAimPoint = secretAimPoint / glm::length(secretAimPoint) * std::min(glm::length(secretAimPoint), 25.0f);
-          aimPoint = glm::normalize(secretAimPoint);  
-        }
+        secretAimPoint = secretAimPoint / glm::length(secretAimPoint) * std::min(glm::length(secretAimPoint), 25.0f);
+        aimPoint = glm::normalize(secretAimPoint);  
       }
+      
     }
     if (event.type == SDL_MOUSEBUTTONDOWN)
     {

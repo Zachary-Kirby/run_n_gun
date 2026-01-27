@@ -1,12 +1,14 @@
 #include "bird.hpp"
 
+
+//NEXT pass a subsystem to bird so it can use the player position and maybe check against all bullets?
+
 Bird::Bird()
 {
 }
 
 void Bird::init(Sprite sprite, glm::vec2 position)
 {
-  
   active = true;
   this->sprite.init(sprite);
   hitbox.x = position.x - hitbox.w / 2;

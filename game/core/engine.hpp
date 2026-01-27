@@ -28,18 +28,24 @@ public:
   std::chrono::steady_clock::time_point last_frame_time;
   std::chrono::duration<double, std::ratio<1, 240>> frame_time {1};
   
+  
+  //These are all used by a system, but level does not depend on any entity and is more
+  //self contained
+  
+  //entities may or may not need, level, player, bullets, and camera. Needed dependancies can be given
+  //in function calls like update and draw.
   Level level;
+  
   Player player;
   Bird birds[10]{};
   int lastBirdIndex = -1;
   Bullet bullets[BULLETLIMIT]{};
+  glm::vec2 camera {.0f, .0f};
+  
   glm::vec2 aimPoint = {.0f, .0f}; //used for player shooting
   glm::vec2 secretAimPoint = {.0f, .0f}; //used to smooth aim point
   
-  glm::vec2 camera {.0f, .0f};
-  
   bool exit_game{false};
-  
   Engine();
   
   void init();
