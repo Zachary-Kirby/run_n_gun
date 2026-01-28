@@ -92,7 +92,7 @@ void Bird::update()
   switch (state)
   {
   case BirdState::STATIC:
-    if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80)
+    if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80.0f)
     {
       swoopProgress = 0.0f;
       swoopTargetPos = player.hitbox.center();
@@ -104,7 +104,7 @@ void Bird::update()
     swoopProgress += 0.01f;
     hitbox = swoop(swoopStartPos.x, swoopStartPos.y, swoopTargetPos.x, swoopTargetPos.y, swoopProgress);
     //check if bird got so far past the player on the other side of the start pos
-    if (std::abs(swoopTargetPos.x - hitbox.x) > 80.0f)
+    if (std::abs(swoopTargetPos.x - hitbox.x) > 90.0f)
     {
       state = BirdState::RECOVER;
     }
@@ -112,11 +112,22 @@ void Bird::update()
   case BirdState::RECOVER:
     if (swoopStartPos.y < hitbox.centerY())
     {
-      hitbox.y -= 1.0f;
+      hitbox.x += std::copysignf(1.0f, swoopTargetPos.x - swoopStartPos.x);
+      hitbox.y -= 2.0f;
     } else
     {
       hitbox.y = swoopStartPos.y - hitbox.h/2.0f;
-      state = BirdState::STATIC;
+      state = BirdState::FOLLOW;
+    }
+    break;
+  case BirdState::FOLLOW:
+    hitbox.x += std::copysignf(0.5f, player.hitbox.centerX() - hitbox.centerX());
+    if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80.0f)
+    {
+      swoopProgress = 0.0f;
+      swoopTargetPos = player.hitbox.center();
+      state = BirdState::SWOOPLOW;
+      swoopStartPos = hitbox.center();
     }
     break;
   default:

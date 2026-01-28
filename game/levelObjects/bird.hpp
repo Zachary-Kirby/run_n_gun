@@ -11,6 +11,7 @@ enum class BirdState {
   SWOOPLOW,
   SWOOPHIGH,
   RECOVER,
+  FOLLOW,
   DEAD
 };
 
