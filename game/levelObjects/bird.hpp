@@ -19,7 +19,8 @@ class Bird {
   float swoopX = 0.0f;
   glm::vec2 swoopStartPos{0,0};
   glm::vec2 swoopTargetPos{0,0};
-  float swoopSpeed = 0.3f;
+  float swoopSpeed = 0.01f;
+  float swoopProgress = 0.0f;
 public:
   BirdState state = BirdState::STATIC;
   int health = 1;

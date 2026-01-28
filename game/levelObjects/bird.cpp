@@ -20,9 +20,13 @@ def swoop(x):
     return lerp(lerp(0, midy, t*4), lerp(midy, target_y, t), t)
 */
 
+//float lerp(float a, float b, float t)
+//{
+//  return (1-t)*a + t*b;
+//}
 
 
-float swoopY(float startX, float startY, float targetX, float targetY, float x)
+glm::vec2 swoop(float startX, float startY, float targetX, float targetY, float t)
 {
   /*
   float relTargetX = std::abs(targetX - startX);
@@ -33,12 +37,9 @@ float swoopY(float startX, float startY, float targetX, float targetY, float x)
   float t = relX/relTargetX;
   return startY+lerp(lerp(0.0f, midy, t), lerp(midy, relTargetY, t), t);
   */
-  float relTargetX = std::abs(targetX - startX);
-  float relTargetY = targetY - startY;
-  float relX = std::abs(x - startX);
-  float a = 0.0f;
-  float b = (relTargetY - relTargetX * a)/(relTargetX*relTargetX);
-  return startY + relX*a-relX*relX*b;
+  float x = std::lerp(std::lerp(startX, startX, t), std::lerp(startX, targetX, t), t);
+  float y = std::lerp(std::lerp(startY, targetY, t), std::lerp(targetY, targetY, t), t);
+  return {x, y};
 }
   
 Bird::Bird()
@@ -93,19 +94,31 @@ void Bird::update()
   case BirdState::STATIC:
     if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80)
     {
+      swoopProgress = 0.0f;
       swoopTargetPos = player.hitbox.center();
       state = BirdState::SWOOPLOW;
       swoopStartPos = hitbox.center();
     }
     break;
   case BirdState::SWOOPLOW:
-    hitbox.x += std::copysignf(swoopSpeed, player.hitbox.centerX()-swoopStartPos.x);
-    hitbox.y = swoopY(swoopStartPos.x, swoopStartPos.y, swoopTargetPos.x, swoopTargetPos.y, hitbox.centerX());
+    swoopProgress += 0.01f;
+    hitbox = swoop(swoopStartPos.x, swoopStartPos.y, swoopTargetPos.x, swoopTargetPos.y, swoopProgress);
     //check if bird got so far past the player on the other side of the start pos
-    if (swoopTargetPos.x - hitbox.x > 40)
+    if (std::abs(swoopTargetPos.x - hitbox.x) > 80.0f)
     {
+      state = BirdState::RECOVER;
+    }
+    break;
+  case BirdState::RECOVER:
+    if (swoopStartPos.y < hitbox.centerY())
+    {
+      hitbox.y -= 1.0f;
+    } else
+    {
+      hitbox.y = swoopStartPos.y - hitbox.h/2.0f;
       state = BirdState::STATIC;
     }
+    break;
   default:
     break;
   }
