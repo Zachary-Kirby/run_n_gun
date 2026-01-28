@@ -37,8 +37,9 @@ glm::vec2 swoop(float startX, float startY, float targetX, float targetY, float 
   float t = relX/relTargetX;
   return startY+lerp(lerp(0.0f, midy, t), lerp(midy, relTargetY, t), t);
   */
-  float x = std::lerp(std::lerp(startX, startX, t), std::lerp(startX, targetX, t), t);
-  float y = std::lerp(std::lerp(startY, targetY, t), std::lerp(targetY, targetY, t), t);
+  float directionX = std::copysignf(1.0f, targetX - startX);
+  float x = std::lerp(std::lerp(startX, startX-directionX*100, t), std::lerp(startX, targetX, t), t);
+  float y = std::lerp(std::lerp(startY, targetY+40, t), std::lerp(targetY, targetY, t), t);
   return {x, y};
 }
   
@@ -104,7 +105,7 @@ void Bird::update()
     swoopProgress += 0.01f;
     hitbox = swoop(swoopStartPos.x, swoopStartPos.y, swoopTargetPos.x, swoopTargetPos.y, swoopProgress);
     //check if bird got so far past the player on the other side of the start pos
-    if (std::abs(swoopTargetPos.x - hitbox.x) > 90.0f)
+    if (swoopProgress > 1.4f)
     {
       state = BirdState::RECOVER;
     }
