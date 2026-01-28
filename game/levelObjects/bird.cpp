@@ -114,7 +114,7 @@ void Bird::update()
     break;
   case BirdState::RECOVER:
     
-    if (swoopTargetPos.y < hitbox.centerY()) {notAtHeight = swoopStartPos.y > hitbox.centerY(); direction = -1;}
+    if (swoopTargetPos.y < swoopStartPos.y) {notAtHeight = swoopStartPos.y > hitbox.centerY(); direction = -1;}
     if (notAtHeight)
     {
       hitbox.x += std::copysignf(1.0f, swoopTargetPos.x - swoopStartPos.x);
