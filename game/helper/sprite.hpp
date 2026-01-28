@@ -13,7 +13,8 @@ class Sprite
   
   Sprite();
   
-  Sprite(Sprite& other);
+  Sprite(const Sprite& other);
+  Sprite& operator= (const Sprite& other);
   
   Sprite (SDL_Texture* atlas, int x, int y, int w, int h, int scale); 
   

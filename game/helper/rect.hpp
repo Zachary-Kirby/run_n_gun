@@ -61,9 +61,17 @@ class fRect
   {}
   
   fRect(Rect other) : x(other.x), y(other.y), w(other.w), h(other.h){}
+  fRect(const Rect& other) : x(other.x), y(other.y), w(other.w), h(other.h){}
+  fRect& operator=(const fRect& other) {x=other.x; y=other.y; w=other.w; h=other.h; return *this;}
+  fRect& operator=(const glm::vec2& other) {x=other.x; y=other.y; return *this;}
   
   float centerX() { return (x + w / 2); }
   float centerY() { return (y + h / 2); }
+  glm::vec2 center() { return glm::vec2(x+w/2,y+h/2); }
+  glm::vec2 topleft() { return glm::vec2(x,y); }
+  glm::vec2 topright() { return glm::vec2(x+w,y); }
+  glm::vec2 bottomleft() { return glm::vec2(x,y+h); }
+  glm::vec2 bottomright() { return glm::vec2(x+w,y+h); }
   
   bool collide(Rect& other)
   {
@@ -86,4 +94,5 @@ class fRect
   {
     return fRect(x + move.x,y + move.y,w,h);
   }
+  
 };

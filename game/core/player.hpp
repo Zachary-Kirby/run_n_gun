@@ -10,9 +10,8 @@ class Player{
   public:
   float controlStickX = 0.0f;
   float deadzone = 0.1f;
-  glm::vec2 velocity;
-  glm::vec2 position;
   fRect hitbox;
+  glm::vec2 velocity;
   
   Player();
   

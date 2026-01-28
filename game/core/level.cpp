@@ -186,10 +186,10 @@ resolvedCollision Level::resolveCollision(fRect previousRect, fRect rect, bool v
   return {{xCancel,yCancel}, rect};
 }
 
-MoveCollision move(glm::vec2 position, glm::vec2 move, fRect hitbox, Level &level)
+MoveCollision move(fRect hitbox, glm::vec2 move, Level &level)
 {
   //Horizontal Move
-  fRect previousRect = hitbox+position;
+  fRect previousRect = hitbox;
   fRect newRect = previousRect+glm::vec2(move.x, 0);
   resolvedCollision collision;
   collision = level.resolveCollision(previousRect, newRect, false);

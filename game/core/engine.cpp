@@ -12,10 +12,10 @@ Engine::Engine()
   
   
   //Temporary to center on my left monitor
-  SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(1), SDL_WINDOWPOS_CENTERED_DISPLAY(1));
+  SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2));
   SDL_SetWindowTitle(window, "Run And Gun!");
   
-  SDL_SetRelativeMouseMode(SDL_TRUE);
+  //SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
 void Engine::init()
@@ -50,19 +50,19 @@ void Engine::run()
     
     player.update(level);
     
-    if (player.position.x > gameplayDrawWidth/2+player.hitbox.w*1+camera.x)
-      camera.x += player.position.x - (gameplayDrawWidth/2+player.hitbox.w*1+camera.x);
-    if (player.position.x < gameplayDrawWidth/2-player.hitbox.w*1+camera.x)
-      camera.x += player.position.x - (gameplayDrawWidth/2-player.hitbox.w*1+camera.x);
+    if (player.hitbox.x > gameplayDrawWidth/2+player.hitbox.w*1+camera.x)
+      camera.x += player.hitbox.x - (gameplayDrawWidth/2+player.hitbox.w*1+camera.x);
+    if (player.hitbox.x < gameplayDrawWidth/2-player.hitbox.w*1+camera.x)
+      camera.x += player.hitbox.x - (gameplayDrawWidth/2-player.hitbox.w*1+camera.x);
     
     for (auto& levelPoint : level.points)
     {
       if (!levelPoint.active) continue;
       if (levelPoint.type == "bird")
       {
-        lastBirdIndex += 1;
+        
         Sprite birdSprite{atlas, 0, 7*8, 8, 8, 1};
-        birds[lastBirdIndex].init(birdSprite, {levelPoint.x, levelPoint.y});
+        birds.emplace_back(this, birdSprite, glm::vec2(levelPoint.x, levelPoint.y));
         levelPoint.active = false; // too lazy to just remove the point from the vector. Honestly it would be better as a linked list probably
       }
     }
@@ -84,11 +84,11 @@ void Engine::run()
     
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     renderCircle(renderer, {
-      player.position.x+player.hitbox.w/2.0f+aimPoint.x*8.0f-camera.x, 
-      player.position.y+player.hitbox.h/2.0f+aimPoint.y*8.0f-camera.y}, 2.0f);
+      player.hitbox.x+player.hitbox.w/2.0f+aimPoint.x*8.0f-camera.x, 
+      player.hitbox.y+player.hitbox.h/2.0f+aimPoint.y*8.0f-camera.y}, 2.0f);
     renderCircle(renderer, {
-      player.position.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
-      player.position.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y}, 2.0f);
+      player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
+      player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y}, 2.0f);
     
     
     SDL_SetRenderTarget(renderer, NULL);
@@ -142,7 +142,11 @@ void Engine::input()
         player.jump();
       }
       if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) exit_game = true;
-      if (event.key.keysym.scancode == SDL_SCANCODE_R) {player.position.x = 0; player.position.y = 0; }
+      if (event.key.keysym.scancode == SDL_SCANCODE_R) {player.hitbox.x = 0; player.hitbox.y = 0; }
+      if (event.key.keysym.sym == SDLK_BACKQUOTE) {
+        SDL_bool mode = SDL_GetRelativeMouseMode();
+        SDL_SetRelativeMouseMode(mode ? SDL_FALSE : SDL_TRUE);
+      }
     }
     if (event.type == SDL_KEYUP && event.key.repeat == false)
     {
@@ -177,7 +181,7 @@ void Engine::input()
         }
         if (freeBullet != -1)
         {
-          bullets[freeBullet].init({atlas, 2*8, 4*8, 8, 8, 1}, player.position+aimPoint*4.0f+glm::vec2{player.hitbox.w/2.0f-4, player.hitbox.h/2.0f-4}, {aimPoint.x*2, aimPoint.y*2});
+          bullets[freeBullet].init({atlas, 2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*2, aimPoint.y*2});
         }
       }
     }

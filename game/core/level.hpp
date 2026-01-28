@@ -55,4 +55,4 @@ struct MoveCollision
   glm::ivec2 cancelVec;
 };
 
-MoveCollision move(glm::vec2 position, glm::vec2 move, fRect hitbox, Level& level);
+MoveCollision move(fRect hitbox, glm::vec2 move, Level& level);

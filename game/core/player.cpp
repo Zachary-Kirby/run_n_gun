@@ -10,7 +10,6 @@
 
 Player::Player()
 {
-  position = {0, 0};
   hitbox = {0, 0, 16, 16};
   spriteOffset = glm::ivec2(0, 0);
   velocity = {0, 0};
@@ -18,16 +17,17 @@ Player::Player()
 
 void Player::init(glm::vec2 pos, int hitboxWidth, int hitboxHeight, Sprite isprite, glm::ivec2 spriteOffset)
 {
-  position = pos;
+  hitbox.x = pos.x; hitbox.y = pos.y;
   hitbox.w = hitboxWidth;
   hitbox.h = hitboxHeight;
   sprite.init(isprite);
   this->spriteOffset = spriteOffset;
 }
 
-Player::Player(glm::vec2 pos, int hitboxWidth, int hitboxHeight, Sprite isprite, glm::ivec2 spriteOffset) : position(pos)
+Player::Player(glm::vec2 pos, int hitboxWidth, int hitboxHeight, Sprite isprite, glm::ivec2 spriteOffset)
 {
   sprite = isprite;
+  hitbox.x = pos.x; hitbox.y = pos.y;
   hitbox.w = hitboxWidth;
   hitbox.h = hitboxHeight;
   
@@ -54,13 +54,13 @@ void Player::jumpLetGo()
 void Player::update(Level &level)
 {
 
-  MoveCollision collision = move(position, velocity, hitbox, level);
-  position = collision.position;
+  MoveCollision collision = move(hitbox, velocity, level);
+  hitbox = collision.position;
   if (collision.cancelVec.x != 0) velocity.x = 0;
   if (collision.cancelVec.y != 0) velocity.y = 0;
   if (collision.cancelVec.y > 0) grounded = true;
   if (velocity.y > 0.0f) grounded = false;
-  if (std::abs(controlStickX) < deadzone && grounded)
+  if (std::abs(controlStickX) < deadzone)
   {
     if (std::abs(velocity.x) >= 0.11f)
     {
@@ -73,16 +73,14 @@ void Player::update(Level &level)
   }
   else
   {
-    if (velocity.y >= 0.0f)
-    {
-      //keep the player from accelerating more than a certain amount while not capping velocity from other sources
-      float cap = 0.7f*0.75f;
-      if (controlStickX > 0.0f && velocity.x < cap){velocity.x = std::min(velocity.x+controlStickX*0.02f, cap);}
-      if (controlStickX < 0.0f && velocity.x > -cap){velocity.x = std::max(velocity.x+controlStickX*0.02f, -cap);}
-      
-      //velocity.x += controlStickX * 0.02f;
-      
-    }
+    
+  //keep the player from accelerating more than a certain amount while not capping velocity from other sources
+  float cap = 0.7f*0.75f;
+  if (controlStickX > 0.0f && velocity.x < cap){velocity.x = std::min(velocity.x+controlStickX*0.04f, cap);}
+  if (controlStickX < 0.0f && velocity.x > -cap){velocity.x = std::max(velocity.x+controlStickX*0.04f, -cap);}
+  
+  //velocity.x += controlStickX * 0.02f;
+    
   }
   
   velocity += glm::vec2(0.0f, 0.01f);
@@ -93,6 +91,6 @@ void Player::update(Level &level)
 
 void Player::draw(SDL_Renderer *renderer, glm::vec2 camera)
 {
-  sprite.setPostion(position.x+spriteOffset.x-camera.x, position.y+spriteOffset.y-camera.y);
+  sprite.setPostion(hitbox.x+spriteOffset.x-camera.x, hitbox.y+spriteOffset.y-camera.y);
   sprite.draw(renderer);
 }
