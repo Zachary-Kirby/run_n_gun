@@ -6,9 +6,22 @@
 
 class Engine;
 
+enum class BirdState {
+  STATIC,
+  SWOOPLOW,
+  SWOOPHIGH,
+  RECOVER,
+  DEAD
+};
+
 class Bird {
   Engine* engine = nullptr;
+  float swoopX = 0.0f;
+  glm::vec2 swoopStartPos{0,0};
+  glm::vec2 swoopTargetPos{0,0};
+  float swoopSpeed = 0.3f;
 public:
+  BirdState state = BirdState::STATIC;
   int health = 1;
   fRect hitbox {0.0f, 0.0f, 8.0f, 8.0f};
   Sprite sprite;
@@ -20,6 +33,6 @@ public:
   Bird(Engine* engine, Sprite sprite, glm::vec2 position);
   
   void init(Sprite sprite, glm::vec2 position);
-  void update(glm::vec2 target);
+  void update();
   void draw(SDL_Renderer* renderer, glm::vec2 camera);
 };

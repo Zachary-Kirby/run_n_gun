@@ -69,6 +69,8 @@ void Engine::run()
     
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update();
+    for (Bird& bird : birds)
+      if (bird.active) bird.update();
     
     //Draw gameplay
     
@@ -79,8 +81,8 @@ void Engine::run()
     
     for (auto bullet : bullets) if (bullet.active) bullet.draw(renderer, camera);
     player.draw(renderer, camera);
-    for (auto bird : birds) if (bird.active) bird.draw(renderer, camera);
     level.draw(renderer, 0, 0, camera.x, camera.y);
+    for (auto bird : birds) if (bird.active) bird.draw(renderer, camera);
     
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     renderCircle(renderer, {
@@ -141,8 +143,8 @@ void Engine::input()
       {
         player.jump();
       }
-      if (event.key.keysym.scancode == SDL_SCANCODE_ESCAPE) exit_game = true;
-      if (event.key.keysym.scancode == SDL_SCANCODE_R) {player.hitbox.x = 0; player.hitbox.y = 0; }
+      if (event.key.keysym.sym == SDLK_ESCAPE) exit_game = true;
+      if (event.key.keysym.sym == SDLK_r) {player.hitbox.x = 0; player.hitbox.y = 0; }
       if (event.key.keysym.sym == SDLK_BACKQUOTE) {
         SDL_bool mode = SDL_GetRelativeMouseMode();
         SDL_SetRelativeMouseMode(mode ? SDL_FALSE : SDL_TRUE);
@@ -150,7 +152,7 @@ void Engine::input()
     }
     if (event.type == SDL_KEYUP && event.key.repeat == false)
     {
-      if (event.key.keysym.scancode == SDL_SCANCODE_SPACE)
+      if (event.key.keysym.sym == SDLK_SPACE)
       {
         player.jumpLetGo();
       }
