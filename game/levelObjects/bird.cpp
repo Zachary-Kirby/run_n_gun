@@ -90,6 +90,8 @@ void Bird::update()
 {
   if (!active) return;
   Player& player = engine->player;
+  bool notAtHeight = swoopStartPos.y < hitbox.centerY();
+  int direction = 1;
   switch (state)
   {
   case BirdState::STATIC:
@@ -111,10 +113,12 @@ void Bird::update()
     }
     break;
   case BirdState::RECOVER:
-    if (swoopStartPos.y < hitbox.centerY())
+    
+    if (swoopTargetPos.y < hitbox.centerY()) {notAtHeight = swoopStartPos.y > hitbox.centerY(); direction = -1;}
+    if (notAtHeight)
     {
       hitbox.x += std::copysignf(1.0f, swoopTargetPos.x - swoopStartPos.x);
-      hitbox.y -= 2.0f;
+      hitbox.y -= 2.0f * direction;
     } else
     {
       hitbox.y = swoopStartPos.y - hitbox.h/2.0f;
@@ -123,7 +127,7 @@ void Bird::update()
     break;
   case BirdState::FOLLOW:
     hitbox.x += std::copysignf(0.5f, player.hitbox.centerX() - hitbox.centerX());
-    if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80.0f)
+    if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80.0f )
     {
       swoopProgress = 0.0f;
       swoopTargetPos = player.hitbox.center();
