@@ -50,7 +50,15 @@ int Level::uget(int x, int y, int layer = 0)
  */
 void Level::removePoint(int x, int y)
 {
-  //TODO implement
+  float radius = 2.0f;
+  for (int i=0; i<points.size(); i++)
+  {
+    if ((points[i].x-x)*(points[i].x-x) + (points[i].y-y)*(points[i].y-y) < radius*radius)
+    {
+      points.erase(points.begin()+i);
+      i--;
+    }
+  }
 }
 
 /*

@@ -126,6 +126,9 @@ void Engine::input()
   pallete.mouseX = mousePos.x;
   pallete.mouseY = mousePos.y;
   
+  int mouseRelLevelX = (int)((mousePos.x+camera.x)/(float)level.scale);
+  int mouseRelLevelY = (int)((mousePos.y+camera.y)/(float)level.scale);
+  
   SDL_Event event;
   while (SDL_PollEvent(&event))
   {
@@ -195,7 +198,11 @@ void Engine::input()
         }
         if (event.key.keysym.sym == SDLK_e)
         { 
-          level.addPoint(LevelPoint{(int)(mousePos.x/(float)level.scale + camera.x), (int)(mousePos.y/(float)level.scale + camera.y), "bird", ""});
+          level.addPoint(LevelPoint{mouseRelLevelX, mouseRelLevelY, "bird", ""});
+        }
+        if (event.key.keysym.sym == SDLK_r)
+        {
+          level.removePoint(mouseRelLevelX, mouseRelLevelY);
         }
       }
       
