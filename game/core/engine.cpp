@@ -79,7 +79,12 @@ void Engine::run()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
-    for (auto bullet : bullets) if (bullet.active) bullet.draw(renderer, camera);
+    for (auto it = bullets.begin(); it != bullets.end(); it++)
+    {
+      Bullet& bullet = *it;
+      if (bullet.active) bullet.draw(renderer, camera);
+      else {it = bullets.erase(it); it--;}
+    }
     player.draw(renderer, camera);
     level.draw(renderer, 0, 0, camera.x, camera.y);
     for (auto bird : birds) if (bird.active) bird.draw(renderer, camera);
@@ -172,19 +177,7 @@ void Engine::input()
     {
       if (event.button.button == SDL_BUTTON_LEFT)
       {
-        int freeBullet = -1;
-        for (int i = 0; i<BULLETLIMIT; i++)
-        {
-          if (bullets[i].active == false)
-          {
-            freeBullet = i;
-            break;
-          }
-        }
-        if (freeBullet != -1)
-        {
-          bullets[freeBullet].init({atlas, 2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*2, aimPoint.y*2});
-        }
+        bullets.push_back({{atlas, 2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*2, aimPoint.y*2}});
       }
     }
   }
@@ -193,6 +186,7 @@ void Engine::input()
 Engine::~Engine()
 {
   SDL_DestroyTexture(atlas);
+  SDL_DestroyTexture(gameplayDrawTexture);
   SDL_DestroyRenderer(renderer);
   SDL_DestroyWindow(window);
   SDL_Quit();

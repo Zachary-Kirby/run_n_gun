@@ -4,14 +4,13 @@
 #include <SDL2/SDL_image.h>
 #include <format>
 #include <chrono>
+#include <list>
 
 #include "level.hpp"
 #include "player.hpp"
 #include <iostream>
 #include "bird.hpp"
 #include "bullet.hpp"
-
-#define BULLETLIMIT 50
 
 class Engine {
   SDL_Window* window;
@@ -38,7 +37,7 @@ class Engine {
   
   Player player;
   std::vector<Bird> birds;
-  Bullet bullets[BULLETLIMIT]{};
+  std::vector<Bullet> bullets;
   glm::vec2 camera {.0f, .0f};
   
   glm::vec2 aimPoint = {.0f, .0f}; //used for player shooting
