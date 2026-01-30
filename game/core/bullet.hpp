@@ -4,8 +4,9 @@
 #include <glm/vec2.hpp>
 #include "sprite.hpp"
 #include "rect.hpp"
+#include "entity.hpp"
 
-class Bullet{
+class Bullet : public Entity {
   Sprite sprite;
   fRect hitbox;
   glm::vec2 velocity;

@@ -3,6 +3,7 @@
 #include "rect.hpp"
 #include "sprite.hpp"
 #include "glm/vec2.hpp"
+#include "entity.hpp"
 
 class Engine;
 
@@ -15,7 +16,7 @@ enum class BirdState {
   DEAD
 };
 
-class Bird {
+class Bird : public Entity {
   Engine* engine = nullptr;
   float swoopX = 0.0f;
   glm::vec2 swoopStartPos{0,0};
