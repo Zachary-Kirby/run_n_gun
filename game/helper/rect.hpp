@@ -82,6 +82,11 @@ class fRect
   {
     return (point.x > x && point.x < x + w && point.y > y && point .y < y + h);
   }
+
+  bool collide(fRect& other)
+  {
+    return (x < other.x + other.w && x + w > other.x && y < other.y + other.h && y + h > other.y);
+  }
   
   void draw(SDL_Renderer* renderer, SDL_Color color)
   {

@@ -8,10 +8,10 @@
 
 class Bullet : public Entity {
   Sprite sprite;
-  fRect hitbox;
-  glm::vec2 velocity;
   int lifetime;
   public:
+  glm::vec2 velocity;
+  fRect hitbox;
   bool active = false;
   Bullet(Sprite sprite, glm::vec2 position, glm::vec2 velocity)
   {
