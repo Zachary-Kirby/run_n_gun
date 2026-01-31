@@ -1,6 +1,8 @@
 # Run and Gun Game
 
-A simple 2D game based loosely on Contra.
+A simple 2D game based loosely on Contra and Megaman.
+
+![Early Development Image](image.png)
 
 # Prerequisites
  - Debian-based Linux
