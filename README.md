@@ -8,7 +8,8 @@ A simple 2D game based loosely on Contra and Megaman.
  - Debian-based Linux
  - CMake >= 3.10
  - GCC >= 10
- - SDL2, SDL2_image
+ - SDL2 >= 2.0.18
+ - SDL2_image
 
 ```bash
 sudo apt install build-essential cmake libsdl2-dev libsdl2-image-dev
