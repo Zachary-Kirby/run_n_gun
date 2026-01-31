@@ -122,9 +122,10 @@ void Level::load(const char *levelName)
 
 //sides of a rectangle are controlled by these flags, later it could be verts on a square.
 //flags: water left right up down
+//collisionMask ignores that tile collision pattern specified
 const unsigned char tileFlags[] = {0b00000, 0b01111, 0b00010, 0b10000};
 
-resolvedCollision Level::resolveCollision(fRect previousRect, fRect rect, bool verticalMove)
+resolvedCollision Level::resolveCollision(fRect previousRect, fRect rect, bool verticalMove, int collisionMask)
 {
   
   int left {PTT(rect.x)};
@@ -142,6 +143,8 @@ resolvedCollision Level::resolveCollision(fRect previousRect, fRect rect, bool v
       int tile = get(x,y,1);
       if (tile >= 4) continue;
       unsigned char flags = tileFlags[tile];
+      if (collisionMask == flags) continue;
+      
       if (tile)
       {
         Rect tileRect{x*tileSize, y*tileSize, tileSize, tileSize};
@@ -186,18 +189,18 @@ resolvedCollision Level::resolveCollision(fRect previousRect, fRect rect, bool v
   return {{xCancel,yCancel}, rect};
 }
 
-MoveCollision move(fRect hitbox, glm::vec2 move, Level &level)
+MoveCollision move(fRect hitbox, glm::vec2 move, Level &level, int collisionMask)
 {
   //Horizontal Move
   fRect previousRect = hitbox;
   fRect newRect = previousRect+glm::vec2(move.x, 0);
   resolvedCollision collision;
-  collision = level.resolveCollision(previousRect, newRect, false);
+  collision = level.resolveCollision(previousRect, newRect, false, collisionMask);
   int xCol = collision.cancelVec.x;
   
   previousRect = collision.newRect;
   newRect = previousRect+glm::vec2(0, move.y);
-  collision = level.resolveCollision(previousRect, newRect, true);
+  collision = level.resolveCollision(previousRect, newRect, true, collisionMask);
   int yCol = collision.cancelVec.y;
   
   return {{collision.newRect.x, collision.newRect.y}, {xCol, yCol}};

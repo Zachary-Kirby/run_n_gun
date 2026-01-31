@@ -44,7 +44,7 @@ class Level
   * Give two rects and this will resolve a move from previousRect to rect and return a new Rect that is collision free.
   * If verticalMove is true, then the collision check will only be done on the y axis, else it will be done on the x axis.
   */
-  resolvedCollision resolveCollision(fRect previousRect, fRect rect, bool verticalMove = false);
+  resolvedCollision resolveCollision(fRect previousRect, fRect rect, bool verticalMove = false, int collisionMask = 0b00000);
   
 };
 
@@ -55,4 +55,4 @@ struct MoveCollision
   glm::ivec2 cancelVec;
 };
 
-MoveCollision move(fRect hitbox, glm::vec2 move, Level& level);
+MoveCollision move(fRect hitbox, glm::vec2 move, Level& level, int collisionMask = 0b00000);

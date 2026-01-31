@@ -53,8 +53,9 @@ void Player::jumpLetGo()
 
 void Player::update(Level &level)
 {
-
-  MoveCollision collision = move(hitbox, velocity, level);
+  int collisionMask = 0b00000;
+  if (controlStickY > 0.0f) collisionMask = 0b00010;
+  MoveCollision collision = move(hitbox, velocity, level, collisionMask);
   hitbox = collision.position;
   if (collision.cancelVec.x != 0) velocity.x = 0;
   if (collision.cancelVec.y != 0) velocity.y = 0;

@@ -9,6 +9,7 @@ class Player{
   bool grounded = false;
   public:
   float controlStickX = 0.0f;
+  float controlStickY = 0.0f;
   float deadzone = 0.1f;
   fRect hitbox;
   glm::vec2 velocity;

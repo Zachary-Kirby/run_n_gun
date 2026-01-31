@@ -34,7 +34,7 @@ void Engine::init()
   );
   
   level.init(atlas);
-  level.load("test.lvl");
+  level.load("good.lvl");
   
   
   gameplayDrawTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
@@ -79,6 +79,7 @@ void Engine::run()
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
     
+    level.draw(renderer, 0, 0, camera.x, camera.y);
     for (auto it = bullets.begin(); it != bullets.end(); it++)
     {
       Bullet& bullet = *it;
@@ -86,7 +87,6 @@ void Engine::run()
       else {it = bullets.erase(it); it--;}
     }
     player.draw(renderer, camera);
-    level.draw(renderer, 0, 0, camera.x, camera.y);
     for (auto bird : birds) if (bird.active) bird.draw(renderer, camera);
     
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
@@ -125,6 +125,7 @@ void Engine::input()
   const unsigned char* keys = SDL_GetKeyboardState(NULL);
   
   player.controlStickX = 0.0f;
+  player.controlStickY = 0.0f;
   if (keys[SDL_SCANCODE_A])
   {
     player.controlStickX = -1.0f;
@@ -132,6 +133,14 @@ void Engine::input()
   if (keys[SDL_SCANCODE_D])
   {
     player.controlStickX = 1.0f;
+  }
+  if (keys[SDL_SCANCODE_W])
+  {
+    player.controlStickY = -1.0f;
+  }
+  if (keys[SDL_SCANCODE_S])
+  {
+    player.controlStickY = 1.0f;
   }
   
   
@@ -168,7 +177,7 @@ void Engine::input()
       secretAimPoint.y += ((float)event.motion.yrel / 20.0f);
       if (glm::length(secretAimPoint) > 0)
       {
-        secretAimPoint = secretAimPoint / glm::length(secretAimPoint) * std::min(glm::length(secretAimPoint), 25.0f);
+        secretAimPoint = secretAimPoint / glm::length(secretAimPoint) * std::min(glm::length(secretAimPoint), 5.0f);
         aimPoint = glm::normalize(secretAimPoint);  
       }
       
