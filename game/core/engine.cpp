@@ -53,6 +53,7 @@ void Engine::init()
   
   gameplayDrawTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
   background = IMG_LoadTexture(renderer, "Assets/Background1.png");
+  clouds = IMG_LoadTexture(renderer, "Assets/clouds.png");
   SDL_QueryTexture(background, NULL, NULL, &backgroundWidth, &backgroundHeight);
 }
 
@@ -96,8 +97,14 @@ void Engine::run()
     for (int x=0; x<4; x++)
     {
       memcpy(scaledBackgroundPoints, backgroundVerts, sizeof(backgroundVerts));
+      transformVerticies(scaledBackgroundPoints, 4, backgroundHeight/9.0f, (int)-camera.x*0.25f+x*backgroundWidth, backgroundHeight*0.3f);
+      SDL_RenderGeometry(renderer, clouds, scaledBackgroundPoints, 4, backgroundIndices, 6);
+      memcpy(scaledBackgroundPoints, backgroundVerts, sizeof(backgroundVerts));
       transformVerticies(scaledBackgroundPoints, 4, backgroundHeight/9.0f, (int)-camera.x*0.5f+x*backgroundWidth, 0);
       SDL_RenderGeometry(renderer, background, scaledBackgroundPoints, 4, backgroundIndices, 6); 
+      transformVerticies(scaledBackgroundPoints, 4, 1, (int)-camera.x*0.25f, 0);
+      SDL_RenderGeometry(renderer, clouds, scaledBackgroundPoints, 4, backgroundIndices, 6);
+      
     }
     
     level.draw(renderer, 0, 0, camera.x, camera.y);

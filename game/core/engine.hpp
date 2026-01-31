@@ -18,6 +18,7 @@ class Engine {
   SDL_Texture* atlas;
   SDL_Texture* gameplayDrawTexture;
   SDL_Texture* background;
+  SDL_Texture* clouds;
   std::chrono::steady_clock::time_point last_frame_time;
   std::chrono::duration<double, std::ratio<1, 240>> frame_time {1};
   int gameplayDrawScale = 2;
