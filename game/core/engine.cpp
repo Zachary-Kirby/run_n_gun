@@ -35,7 +35,21 @@ void Engine::init()
   
   level.init(atlas);
   level.load("good.lvl");
-  
+  for (auto point : level.points)
+  {
+    if (point.type == "start") 
+    {
+      player.hitbox.x = point.x-player.hitbox.w/2;
+      player.hitbox.y = point.y-player.hitbox.h/2;
+    }
+    if (point.type == "bird")
+    {
+      
+      Sprite birdSprite{atlas, 0, 7*8, 8, 8, 1};
+      birds.emplace_back(this, birdSprite, glm::vec2(point.x, point.y));
+      point.active = false; // too lazy to just remove the point from the vector. Honestly it would be better as a linked list probably
+    }
+  }
   
   gameplayDrawTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
   
@@ -55,17 +69,7 @@ void Engine::run()
     if (player.hitbox.x < gameplayDrawWidth/2-player.hitbox.w*1+camera.x)
       camera.x += player.hitbox.x - (gameplayDrawWidth/2-player.hitbox.w*1+camera.x);
     
-    for (auto& levelPoint : level.points)
-    {
-      if (!levelPoint.active) continue;
-      if (levelPoint.type == "bird")
-      {
-        
-        Sprite birdSprite{atlas, 0, 7*8, 8, 8, 1};
-        birds.emplace_back(this, birdSprite, glm::vec2(levelPoint.x, levelPoint.y));
-        levelPoint.active = false; // too lazy to just remove the point from the vector. Honestly it would be better as a linked list probably
-      }
-    }
+    
     
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update();
