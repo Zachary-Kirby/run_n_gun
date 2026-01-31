@@ -40,5 +40,6 @@ add_executable(levelEdit
   editor/main.cpp
   editor/pallete.cpp
   editor/text.cpp
+  editor/inputBox.cpp
 )
 target_link_libraries(levelEdit rungun_shared)

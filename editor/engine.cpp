@@ -14,11 +14,15 @@ Engine::Engine()
   collisionAtlas = IMG_LoadTexture(renderer, "./Assets/collision.png");
   pallete.init(atlas, collisionAtlas);
   textRenderer.init(renderer);
-  SDL_Rect tileEditArea {0, 0, (windowWidth-160)/windowScale, windowHeight/windowScale};
+  SDL_Rect tileEditArea {0, 0, (windowWidth-240)/windowScale, windowHeight/windowScale};
   level.init(atlas, collisionAtlas, tileEditArea);
   screenTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, windowWidth/windowScale, windowHeight/windowScale);
   std::cout << "Current path: " << std::filesystem::current_path() << std::endl;
   SDL_StopTextInput();
+  
+  objectTypeBox.init("object type", tileEditArea.w*windowScale, 0, windowWidth-tileEditArea.w*windowScale, 16, &textRenderer);
+  objectTypeBox.text = "bird";
+  objectParametersBox.init("object parameters", tileEditArea.w*windowScale, 16, windowWidth-tileEditArea.w*windowScale, 16, &textRenderer);
 }
 
 void Engine::run()
@@ -86,6 +90,11 @@ void Engine::run()
       textRenderer.draw(renderer, layer, 0, 0, 11*16, 2);
     }
     
+    //render right options bar (levelPoints info, Rectangles info, etc.)
+    objectTypeBox.draw(renderer);
+    objectParametersBox.draw(renderer);
+    
+    
     std::this_thread::sleep_until(lastFrameTime + frameDuration);
     lastFrameTime = std::chrono::steady_clock::now();
     
@@ -136,6 +145,17 @@ void Engine::input()
     {
       exit_game = true;
     }
+    
+    //This will stop text input, but then immediatly after it will be set again is a text box is clicked
+    if (event.type == SDL_MOUSEBUTTONDOWN){
+      SDL_StopTextInput();
+      saveDialogueEnabled = false;
+      loadDialogueEnabled = false;
+    }
+    objectTypeBox.handleEvent(event);
+    objectParametersBox.handleEvent(event);
+    
+    
     if (event.type == SDL_KEYUP && event.key.repeat == 0)
     {
       if (event.key.keysym.sym == SDLK_TAB) pallete.enabled = false;
@@ -154,6 +174,8 @@ void Engine::input()
       {
         loadDialogueEnabled = false;
         saveDialogueEnabled = false;
+        objectTypeBox.selected = false;
+        objectTypeBox.selected = false;
         SDL_StopTextInput();
       }
       
@@ -198,7 +220,7 @@ void Engine::input()
         }
         if (event.key.keysym.sym == SDLK_e)
         { 
-          level.addPoint(LevelPoint{mouseRelLevelX, mouseRelLevelY, "bird", ""});
+          level.addPoint(LevelPoint{mouseRelLevelX, mouseRelLevelY, objectTypeBox.text, objectParametersBox.text});
         }
         if (event.key.keysym.sym == SDLK_r)
         {
@@ -207,9 +229,9 @@ void Engine::input()
       }
       
       
-      bool dialogueOpen = saveDialogueEnabled || loadDialogueEnabled;
       
-      if (!dialogueOpen)
+      
+      if (!SDL_IsTextInputActive())
       {
         if (event.key.keysym.sym == SDLK_s)
         {
@@ -229,7 +251,10 @@ void Engine::input()
     }
     if (event.type == SDL_TEXTINPUT)
     {
-      strncat(levelName, event.text.text, 255-strlen(levelName));
+      if (saveDialogueEnabled || loadDialogueEnabled)
+      {
+        strncat(levelName, event.text.text, 255-strlen(levelName));
+      }
     }
     if (event.type == SDL_TEXTEDITING)
     {

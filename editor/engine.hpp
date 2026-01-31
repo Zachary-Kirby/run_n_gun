@@ -3,14 +3,14 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
-#include <SDL_image.h>
+#include <SDL2/SDL_image.h>
 #include <SDL2/SDL.h>
 
 #include "level.hpp"
 #include "glm/glm.hpp"
 #include "pallete.hpp"
 #include "text.hpp"
-
+#include "inputBox.hpp"
 
 
 class Engine {
@@ -38,9 +38,14 @@ public:
   
   int selectedLayer = 0;
   
+  
   char levelName[256]{'\0'};
   bool saveDialogueEnabled = false;
   bool loadDialogueEnabled = false;
+  
+  InputBox objectTypeBox;
+  InputBox objectParametersBox;
+  
   
   Engine();
   

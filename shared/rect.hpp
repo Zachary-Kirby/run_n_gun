@@ -26,7 +26,7 @@ class Rect
     return (x < other.x + other.w && x + w > other.x && y < other.y + other.h && y + h > other.y);
   }
   
-  bool collide(glm::vec2& point)
+  bool collide(const glm::vec2& point)
   {
     return (point.x > x && point.x < x + w && point.y > y && point .y < y + h);
   }
