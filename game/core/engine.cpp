@@ -52,7 +52,8 @@ void Engine::init()
   }
   
   gameplayDrawTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
-  
+  background = IMG_LoadTexture(renderer, "Assets/Background1.png");
+  SDL_QueryTexture(background, NULL, NULL, &backgroundWidth, &backgroundHeight);
 }
 
 void Engine::run()
@@ -82,6 +83,22 @@ void Engine::run()
     SDL_SetRenderTarget(renderer, gameplayDrawTexture);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
+    
+    
+    skyVerts[1].position.x = gameplayDrawWidth;
+    skyVerts[2].position.y = gameplayDrawHeight;
+    skyVerts[3].position.x = gameplayDrawWidth;
+    skyVerts[3].position.y = gameplayDrawHeight;
+    SDL_RenderGeometry(renderer, NULL, skyVerts, 4, backgroundIndices, 6);
+    
+    SDL_Vertex scaledBackgroundPoints[4];
+    
+    for (int x=0; x<4; x++)
+    {
+      memcpy(scaledBackgroundPoints, backgroundVerts, sizeof(backgroundVerts));
+      transformVerticies(scaledBackgroundPoints, 4, backgroundHeight/9.0f, (int)-camera.x*0.5f+x*backgroundWidth, 0);
+      SDL_RenderGeometry(renderer, background, scaledBackgroundPoints, 4, backgroundIndices, 6); 
+    }
     
     level.draw(renderer, 0, 0, camera.x, camera.y);
     for (auto it = bullets.begin(); it != bullets.end(); it++)

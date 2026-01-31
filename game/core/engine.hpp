@@ -16,12 +16,28 @@ class Engine {
   SDL_Window* window;
   SDL_Renderer* renderer;
   SDL_Texture* atlas;
-  SDL_Texture* gameplayDrawTexture = nullptr;
+  SDL_Texture* gameplayDrawTexture;
+  SDL_Texture* background;
   std::chrono::steady_clock::time_point last_frame_time;
   std::chrono::duration<double, std::ratio<1, 240>> frame_time {1};
   int gameplayDrawScale = 2;
   int windowWidth = 640;
   int windowHeight = 480;
+  SDL_Vertex skyVerts[4] {
+    { 0, 0, 0x37, 0x7f, 0xff, 0xff, 0, 0},
+    { 1, 0, 0x37, 0x7f, 0xff, 0xff, 1, 0},
+    { 0, 1, 0x92, 0xb8, 0xfc, 0xff, 0, 1},
+    { 1, 1, 0x92, 0xb8, 0xfc, 0xff, 1, 1}
+  };
+  SDL_Vertex backgroundVerts[4] {
+    { 0, 0, 255, 255, 255, 255,  0, 0},
+    { 16, 0, 255, 255, 255, 255,  1, 0},
+    { 0, 9, 255, 255, 255, 255,  0, 1},
+    { 16, 9, 255, 255, 255, 255,  1, 1}
+  };
+  int backgroundIndices[6] {0, 1, 2, 1, 2, 3};
+  int backgroundHeight, backgroundWidth;
+  
   public:
   int gameplayDrawWidth = windowWidth / gameplayDrawScale;
   int gameplayDrawHeight = windowHeight / gameplayDrawScale;
