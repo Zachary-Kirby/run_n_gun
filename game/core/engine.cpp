@@ -8,7 +8,7 @@
 Engine::Engine()
 {
   SDL_Init(SDL_INIT_VIDEO);
-  SDL_CreateWindowAndRenderer(640, 480, SDL_WINDOW_SHOWN, &window, &renderer);
+  SDL_CreateWindowAndRenderer(640, 640*9/16, SDL_WINDOW_SHOWN, &window, &renderer);
   
   
   //Temporary to center on my left monitor
@@ -64,7 +64,7 @@ void Engine::run()
   {
     input();
     
-    player.update(level);
+    player.update(level, delta);
     
     if (player.hitbox.x > gameplayDrawWidth/2+player.hitbox.w*1+camera.x)
       camera.x += player.hitbox.x - (gameplayDrawWidth/2+player.hitbox.w*1+camera.x);
@@ -134,8 +134,9 @@ void Engine::run()
     SDL_RenderCopy(renderer, gameplayDrawTexture, NULL, NULL);
     SDL_RenderPresent(renderer);
     std::this_thread::sleep_until(last_frame_time + frame_time);
+    delta = 0.001f*std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock().now() - last_frame_time).count();
     last_frame_time = std::chrono::steady_clock().now();
-    
+    std::cout << delta << std::endl;
     //SDL_RenderPresent(renderer);
   }
 }

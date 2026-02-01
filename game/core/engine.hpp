@@ -20,10 +20,10 @@ class Engine {
   SDL_Texture* background;
   SDL_Texture* clouds;
   std::chrono::steady_clock::time_point last_frame_time;
-  std::chrono::duration<double, std::ratio<1, 240>> frame_time {1};
+  std::chrono::duration<double, std::ratio<1, 10>> frame_time {1};
   int gameplayDrawScale = 2;
   int windowWidth = 640;
-  int windowHeight = 480;
+  int windowHeight = 640*9/16;
   SDL_Vertex skyVerts[4] {
     { 0, 0, 0x37, 0x7f, 0xff, 0xff, 0, 0},
     { 1, 0, 0x37, 0x7f, 0xff, 0xff, 1, 0},
@@ -55,10 +55,11 @@ class Engine {
   Player player;
   std::vector<Bird> birds;
   std::vector<Bullet> bullets;
-  glm::vec2 camera {.0f, .0f};
+  glm::vec2 camera {.0f, 50.0f};
   
   glm::vec2 aimPoint = {.0f, .0f}; //used for player shooting
   glm::vec2 secretAimPoint = {.0f, .0f}; //used to smooth aim point
+  float delta = 0.1f;
   
   bool exit_game{false};
   Engine();

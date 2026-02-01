@@ -24,7 +24,7 @@ class Player{
 
   void jumpLetGo();
 
-  void update(Level& level);
+  void update(Level& level, float delta);
   
   void draw(SDL_Renderer* renderer, glm::vec2 camera);
 };
