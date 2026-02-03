@@ -11,10 +11,14 @@
 #include <iostream>
 #include "bird.hpp"
 #include "bullet.hpp"
+#include "renderer.hpp"
 
 class Engine {
+  SDL_GLContext context;
   SDL_Window* window;
-  SDL_Renderer* renderer;
+  Renderer rendererGL;
+  
+  //SDL_Renderer* rendererSDL;
   SDL_Texture* atlas;
   SDL_Texture* gameplayDrawTexture;
   SDL_Texture* background;

@@ -8,8 +8,10 @@
 Engine::Engine()
 {
   SDL_Init(SDL_INIT_VIDEO);
-  SDL_CreateWindowAndRenderer(640, 640*9/16, SDL_WINDOW_SHOWN, &window, &renderer);
+  window = SDL_CreateWindow("Run And Gun!", SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2), 640, 640*9/16, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+  context = SDL_GL_CreateContext(window);
   
+  rendererGL.init();
   
   //Temporary to center on my left monitor
   SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2));
@@ -20,12 +22,12 @@ Engine::Engine()
 
 void Engine::init()
 {
-  atlas = IMG_LoadTexture(renderer, "Assets/Atlas.png");
-  if (!atlas)
-  {
-    std::cerr << "Failed to load atlas: " << IMG_GetError() << std::endl;
-    exit(1);
-  }
+  //atlas = IMG_LoadTexture(rendererSDL, "Assets/Atlas.png");
+  //if (!atlas)
+  //{
+  //  std::cerr << "Failed to load atlas: " << IMG_GetError() << std::endl;
+  //  exit(1);
+  //}
   player.init(
     {0, 0}, //Position
     16, 16, //Hitbox
@@ -51,10 +53,10 @@ void Engine::init()
     }
   }
   
-  gameplayDrawTexture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
-  background = IMG_LoadTexture(renderer, "Assets/Background1.png");
-  clouds = IMG_LoadTexture(renderer, "Assets/clouds.png");
-  SDL_QueryTexture(background, NULL, NULL, &backgroundWidth, &backgroundHeight);
+  //gameplayDrawTexture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
+  //background = IMG_LoadTexture(rendererSDL, "Assets/Background1.png");
+  //clouds = IMG_LoadTexture(rendererSDL, "Assets/clouds.png");
+  //SDL_QueryTexture(background, NULL, NULL, &backgroundWidth, &backgroundHeight);
 }
 
 void Engine::run()
@@ -79,7 +81,12 @@ void Engine::run()
       if (bird.active) bird.update();
     
     //Draw gameplay
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
     
+    /*
+    
+    // old render code not using opengl
     
     SDL_SetRenderTarget(renderer, gameplayDrawTexture);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -133,11 +140,14 @@ void Engine::run()
     
     SDL_RenderCopy(renderer, gameplayDrawTexture, NULL, NULL);
     SDL_RenderPresent(renderer);
+    */
+   
     std::this_thread::sleep_until(last_frame_time + frame_time);
     delta = 0.001f*std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock().now() - last_frame_time).count();
     last_frame_time = std::chrono::steady_clock().now();
     std::cout << delta << std::endl;
     //SDL_RenderPresent(renderer);
+    SDL_GL_SwapWindow(window);
   }
 }
 
@@ -223,9 +233,9 @@ void Engine::input()
 
 Engine::~Engine()
 {
-  SDL_DestroyTexture(atlas);
-  SDL_DestroyTexture(gameplayDrawTexture);
-  SDL_DestroyRenderer(renderer);
+  //SDL_DestroyTexture(atlas);
+  //SDL_DestroyTexture(gameplayDrawTexture);
+  //SDL_DestroyRenderer(rendererSDL);
   SDL_DestroyWindow(window);
   SDL_Quit();
 }

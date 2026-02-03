@@ -8,6 +8,7 @@ project(rungun)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(OpenGL REQUIRED)
 
 #Shared Library for Game and Editor
 add_library(rungun_shared STATIC
@@ -29,8 +30,8 @@ add_executable(rungun
   game/helper/sprite.cpp
   game/levelObjects/bird.cpp
 )
-target_link_libraries(rungun rungun_shared)
-target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects)
+target_link_libraries(rungun rungun_shared OpenGL::GL ${CMAKE_SOURCE_DIR}/libs/libglad.a)
+target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects libs/glad)
 
 
 #Level Editor
