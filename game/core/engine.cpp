@@ -11,7 +11,7 @@ Engine::Engine()
   window = SDL_CreateWindow("Run And Gun!", SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2), 640, 640*9/16, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
   context = SDL_GL_CreateContext(window);
   
-  rendererGL.init();
+  rendererGL.init(windowWidth, windowHeight);
   
   //Temporary to center on my left monitor
   SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2));
@@ -83,7 +83,7 @@ void Engine::run()
     //Draw gameplay
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    
+    RenderRect(&rendererGL, 1.0f, 0, 1.0f, 1.0f);
     /*
     
     // old render code not using opengl

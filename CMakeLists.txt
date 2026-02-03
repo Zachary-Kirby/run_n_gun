@@ -29,6 +29,7 @@ add_executable(rungun
   game/core/bullet.cpp
   game/helper/sprite.cpp
   game/levelObjects/bird.cpp
+  game/core/renderer.cpp
 )
 target_link_libraries(rungun rungun_shared OpenGL::GL ${CMAKE_SOURCE_DIR}/libs/libglad.a)
 target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects libs/glad)
