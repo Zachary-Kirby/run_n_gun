@@ -81,6 +81,7 @@ void Engine::run()
       if (bird.active) bird.update();
     
     //Draw gameplay
+    //rendererGL.gameplayRenderTarget.bind();
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     
@@ -97,6 +98,30 @@ void Engine::run()
       player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
       player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y,
       4.0f);
+    //RenderTarget::unbind();
+    //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    
+    /* failed attempt at post processing
+    rendererGL.gameplayRenderTarget.bind();
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    
+    rendererGL.gameplayRenderTarget.unbind();
+    
+    rendererGL.gameplayDrawTexture.setTarget(0);
+    RenderCopy(&rendererGL,
+      {0.0f, 0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight}
+      ,{0.0f, 0.0f, (float)windowWidth, (float)windowHeight}, 0.0f);
+    rendererGL.atlasTexture.setTarget(0);
+    */
+
+    //rendererGL.atlasTexture.setTarget(0);
+    //rendererGL.gameplayDrawTexture.setTarget(0);
+    //RenderCopy(&rendererGL,
+    //  {0.0f, 0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight}
+    //  ,{0.0f, 0.0f, (float)windowWidth, (float)windowHeight}, 0.0f);
+    //rendererGL.atlasTexture.setTarget(0);
     /*
     
     // old render code not using opengl

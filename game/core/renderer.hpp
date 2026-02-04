@@ -11,6 +11,65 @@
 #include <unordered_map>
 #include <array>
 
+enum class TextureType {
+  COLOR,
+  DEPTH
+};
+
+class Texture{
+public:
+  float w;
+  float h;
+  unsigned int id;
+  Texture() {w = 0; h = 0; id = 0;}
+  Texture& operator=(Texture&& other);
+  Texture(const char* path);
+  Texture(float w, float h, TextureType type = TextureType::COLOR);
+  void bind(){
+    glBindTexture(GL_TEXTURE_2D, id);
+  }
+  void setTarget(int target)
+  {
+    glActiveTexture(GL_TEXTURE0 + target);
+    glBindTexture(GL_TEXTURE_2D, id);
+  }
+  ~Texture(){
+    if (id != 0)
+    {
+      glDeleteTextures(1, &id);
+    }
+  }
+};
+
+class RenderTarget{
+public:
+  unsigned int fbo;
+  Texture* texture;
+  RenderTarget() {fbo = 0; texture = nullptr;}
+  RenderTarget(Texture* texture);
+  RenderTarget(Texture* color, Texture* depth);
+  RenderTarget& operator=(RenderTarget&& other){
+    if (this != &other){
+      fbo = other.fbo;
+      texture = other.texture;
+      other.fbo = 0;
+      other.texture = nullptr;
+    }
+    return *this;
+  }
+  void bind(){
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+  }
+  static void unbind(){
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  }
+  ~RenderTarget(){
+    if (fbo != 0)
+    {
+      glDeleteFramebuffers(1, &fbo);
+    }
+  }
+};
 
 class Renderer {
 public:
@@ -25,7 +84,14 @@ public:
   unsigned int defaultShaderProgramID;
   unsigned int circleShaderProgramID;
   unsigned int coloredShaderProgramID;
-  unsigned int atlasID, atlasWidth, atlasHeight;
+  Texture atlasTexture;
+  Texture atlasAltTexture;
+  Texture gameplayDrawTexture;
+  Texture gameplayDepthTexture;
+  unsigned int gameplayDrawWidth, gameplayDrawHeight;
+  RenderTarget gameplayRenderTarget;
+  
+
   std::string loadShaderFromFile(const std::string& filepath);
   std::unordered_map<std::string, unsigned int> uniformLocations;
   glm::mat4 projectionMatrix;
