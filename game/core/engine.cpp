@@ -97,17 +97,9 @@ void Engine::run()
       player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
       player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y,
       4.0f);
-    //RenderRect(&rendererGL, 32, 32, 64, 64);
-    //RenderRect(&rendererGL, 16.0f, 16.0f, 16.0f, 16.0f);
-    //RenderCopy(&rendererGL, {0.0f, 8.0f*16, 16.0f, 16.0f}, {0.0f, 0.0f, 128.0f, 128.0f}, 0.0f);
     /*
     
     // old render code not using opengl
-    
-    SDL_SetRenderTarget(renderer, gameplayDrawTexture);
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-    
     
     skyVerts[1].position.x = gameplayDrawWidth;
     skyVerts[2].position.y = gameplayDrawHeight;
@@ -127,30 +119,7 @@ void Engine::run()
       SDL_RenderGeometry(renderer, background, scaledBackgroundPoints, 4, backgroundIndices, 6); 
       transformVerticies(scaledBackgroundPoints, 4, 1, (int)-camera.x*0.25f, 0);
       SDL_RenderGeometry(renderer, clouds, scaledBackgroundPoints, 4, backgroundIndices, 6);
-      
     }
-    
-    
-    
-    player.draw(renderer, camera);
-    for (auto bird : birds) if (bird.active) bird.draw(renderer, camera);
-    
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-    renderCircle(renderer, {
-      player.hitbox.x+player.hitbox.w/2.0f+aimPoint.x*8.0f-camera.x, 
-      player.hitbox.y+player.hitbox.h/2.0f+aimPoint.y*8.0f-camera.y}, 2.0f);
-    renderCircle(renderer, {
-      player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
-      player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y}, 2.0f);
-    
-    
-    SDL_SetRenderTarget(renderer, NULL);
-    
-    //TODO draw UI
-    
-    
-    SDL_RenderCopy(renderer, gameplayDrawTexture, NULL, NULL);
-    SDL_RenderPresent(renderer);
     */
    
     std::this_thread::sleep_until(last_frame_time + frame_time);
