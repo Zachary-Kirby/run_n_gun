@@ -1,15 +1,14 @@
 #include "sprite.hpp"
+#include "renderer.hpp"
 
 Sprite::Sprite()
 {
   src = {0, 0, 0, 0};
   dst = {0, 0, 0, 0};
-  atlas = nullptr;
   scale = 1;
 }
 
-Sprite::Sprite(const Sprite &other) : 
-atlas(other.atlas), 
+Sprite::Sprite(const Sprite &other) :
 src(other.src), 
 dst(other.dst), 
 scale(other.scale) 
@@ -23,13 +22,12 @@ Sprite &Sprite::operator=(const Sprite &other)
   {
     src = other.src;
     dst = other.dst;
-    atlas = other.atlas;
     scale = other.scale;
   }
   return *this;
 }
 
-Sprite::Sprite(SDL_Texture *atlas, int x, int y, int w, int h, int scale = 1) : atlas(atlas), src(x, y, w, h), dst(0, 0, w * scale, h * scale)
+Sprite::Sprite(int x, int y, int w, int h, int scale = 1) : src(x, y, w, h), dst(0, 0, w * scale, h * scale)
 {
 }
 
@@ -37,7 +35,6 @@ void Sprite::init(Sprite other)
 {
   src = other.src;
   dst = other.dst;
-  atlas = other.atlas;
   scale = other.scale;
 }
 
@@ -47,7 +44,7 @@ void Sprite::setPostion(int x, int y)
   dst.y = y;
 }
 
-void Sprite::draw(SDL_Renderer *renderer)
+void Sprite::draw(Renderer *renderer)
 {
-  SDL_RenderCopy(renderer, atlas, &src, &dst);
+  RenderCopy(renderer, &src, &dst);
 }

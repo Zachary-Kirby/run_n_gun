@@ -31,7 +31,7 @@ void Engine::init()
   player.init(
     {0, 0}, //Position
     16, 16, //Hitbox
-    {atlas, 0, 32, 16, 16, 1}, //Sprite
+    {0, 8*4, 16, 16, 1}, //Sprite
     {0, 0} //Sprite Offset
   );
   
@@ -47,7 +47,7 @@ void Engine::init()
     if (point.type == "bird")
     {
       
-      Sprite birdSprite{atlas, 0, 7*8, 8, 8, 1};
+      Sprite birdSprite{0, 7*8, 8, 8, 1};
       birds.emplace_back(this, birdSprite, glm::vec2(point.x, point.y));
       point.active = false; // too lazy to just remove the point from the vector. Honestly it would be better as a linked list probably
     }
@@ -83,7 +83,11 @@ void Engine::run()
     //Draw gameplay
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    RenderRect(&rendererGL, 1.0f, 0, 1.0f, 1.0f);
+    
+    level.draw(&rendererGL, 0, 0, camera.x, camera.y);
+    player.draw(&rendererGL, camera);
+    //RenderRect(&rendererGL, 16.0f, 16.0f, 16.0f, 16.0f);
+    //RenderCopy(&rendererGL, {0.0f, 8.0f*16, 16.0f, 16.0f}, {0.0f, 0.0f, 128.0f, 128.0f}, 0.0f);
     /*
     
     // old render code not using opengl
@@ -114,7 +118,7 @@ void Engine::run()
       
     }
     
-    level.draw(renderer, 0, 0, camera.x, camera.y);
+    
     for (auto it = bullets.begin(); it != bullets.end(); it++)
     {
       Bullet& bullet = *it;
@@ -145,7 +149,6 @@ void Engine::run()
     std::this_thread::sleep_until(last_frame_time + frame_time);
     delta = 0.001f*std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock().now() - last_frame_time).count();
     last_frame_time = std::chrono::steady_clock().now();
-    std::cout << delta << std::endl;
     //SDL_RenderPresent(renderer);
     SDL_GL_SwapWindow(window);
   }
@@ -225,7 +228,7 @@ void Engine::input()
     {
       if (event.button.button == SDL_BUTTON_LEFT)
       {
-        bullets.push_back({{atlas, 2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*2, aimPoint.y*2}});
+        //bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*2, aimPoint.y*2}});
       }
     }
   }

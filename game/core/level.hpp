@@ -10,6 +10,8 @@ struct resolvedCollision
   fRect newRect;
 };
 
+class Renderer;
+
 class Level
 {
   /*
@@ -34,7 +36,7 @@ class Level
   
   int uget(int x, int y, int layer);
   
-  void draw(SDL_Renderer* renderer, int offsetX, int offsetY, int cameraX, int cameraY);
+  void draw(Renderer* renderer, int offsetX, int offsetY, int cameraX, int cameraY);
   
   void save(char* levelName);
   

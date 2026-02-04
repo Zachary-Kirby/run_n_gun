@@ -1,4 +1,5 @@
 #include "bullet.hpp"
+#include "renderer.hpp"
 
 //TODO this is mostly duplicate code
 void Bullet::init(Sprite sprite, glm::vec2 position, glm::vec2 velocity)
@@ -22,7 +23,7 @@ void Bullet::update()
 }
 
 //TODO this is duplicate code
-void Bullet::draw(SDL_Renderer *renderer, glm::vec2 camera)
+void Bullet::draw(Renderer *renderer, glm::vec2 camera)
 {
   sprite.setPostion(hitbox.x-camera.x, hitbox.y-camera.y);
   sprite.draw(renderer);

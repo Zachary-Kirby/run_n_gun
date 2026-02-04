@@ -3,9 +3,10 @@
 #include "rect.hpp"
 #include "sprite.hpp"
 #include "glm/vec2.hpp"
-#include "entity.hpp"
+
 
 class Engine;
+class Renderer;
 
 enum class BirdState {
   STATIC,
@@ -16,7 +17,7 @@ enum class BirdState {
   DEAD
 };
 
-class Bird : public Entity {
+class Bird {
   Engine* engine = nullptr;
   float swoopX = 0.0f;
   glm::vec2 swoopStartPos{0,0};
@@ -37,5 +38,5 @@ public:
   
   void init(Sprite sprite, glm::vec2 position);
   void update();
-  void draw(SDL_Renderer* renderer, glm::vec2 camera);
+  void draw(Renderer* renderer, glm::vec2 camera);
 };

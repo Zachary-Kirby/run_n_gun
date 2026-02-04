@@ -1,5 +1,6 @@
 #include <fstream>
 #include "level.hpp"
+#include "renderer.hpp"
 
 
 void Level::init(SDL_Texture *loadedAtlas)
@@ -25,7 +26,7 @@ int Level::uget(int x, int y, int layer = 0)
   return data[x+y*width+layer*width*height];
 }
 
-void Level::draw(SDL_Renderer *renderer, int offsetX, int offsetY, int cameraX, int cameraY)
+void Level::draw(Renderer *renderer, int offsetX, int offsetY, int cameraX, int cameraY)
 {
   //TODO optimize drawing area to only tiles on screen
   SDL_Rect drawRect {0, 0, tileSize*scale, tileSize*scale};
@@ -52,7 +53,7 @@ void Level::draw(SDL_Renderer *renderer, int offsetX, int offsetY, int cameraX, 
         };
         
         
-        SDL_RenderCopy(renderer, layerAtlas, &srcRect, &drawRect);
+        RenderCopy(renderer, &srcRect, &drawRect, -0.1f);
       }
     }
   }

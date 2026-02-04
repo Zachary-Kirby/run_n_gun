@@ -122,7 +122,7 @@ void Bird::update()
   }
 }
 
-void Bird::draw(SDL_Renderer *renderer, glm::vec2 camera)
+void Bird::draw(Renderer *renderer, glm::vec2 camera)
 {
   sprite.setPostion(hitbox.x-camera.x, hitbox.y-camera.y);
   sprite.draw(renderer);

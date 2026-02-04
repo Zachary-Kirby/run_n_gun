@@ -6,6 +6,8 @@
 #include "rect.hpp"
 #include "entity.hpp"
 
+class Renderer;
+
 class Bullet : public Entity {
   Sprite sprite;
   int lifetime;
@@ -36,5 +38,5 @@ class Bullet : public Entity {
   }
   void init(Sprite sprite, glm::vec2 position, glm::vec2 velocity);
   void update();
-  void draw(SDL_Renderer* renderer, glm::vec2 camera);
+  void draw(Renderer* renderer, glm::vec2 camera);
 };

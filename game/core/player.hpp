@@ -3,6 +3,8 @@
 #include <glm/glm.hpp>
 #include "sprite.hpp"
 
+class Renderer;
+
 class Player{
   Sprite sprite;
   glm::ivec2 spriteOffset;
@@ -26,5 +28,5 @@ class Player{
 
   void update(Level& level, float delta);
   
-  void draw(SDL_Renderer* renderer, glm::vec2 camera);
+  void draw(Renderer* renderer, glm::vec2 camera);
 };

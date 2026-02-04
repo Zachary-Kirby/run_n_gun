@@ -4,7 +4,7 @@
 #include "sprite.hpp"
 #include "rect.hpp"
 #include "level.hpp"
-
+#include "renderer.hpp"
 #include "player.hpp"
 
 
@@ -93,7 +93,7 @@ void Player::update(Level &level, float delta)
   
 }
 
-void Player::draw(SDL_Renderer *renderer, glm::vec2 camera)
+void Player::draw(Renderer *renderer, glm::vec2 camera)
 {
   sprite.setPostion(hitbox.x+spriteOffset.x-camera.x, hitbox.y+spriteOffset.y-camera.y);
   sprite.draw(renderer);
