@@ -8,7 +8,7 @@
 
 class Renderer;
 
-class Bullet : public Entity {
+class Bullet{
   Sprite sprite;
   int lifetime;
   public:

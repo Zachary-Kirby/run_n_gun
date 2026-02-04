@@ -86,6 +86,18 @@ void Engine::run()
     
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
     player.draw(&rendererGL, camera);
+    for (auto it = bullets.begin(); it != bullets.end(); it++)
+    {
+      Bullet& bullet = *it;
+      if (bullet.active) bullet.draw(&rendererGL, camera);
+      else {it = bullets.erase(it); it--;}
+    }
+    for (auto bird : birds) if (bird.active) bird.draw(&rendererGL, camera);
+    RenderCircle(&rendererGL,
+      player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
+      player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y,
+      4.0f);
+    //RenderRect(&rendererGL, 32, 32, 64, 64);
     //RenderRect(&rendererGL, 16.0f, 16.0f, 16.0f, 16.0f);
     //RenderCopy(&rendererGL, {0.0f, 8.0f*16, 16.0f, 16.0f}, {0.0f, 0.0f, 128.0f, 128.0f}, 0.0f);
     /*
@@ -119,12 +131,7 @@ void Engine::run()
     }
     
     
-    for (auto it = bullets.begin(); it != bullets.end(); it++)
-    {
-      Bullet& bullet = *it;
-      if (bullet.active) bullet.draw(renderer, camera);
-      else {it = bullets.erase(it); it--;}
-    }
+    
     player.draw(renderer, camera);
     for (auto bird : birds) if (bird.active) bird.draw(renderer, camera);
     
@@ -228,7 +235,7 @@ void Engine::input()
     {
       if (event.button.button == SDL_BUTTON_LEFT)
       {
-        //bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*2, aimPoint.y*2}});
+        bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*2, aimPoint.y*2}});
       }
     }
   }
