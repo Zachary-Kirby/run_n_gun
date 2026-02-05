@@ -128,7 +128,10 @@ void Renderer::init(int screenWidth, int screenHeight)
   // Textures
   atlasTexture = Texture("Assets/Atlas.png");
   atlasAltTexture = Texture("Assets/AltAtlas.png");
-  gameplayDrawTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight);
+  gameplayDrawWidth = screenWidth;
+  gameplayDrawHeight = screenWidth;
+  //TODO stop being lazy and just make a way to mirror the texture
+  gameplayDrawTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight, TextureType::COLOR);
   gameplayDepthTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight, TextureType::DEPTH);
   gameplayRenderTarget = RenderTarget(&gameplayDrawTexture, &gameplayDepthTexture);
   atlasTexture.setTarget(0);
@@ -237,16 +240,17 @@ Texture::Texture(float w, float h, TextureType type)
   this->h = h;
   glGenTextures(1, &id);
   glBindTexture(GL_TEXTURE_2D, id);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
   if (type == TextureType::COLOR){
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, (int)w, (int)h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
   }
   else if (type == TextureType::DEPTH){
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, (int)w, (int)h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_INT, NULL);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, (int)w, (int)h, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, NULL);
   }
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  
 }
 
 RenderTarget::RenderTarget(Texture *texture)
@@ -261,7 +265,52 @@ RenderTarget::RenderTarget(Texture *color, Texture *depth)
 {
   glGenFramebuffers(1, &fbo);
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color->id, 0);
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth->id, 0);
+  if (color != nullptr)
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, color->id, 0);
+  else
+    std::cerr << "RENDERTARGET::COLORTEXTURE::NULL" << std::endl;
+  
+  if (depth != nullptr)
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depth->id, 0);
+  else
+    std::cerr << "RENDERTARGET::DEPTHTEXTURE::NULL" << std::endl;
+  
+  GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+  if (status != GL_FRAMEBUFFER_COMPLETE)
+  {
+    std::cerr << "FRAMEBUFFER::INCOMPLETE - ";
+    switch (status)
+    {
+      case GL_FRAMEBUFFER_UNDEFINED:
+        std::cerr << "GL_FRAMEBUFFER_UNDEFINED";
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+        std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT";
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+        std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT";
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+        std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER";
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+        std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER";
+        break;
+      case GL_FRAMEBUFFER_UNSUPPORTED:
+        std::cerr << "GL_FRAMEBUFFER_UNSUPPORTED";
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+        std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";
+        break;
+      case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+        std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS";
+        break;
+      default:
+        std::cerr << "Unknown error code: " << status;
+        break;
+    }
+    std::cerr << std::endl;
+  }
+  
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

@@ -81,9 +81,10 @@ void Engine::run()
       if (bird.active) bird.update();
     
     //Draw gameplay
-    //rendererGL.gameplayRenderTarget.bind();
+    rendererGL.gameplayRenderTarget.bind();
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0,-400,rendererGL.gameplayDrawWidth, rendererGL.gameplayDrawHeight);
     
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
     player.draw(&rendererGL, camera);
@@ -98,9 +99,17 @@ void Engine::run()
       player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
       player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y,
       4.0f);
-    //RenderTarget::unbind();
+    RenderTarget::unbind();
     //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glViewport(0,0,windowWidth,windowHeight);
+    rendererGL.gameplayDrawTexture.setTarget(0);
+    RenderCopy(&rendererGL,
+     {0.0f,-(float)rendererGL.gameplayDrawTexture.h/16.0f,(float)rendererGL.gameplayDrawTexture.w/16.0f,(float)rendererGL.gameplayDrawTexture.h/16.0f}, 
+     {0.0f,-80.0f,(float)windowWidth,(float)windowHeight},
+     0.0f
+    );
     
+    rendererGL.atlasTexture.setTarget(0);
     /* failed attempt at post processing
     rendererGL.gameplayRenderTarget.bind();
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
