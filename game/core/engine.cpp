@@ -84,7 +84,7 @@ void Engine::run()
     rendererGL.gameplayRenderTarget.bind();
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(0,-400,rendererGL.gameplayDrawWidth, rendererGL.gameplayDrawHeight);
+    glViewport(0,0,rendererGL.gameplayDrawWidth, rendererGL.gameplayDrawHeight);
     
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
     player.draw(&rendererGL, camera);
@@ -103,9 +103,12 @@ void Engine::run()
     //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glViewport(0,0,windowWidth,windowHeight);
     rendererGL.gameplayDrawTexture.setTarget(0);
+    
+    //TODO BUG: RenderCopy only uses the atlas for pixel coordinate sources, meaning that it doesn't
+    //work with other textures as expected
     RenderCopy(&rendererGL,
-     {0.0f,-(float)rendererGL.gameplayDrawTexture.h/16.0f,(float)rendererGL.gameplayDrawTexture.w/16.0f,(float)rendererGL.gameplayDrawTexture.h/16.0f}, 
-     {0.0f,-80.0f,(float)windowWidth,(float)windowHeight},
+     {0.0f,-rendererGL.atlasTexture.h,rendererGL.atlasTexture.w/2.0f,rendererGL.atlasTexture.h/2.0f}, 
+     {0.0f,0.0f,(float)windowWidth,(float)windowHeight},
      0.0f
     );
     

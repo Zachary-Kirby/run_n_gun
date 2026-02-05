@@ -59,7 +59,7 @@ class Engine {
   Player player;
   std::vector<Bird> birds;
   std::vector<Bullet> bullets;
-  glm::vec2 camera {.0f, 120.0f};
+  glm::vec2 camera {.0f, 0.0f};
   
   glm::vec2 aimPoint = {.0f, .0f}; //used for player shooting
   glm::vec2 secretAimPoint = {.0f, .0f}; //used to smooth aim point
