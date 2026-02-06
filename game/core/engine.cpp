@@ -64,16 +64,25 @@ void Engine::run()
 {
   glm::mat4 proj;
   last_frame_time = std::chrono::steady_clock().now();
+  float shadowCamX = camera.x;
   while (exit_game == false)
   {
     input();
     
     player.update(level, delta);
-    
-    if (player.hitbox.x > gameplayDrawWidth/2+player.hitbox.w+camera.x)
-      camera.x += player.hitbox.x - (gameplayDrawWidth/2+player.hitbox.w+camera.x);
-    if (player.hitbox.x < gameplayDrawWidth/2-player.hitbox.w+camera.x)
-      camera.x += player.hitbox.x - (gameplayDrawWidth/2-player.hitbox.w+camera.x);
+    //{
+    //  float targetX = (player.hitbox.x + player.hitbox.w/2) - rendererGL.gameplayDrawWidth/2;
+    //  float dif = (targetX - shadowCamX);
+    //  shadowCamX = shadowCamX + dif*2.0f*delta;
+    //  camera.x = shadowCamX + (targetX - shadowCamX) * 2.0f;
+    //}
+    {
+      float followPoint = (player.hitbox.x+secretAimPoint.x*8.0f);
+      if (followPoint > gameplayDrawWidth/2+player.hitbox.w+camera.x)
+        camera.x += followPoint - (gameplayDrawWidth/2+player.hitbox.w+camera.x);
+      if (followPoint < gameplayDrawWidth/2-player.hitbox.w+camera.x)
+        camera.x += followPoint - (gameplayDrawWidth/2-player.hitbox.w+camera.x);
+    }
     
     
     

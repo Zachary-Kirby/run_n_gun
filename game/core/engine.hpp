@@ -24,7 +24,7 @@ class Engine {
   SDL_Texture* background;
   SDL_Texture* clouds;
   std::chrono::steady_clock::time_point last_frame_time;
-  std::chrono::duration<double, std::ratio<1, 240>> frame_time {1};
+  std::chrono::duration<double, std::ratio<1, 244>> frame_time {1};
   int gameplayDrawScale = 2;
   int windowWidth = 640;
   int windowHeight = 640*9/16;
