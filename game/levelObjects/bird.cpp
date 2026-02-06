@@ -53,7 +53,7 @@ void Bird::init(Sprite sprite, glm::vec2 position)
   hitbox.y = position.y - hitbox.h / 2;
 }
 
-void Bird::update()
+void Bird::update(float delta)
 {
   if (!active) return;
   for (auto it = engine->bullets.begin(); it != engine->bullets.end(); it++)
@@ -86,7 +86,7 @@ void Bird::update()
     }
     break;
   case BirdState::SWOOPLOW:
-    swoopProgress += 0.01f;
+    swoopProgress += delta;
     hitbox = swoop(swoopStartPos.x, swoopStartPos.y, swoopTargetPos.x, swoopTargetPos.y, swoopProgress);
     //check if bird got so far past the player on the other side of the start pos
     if (swoopProgress > 1.4f)
@@ -99,8 +99,8 @@ void Bird::update()
     if (swoopTargetPos.y < swoopStartPos.y) {notAtHeight = swoopStartPos.y > hitbox.centerY(); direction = -1;}
     if (notAtHeight)
     {
-      hitbox.x += std::copysignf(1.0f, swoopTargetPos.x - swoopStartPos.x);
-      hitbox.y -= 2.0f * direction;
+      hitbox.x += std::copysignf(160.0f, swoopTargetPos.x - swoopStartPos.x) * delta;
+      hitbox.y -= 320.0f * direction * delta;
     } else
     {
       hitbox.y = swoopStartPos.y - hitbox.h/2.0f;
@@ -108,7 +108,7 @@ void Bird::update()
     }
     break;
   case BirdState::FOLLOW:
-    hitbox.x += std::copysignf(0.5f, player.hitbox.centerX() - hitbox.centerX());
+    hitbox.x += std::copysignf(320.0f, player.hitbox.centerX() - hitbox.centerX()) * delta;
     if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80.0f )
     {
       swoopProgress = 0.0f;

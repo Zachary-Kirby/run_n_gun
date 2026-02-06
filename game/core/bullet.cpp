@@ -9,14 +9,14 @@ void Bullet::init(Sprite sprite, glm::vec2 position, glm::vec2 velocity)
   this->hitbox.x = position.x;
   this->hitbox.y = position.y;
   active = true;
-  lifetime = 120;
+  lifetime = 2.0f;
 }
 
-void Bullet::update()
+void Bullet::update(float delta)
 {
-  hitbox.x += velocity.x;
-  hitbox.y += velocity.y;
-  lifetime--;
+  hitbox.x += velocity.x * delta;
+  hitbox.y += velocity.y * delta;
+  lifetime = lifetime - delta;
   if (lifetime <= 0){
     active = false;
   }

@@ -87,9 +87,9 @@ void Engine::run()
     
     
     for (Bullet& bullet : bullets)
-      if (bullet.active) bullet.update();
+      if (bullet.active) bullet.update(delta);
     for (Bird& bird : birds)
-      if (bird.active) bird.update();
+      if (bird.active) bird.update(delta);
     
     //Draw gameplay
     rendererGL.gameplayRenderTarget.bind();
@@ -234,7 +234,7 @@ void Engine::input()
     {
       if (event.button.button == SDL_BUTTON_LEFT)
       {
-        bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*2, aimPoint.y*2}});
+        bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*320.0f, aimPoint.y*320.0f}});
       }
     }
   }

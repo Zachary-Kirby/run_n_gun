@@ -37,6 +37,6 @@ public:
   Bird(Engine* engine, Sprite sprite, glm::vec2 position);
   
   void init(Sprite sprite, glm::vec2 position);
-  void update();
+  void update(float delta);
   void draw(Renderer* renderer, glm::vec2 camera);
 };

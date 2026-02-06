@@ -10,7 +10,7 @@ class Renderer;
 
 class Bullet{
   Sprite sprite;
-  int lifetime;
+  float lifetime;
   public:
   glm::vec2 velocity;
   fRect hitbox;
@@ -37,6 +37,6 @@ class Bullet{
     return *this;
   }
   void init(Sprite sprite, glm::vec2 position, glm::vec2 velocity);
-  void update();
+  void update(float delta);
   void draw(Renderer* renderer, glm::vec2 camera);
 };
