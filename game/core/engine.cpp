@@ -4,6 +4,7 @@
 #include <iostream>
 #include "constants.hpp"
 #include "renderCircle.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 Engine::Engine()
 {
@@ -61,6 +62,7 @@ void Engine::init()
 
 void Engine::run()
 {
+  glm::mat4 proj;
   last_frame_time = std::chrono::steady_clock().now();
   while (exit_game == false)
   {
@@ -68,10 +70,10 @@ void Engine::run()
     
     player.update(level, delta);
     
-    if (player.hitbox.x > gameplayDrawWidth/2+player.hitbox.w*1+camera.x)
-      camera.x += player.hitbox.x - (gameplayDrawWidth/2+player.hitbox.w*1+camera.x);
-    if (player.hitbox.x < gameplayDrawWidth/2-player.hitbox.w*1+camera.x)
-      camera.x += player.hitbox.x - (gameplayDrawWidth/2-player.hitbox.w*1+camera.x);
+    if (player.hitbox.x > gameplayDrawWidth/2+player.hitbox.w+camera.x)
+      camera.x += player.hitbox.x - (gameplayDrawWidth/2+player.hitbox.w+camera.x);
+    if (player.hitbox.x < gameplayDrawWidth/2-player.hitbox.w+camera.x)
+      camera.x += player.hitbox.x - (gameplayDrawWidth/2-player.hitbox.w+camera.x);
     
     
     
@@ -82,17 +84,25 @@ void Engine::run()
     
     //Draw gameplay
     rendererGL.gameplayRenderTarget.bind();
+    
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(0,0,rendererGL.gameplayDrawWidth*2.0f, rendererGL.gameplayDrawHeight*2.0f);
+    glViewport(0,0,rendererGL.gameplayDrawWidth, rendererGL.gameplayDrawHeight);
+    proj = glm::ortho(0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight, 0.0f, -1.0f, 1.0f);
+    rendererGL.setProjectionMatrix(proj);
+    //glm::mat4 proj = glm::ortho(0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight, 0.0f, -1.0f, 1.0f);
+    //rendererGL.setProjectionMatrix(proj);
     
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
     player.draw(&rendererGL, camera);
-    for (auto it = bullets.begin(); it != bullets.end(); it++)
+    for (auto it = bullets.begin(); it != bullets.end(); )
     {
       Bullet& bullet = *it;
-      if (bullet.active) bullet.draw(&rendererGL, camera);
-      else {it = bullets.erase(it); it--;}
+      if (bullet.active) {
+        bullet.draw(&rendererGL, camera); 
+        it++;
+      }
+      else {it = bullets.erase(it);}
     }
     for (auto bird : birds) if (bird.active) bird.draw(&rendererGL, camera);
     RenderCircle(&rendererGL,
@@ -101,7 +111,9 @@ void Engine::run()
       4.0f);
     RenderTarget::unbind();
     //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    glViewport(0,0,windowWidth,windowHeight);
+    glViewport(0,windowHeight/2-(windowWidth/16*9)/2,windowWidth,windowWidth/16*9);
+    proj = glm::ortho(0.0f, (float)windowWidth, (float)(windowWidth/16*9), 0.0f, -1.0f, 1.0f);
+    rendererGL.setProjectionMatrix(proj);
     rendererGL.gameplayDrawTexture.setTarget(0);
     rendererGL.textureSize[0] = 1.0f;
     rendererGL.textureSize[1] = 1.0f;
@@ -111,7 +123,7 @@ void Engine::run()
     
     RenderCopy(&rendererGL,
      {0.0f,-1.0f,1.0f,1.0f}, 
-     {0.0f,0.0f,(float)rendererGL.gameplayDrawWidth*2,(float)rendererGL.gameplayDrawHeight*2},
+     {0.0f,0.0f,(float)windowWidth,(float)(windowWidth/16*9)},
      0.0f
     );
     
@@ -168,6 +180,7 @@ void Engine::input()
       {
         windowWidth = event.window.data1;
         windowHeight = event.window.data2;
+        
         std::cout << windowWidth << " " << windowHeight << std::endl;
       }
       

@@ -99,6 +99,7 @@ public:
   glm::mat4 projectionMatrix;
   unsigned int createShader(const char* path, unsigned int type);
   void init(int screenWidth, int screenHeight);
+  void setProjectionMatrix(glm::mat4 projectionMatrix);
 };
 
 void SetColor(Renderer* renderer, float r, float g, float b, float a);

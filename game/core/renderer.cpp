@@ -116,25 +116,31 @@ void Renderer::init(int screenWidth, int screenHeight)
   uniformLocations["scale"] = glGetUniformLocation(defaultShaderProgramID, "scale");
   uniformLocations["src"] = glGetUniformLocation(defaultShaderProgramID, "src");
   uniformLocations["atlas"] = glGetUniformLocation(defaultShaderProgramID, "atlas");
-  glUniformMatrix4fv(uniformLocations["projection"], 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+  
   glUniform1i(uniformLocations["atlas"], 0);
   
-  glUseProgram(coloredShaderProgramID);
-  glUniformMatrix4fv(glGetUniformLocation(coloredShaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
-  
-  glUseProgram(circleShaderProgramID);
-  glUniformMatrix4fv(glGetUniformLocation(circleShaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+  setProjectionMatrix(projectionMatrix);
   
   // Textures
   atlasTexture = Texture("Assets/Atlas.png");
   atlasAltTexture = Texture("Assets/AltAtlas.png");
   gameplayDrawWidth = 320;
   gameplayDrawHeight = 180;
-  //TODO stop being lazy and just make a way to mirror the texture
   gameplayDrawTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight, TextureType::COLOR);
   gameplayDepthTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight, TextureType::DEPTH);
   gameplayRenderTarget = RenderTarget(&gameplayDrawTexture, &gameplayDepthTexture);
   atlasTexture.setTarget(0);
+}
+
+void Renderer::setProjectionMatrix(glm::mat4 projectionMatrix)
+{
+  glUseProgram(defaultShaderProgramID);
+  glUniformMatrix4fv(uniformLocations["projection"], 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+  glUseProgram(coloredShaderProgramID);
+  glUniformMatrix4fv(glGetUniformLocation(coloredShaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+  glUseProgram(circleShaderProgramID);
+  glUniformMatrix4fv(glGetUniformLocation(circleShaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+  
 }
 
 void SetColor(Renderer* renderer, float r, float g, float b, float a)
