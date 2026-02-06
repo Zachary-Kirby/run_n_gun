@@ -90,6 +90,8 @@ public:
   Texture gameplayDepthTexture;
   unsigned int gameplayDrawWidth, gameplayDrawHeight;
   RenderTarget gameplayRenderTarget;
+  //Use this to control how you want to interpret rendercopy calls
+  float textureSize[2]{1.0f, 1.0f};
   
 
   std::string loadShaderFromFile(const std::string& filepath);

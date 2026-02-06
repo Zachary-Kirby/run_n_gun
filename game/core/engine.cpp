@@ -8,7 +8,7 @@
 Engine::Engine()
 {
   SDL_Init(SDL_INIT_VIDEO);
-  window = SDL_CreateWindow("Run And Gun!", SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2), 640, 640*9/16, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL);
+  window = SDL_CreateWindow("Run And Gun!", SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2), 640, 640*9/16, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   context = SDL_GL_CreateContext(window);
   
   rendererGL.init(windowWidth, windowHeight);
@@ -84,7 +84,7 @@ void Engine::run()
     rendererGL.gameplayRenderTarget.bind();
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
-    glViewport(0,0,rendererGL.gameplayDrawWidth, rendererGL.gameplayDrawHeight);
+    glViewport(0,0,rendererGL.gameplayDrawWidth*2.0f, rendererGL.gameplayDrawHeight*2.0f);
     
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
     player.draw(&rendererGL, camera);
@@ -103,62 +103,22 @@ void Engine::run()
     //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glViewport(0,0,windowWidth,windowHeight);
     rendererGL.gameplayDrawTexture.setTarget(0);
+    rendererGL.textureSize[0] = 1.0f;
+    rendererGL.textureSize[1] = 1.0f;
     
     //TODO BUG: RenderCopy only uses the atlas for pixel coordinate sources, meaning that it doesn't
     //work with other textures as expected
+    
     RenderCopy(&rendererGL,
-     {0.0f,-rendererGL.atlasTexture.h,rendererGL.atlasTexture.w/2.0f,rendererGL.atlasTexture.h/2.0f}, 
-     {0.0f,0.0f,(float)windowWidth,(float)windowHeight},
+     {0.0f,-1.0f,1.0f,1.0f}, 
+     {0.0f,0.0f,(float)rendererGL.gameplayDrawWidth*2,(float)rendererGL.gameplayDrawHeight*2},
      0.0f
     );
     
     rendererGL.atlasTexture.setTarget(0);
-    /* failed attempt at post processing
-    rendererGL.gameplayRenderTarget.bind();
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    rendererGL.textureSize[0] = rendererGL.atlasTexture.w;
+    rendererGL.textureSize[1] = rendererGL.atlasTexture.h;
     
-    
-    rendererGL.gameplayRenderTarget.unbind();
-    
-    rendererGL.gameplayDrawTexture.setTarget(0);
-    RenderCopy(&rendererGL,
-      {0.0f, 0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight}
-      ,{0.0f, 0.0f, (float)windowWidth, (float)windowHeight}, 0.0f);
-    rendererGL.atlasTexture.setTarget(0);
-    */
-
-    //rendererGL.atlasTexture.setTarget(0);
-    //rendererGL.gameplayDrawTexture.setTarget(0);
-    //RenderCopy(&rendererGL,
-    //  {0.0f, 0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight}
-    //  ,{0.0f, 0.0f, (float)windowWidth, (float)windowHeight}, 0.0f);
-    //rendererGL.atlasTexture.setTarget(0);
-    /*
-    
-    // old render code not using opengl
-    
-    skyVerts[1].position.x = gameplayDrawWidth;
-    skyVerts[2].position.y = gameplayDrawHeight;
-    skyVerts[3].position.x = gameplayDrawWidth;
-    skyVerts[3].position.y = gameplayDrawHeight;
-    SDL_RenderGeometry(renderer, NULL, skyVerts, 4, backgroundIndices, 6);
-    
-    SDL_Vertex scaledBackgroundPoints[4];
-    
-    for (int x=0; x<4; x++)
-    {
-      memcpy(scaledBackgroundPoints, backgroundVerts, sizeof(backgroundVerts));
-      transformVerticies(scaledBackgroundPoints, 4, backgroundHeight/9.0f, (int)-camera.x*0.25f+x*backgroundWidth, backgroundHeight*0.3f);
-      SDL_RenderGeometry(renderer, clouds, scaledBackgroundPoints, 4, backgroundIndices, 6);
-      memcpy(scaledBackgroundPoints, backgroundVerts, sizeof(backgroundVerts));
-      transformVerticies(scaledBackgroundPoints, 4, backgroundHeight/9.0f, (int)-camera.x*0.5f+x*backgroundWidth, 0);
-      SDL_RenderGeometry(renderer, background, scaledBackgroundPoints, 4, backgroundIndices, 6); 
-      transformVerticies(scaledBackgroundPoints, 4, 1, (int)-camera.x*0.25f, 0);
-      SDL_RenderGeometry(renderer, clouds, scaledBackgroundPoints, 4, backgroundIndices, 6);
-    }
-    */
-   
     std::this_thread::sleep_until(last_frame_time + frame_time);
     delta = 0.001f*std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock().now() - last_frame_time).count();
     last_frame_time = std::chrono::steady_clock().now();
@@ -202,6 +162,17 @@ void Engine::input()
   SDL_Event event;
   while (SDL_PollEvent(&event))
   {
+    if (event.type == SDL_WINDOWEVENT)
+    {
+      if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+      {
+        windowWidth = event.window.data1;
+        windowHeight = event.window.data2;
+        std::cout << windowWidth << " " << windowHeight << std::endl;
+      }
+      
+    }
+    
     if (event.type == SDL_QUIT)
     {
       exit_game = true;

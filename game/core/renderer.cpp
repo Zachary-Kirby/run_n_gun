@@ -128,8 +128,8 @@ void Renderer::init(int screenWidth, int screenHeight)
   // Textures
   atlasTexture = Texture("Assets/Atlas.png");
   atlasAltTexture = Texture("Assets/AltAtlas.png");
-  gameplayDrawWidth = screenWidth;
-  gameplayDrawHeight = screenWidth;
+  gameplayDrawWidth = 320;
+  gameplayDrawHeight = 180;
   //TODO stop being lazy and just make a way to mirror the texture
   gameplayDrawTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight, TextureType::COLOR);
   gameplayDepthTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight, TextureType::DEPTH);
@@ -166,7 +166,7 @@ void RenderCopy(Renderer *renderer, float *src, float *dst, float z)
   glBindVertexArray(renderer->vao);
   glUniform3f(renderer->uniformLocations["position"], dst[0], dst[1], z);
   glUniform2f(renderer->uniformLocations["scale"], dst[2], dst[3]);
-  glUniform4f(renderer->uniformLocations["src"], src[0]/renderer->atlasTexture.w, src[1]/renderer->atlasTexture.h, src[2]/renderer->atlasTexture.w, src[3]/renderer->atlasTexture.h);
+  glUniform4f(renderer->uniformLocations["src"], src[0]/renderer->textureSize[0], src[1]/renderer->textureSize[1], src[2]/renderer->textureSize[0], src[3]/renderer->textureSize[1]);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
   glBindVertexArray(0);
 }
@@ -177,7 +177,7 @@ void RenderCopy(Renderer *renderer, const std::array<float, 4>& src, const std::
   glBindVertexArray(renderer->vao);
   glUniform3f(renderer->uniformLocations["position"], dst[0], dst[1], z);
   glUniform2f(renderer->uniformLocations["scale"], dst[2], dst[3]);
-  glUniform4f(renderer->uniformLocations["src"], src[0]/renderer->atlasTexture.w, src[1]/renderer->atlasTexture.h, src[2]/renderer->atlasTexture.w, src[3]/renderer->atlasTexture.h);
+  glUniform4f(renderer->uniformLocations["src"], src[0]/renderer->textureSize[0], src[1]/renderer->textureSize[1], src[2]/renderer->textureSize[0], src[3]/renderer->textureSize[1]);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
   glBindVertexArray(0);
 }
@@ -189,10 +189,10 @@ void RenderCopy(Renderer *renderer, SDL_Rect* src, SDL_Rect* dst, float z)
   glUniform3f(renderer->uniformLocations["position"], dst->x, dst->y, z);
   glUniform2f(renderer->uniformLocations["scale"], dst->w, dst->h);
   glUniform4f(renderer->uniformLocations["src"],
-    src->x/((float)renderer->atlasTexture.w),
-    src->y/((float)renderer->atlasTexture.h),
-    src->w/((float)renderer->atlasTexture.w),
-    src->h/((float)renderer->atlasTexture.h)
+    src->x/((float)renderer->textureSize[0]),
+    src->y/((float)renderer->textureSize[1]),
+    src->w/((float)renderer->textureSize[0]),
+    src->h/((float)renderer->textureSize[1])
   );
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
   glBindVertexArray(0);
