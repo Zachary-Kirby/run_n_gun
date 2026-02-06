@@ -70,18 +70,12 @@ void Engine::run()
     input();
     
     player.update(level, delta);
-    //{
-    //  float targetX = (player.hitbox.x + player.hitbox.w/2) - rendererGL.gameplayDrawWidth/2;
-    //  float dif = (targetX - shadowCamX);
-    //  shadowCamX = shadowCamX + dif*2.0f*delta;
-    //  camera.x = shadowCamX + (targetX - shadowCamX) * 2.0f;
-    //}
-    {
+    { // Camera Follow
       float followPoint = (player.hitbox.x+secretAimPoint.x*8.0f);
-      if (followPoint > gameplayDrawWidth/2+player.hitbox.w+camera.x)
-        camera.x += followPoint - (gameplayDrawWidth/2+player.hitbox.w+camera.x);
-      if (followPoint < gameplayDrawWidth/2-player.hitbox.w+camera.x)
-        camera.x += followPoint - (gameplayDrawWidth/2-player.hitbox.w+camera.x);
+      if (followPoint > rendererGL.gameplayDrawWidth/2+player.hitbox.w+camera.x)
+        camera.x += followPoint - (rendererGL.gameplayDrawWidth/2+player.hitbox.w+camera.x);
+      if (followPoint < rendererGL.gameplayDrawWidth/2-player.hitbox.w+camera.x)
+        camera.x += followPoint - (rendererGL.gameplayDrawWidth/2-player.hitbox.w+camera.x);
     }
     
     
@@ -94,14 +88,75 @@ void Engine::run()
     //Draw gameplay
     rendererGL.gameplayRenderTarget.bind();
     
-    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    //glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0,0,rendererGL.gameplayDrawWidth, rendererGL.gameplayDrawHeight);
     proj = glm::ortho(0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight, 0.0f, -1.0f, 1.0f);
     rendererGL.setProjectionMatrix(proj);
-    //glm::mat4 proj = glm::ortho(0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight, 0.0f, -1.0f, 1.0f);
-    //rendererGL.setProjectionMatrix(proj);
     
+    { // Sky gradient
+      float r1 =  99.0f/255.0f;
+      float g1 = 155.0f/255.0f;
+      float b1 = 255.0f/255.0f;
+      float a1 = 255.0f/255.0f;
+      float r2 = 190.0f/255.0f;
+      float g2 = 214.0f/255.0f;
+      float b2 = 255.0f/255.0f;
+      float a2 = 255.0f/255.0f;
+      SetGradient(&rendererGL, r1, g1, b1, a1, r2, g2, b2, a2);
+      RenderRect(&rendererGL, 0, 0, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight);
+      SetColor(&rendererGL, 1.0f, 1.0f, 1.0f, 1.0f);
+    }
+
+    
+    {// Clouds Layer 1
+      //TODO cache and save uniform locations in the renderer class instead of looking them up every time
+      //TODO rename atlas to texture0 since it is more general than the atlas
+      
+      glUseProgram(rendererGL.defaultShaderProgramID);
+      glUniform1i(rendererGL.uniformLocations["atlas"], 1);
+      rendererGL.textureSize[0] = (float)rendererGL.cloudsTexture.w;
+      rendererGL.textureSize[1] = (float)rendererGL.cloudsTexture.h;
+      RenderCopy(&rendererGL,
+       {camera.x*0.5f,0.0f,(float)rendererGL.cloudsTexture.w,(float)rendererGL.cloudsTexture.h}, 
+       {0.0f,0.0f,(float)rendererGL.cloudsTexture.w,(float)rendererGL.cloudsTexture.h},
+       0.0f
+      );
+      rendererGL.textureSize[0] = (float)rendererGL.atlasTexture.w;
+      rendererGL.textureSize[1] = (float)rendererGL.atlasTexture.h;
+      glUniform1i(rendererGL.uniformLocations["atlas"], 0);
+    }
+    
+    { // Background
+      glUseProgram(rendererGL.defaultShaderProgramID);
+      glUniform1i(rendererGL.uniformLocations["atlas"], 2);
+      rendererGL.textureSize[0] = (float)rendererGL.backgroundTexture.w;
+      rendererGL.textureSize[1] = (float)rendererGL.backgroundTexture.h;
+      RenderCopy(&rendererGL,
+       {camera.x*0.8f,0.0f,(float)rendererGL.backgroundTexture.w,(float)rendererGL.backgroundTexture.h}, 
+       {0.0f,0.0f,(float)rendererGL.backgroundTexture.w,(float)rendererGL.backgroundTexture.h},
+       0.0f
+      );
+      rendererGL.textureSize[0] = (float)rendererGL.atlasTexture.w;
+      rendererGL.textureSize[1] = (float)rendererGL.atlasTexture.h;
+      glUniform1i(rendererGL.uniformLocations["atlas"], 0);
+    }
+
+    { // Clouds Layer 2
+      glUseProgram(rendererGL.defaultShaderProgramID);
+      glUniform1i(rendererGL.uniformLocations["atlas"], 1);
+      rendererGL.textureSize[0] = (float)rendererGL.cloudsTexture.w;
+      rendererGL.textureSize[1] = (float)rendererGL.cloudsTexture.h;
+      RenderCopy(&rendererGL,
+       {camera.x*0.9f,50.0f,(float)rendererGL.cloudsTexture.w,(float)rendererGL.cloudsTexture.h}, 
+       {0.0f,0.0f,(float)rendererGL.cloudsTexture.w,(float)rendererGL.cloudsTexture.h},
+       0.0f
+      );
+      rendererGL.textureSize[0] = (float)rendererGL.atlasTexture.w;
+      rendererGL.textureSize[1] = (float)rendererGL.atlasTexture.h;
+      glUniform1i(rendererGL.uniformLocations["atlas"], 0);
+    }
+
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
     player.draw(&rendererGL, camera);
     for (auto it = bullets.begin(); it != bullets.end(); )
@@ -115,9 +170,9 @@ void Engine::run()
     }
     for (auto bird : birds) if (bird.active) bird.draw(&rendererGL, camera);
     RenderCircle(&rendererGL,
-      player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x, 
-      player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y,
-      4.0f);
+      (int)(player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x), 
+      (int)(player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y),
+      6.0f);
     RenderTarget::unbind();
     //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glViewport(0,windowHeight/2-(windowWidth/16*9)/2,windowWidth,windowWidth/16*9);

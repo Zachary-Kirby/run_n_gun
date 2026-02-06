@@ -126,9 +126,16 @@ void Renderer::init(int screenWidth, int screenHeight)
   atlasAltTexture = Texture("Assets/AltAtlas.png");
   gameplayDrawWidth = 320;
   gameplayDrawHeight = 180;
+  
   gameplayDrawTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight, TextureType::COLOR);
   gameplayDepthTexture = Texture((float)gameplayDrawWidth, (float)gameplayDrawHeight, TextureType::DEPTH);
   gameplayRenderTarget = RenderTarget(&gameplayDrawTexture, &gameplayDepthTexture);
+  
+  cloudsTexture = Texture("Assets/clouds.png");
+  backgroundTexture = Texture("Assets/Background1.png");
+  cloudsTexture.setTarget(1);
+  backgroundTexture.setTarget(2);
+
   atlasTexture.setTarget(0);
 }
 
@@ -153,6 +160,34 @@ void SetColor(Renderer* renderer, float r, float g, float b, float a)
     renderer->verticies[i+5] = b;
     renderer->verticies[i+6] = a;
   }
+  glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(renderer->verticies), renderer->verticies);
+}
+
+void SetGradient(Renderer *renderer, float r, float g, float b, float a, float r2, float g2, float b2, float a2)
+{
+  glBindBuffer(GL_ARRAY_BUFFER, renderer->vbo);
+  
+  renderer->verticies[3] = r;
+  renderer->verticies[4] = g;
+  renderer->verticies[5] = b;
+  renderer->verticies[6] = a;
+  
+  renderer->verticies[3+7] = r;
+  renderer->verticies[4+7] = g;
+  renderer->verticies[5+7] = b;
+  renderer->verticies[6+7] = a;
+
+  renderer->verticies[3+14] = r2;
+  renderer->verticies[4+14] = g2;
+  renderer->verticies[5+14] = b2;
+  renderer->verticies[6+14] = a2;
+  
+  renderer->verticies[3+7+14] = r2;
+  renderer->verticies[4+7+14] = g2;
+  renderer->verticies[5+7+14] = b2;
+  renderer->verticies[6+7+14] = a2;
+
+
   glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(renderer->verticies), renderer->verticies);
 }
 

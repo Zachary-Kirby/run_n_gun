@@ -86,6 +86,10 @@ public:
   unsigned int coloredShaderProgramID;
   Texture atlasTexture;
   Texture atlasAltTexture;
+
+  Texture cloudsTexture;
+  Texture backgroundTexture;
+  
   Texture gameplayDrawTexture;
   Texture gameplayDepthTexture;
   unsigned int gameplayDrawWidth, gameplayDrawHeight;
@@ -103,6 +107,8 @@ public:
 };
 
 void SetColor(Renderer* renderer, float r, float g, float b, float a);
+
+void SetGradient(Renderer* renderer, float r, float g, float b, float a, float r2, float g2, float b2, float a2);
 
 void RenderRect(Renderer* renderer, float x, float y, float width, float height, float z=0.0f);
 
