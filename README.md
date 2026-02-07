@@ -6,14 +6,19 @@ A simple 2D game based loosely on Contra and Megaman.
 
 # Prerequisites
  - Debian-based Linux
- - CMake >= 3.10
+ - CMake >= 3.12
  - GCC >= 10
  - SDL2 >= 2.0.18
  - SDL2_image
+ - OpenGL 3.3 or higher
 
 ```bash
 sudo apt install build-essential cmake libsdl2-dev libsdl2-image-dev
 ```
+
+Some systems package an old version of SDL2 so ensure you have at least SDL2 2.0.18 installed.
+Otherwise you may want to compile SDL2 manually. SDL2 has some instructions on how to install it
+on your system.
 
 ## Linux
 

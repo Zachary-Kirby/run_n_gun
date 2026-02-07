@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 20)
@@ -33,7 +33,7 @@ add_executable(rungun
 )
 target_link_libraries(rungun rungun_shared OpenGL::GL ${CMAKE_SOURCE_DIR}/libs/libglad.a)
 target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects libs/glad)
-
+add_dependencies(rungun update_sprites)
 
 #Level Editor
 add_executable(levelEdit 
@@ -45,3 +45,26 @@ add_executable(levelEdit
   editor/inputBox.cpp
 )
 target_link_libraries(levelEdit rungun_shared)
+
+#Update Assets
+
+set(SPRITE_NAMES
+  Player
+  EnergyBar
+  Bird
+)
+
+list(TRANSFORM SPRITE_NAMES APPEND ".aseprite")
+list(TRANSFORM SPRITE_NAMES PREPEND "${CMAKE_SOURCE_DIR}/Assets/sprites/")
+
+add_custom_command(
+  OUTPUT ${CMAKE_SOURCE_DIR}/Assets/sprites.png
+  COMMAND ${CMAKE_SOURCE_DIR}/Assets/sprites/generate.sh
+  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/sprites
+  DEPENDS ${SPRITE_NAMES}
+)
+
+add_custom_target(update_sprites ALL
+  DEPENDS ${CMAKE_SOURCE_DIR}/Assets/sprites.png
+)
+
