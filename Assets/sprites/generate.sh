@@ -9,5 +9,7 @@ aseprite\
  --sheet-height 256\
 	*.aseprite\
  --sheet ../sprites.png\
+ --list-slices\
  --list-tags\
- --list-slices
+ --tagname-format '{title}_{tag}'\
+ --filename-format '{title}_{tag}:{tagframe}'
