@@ -6,9 +6,28 @@ set(CMAKE_CXX_STANDARD_REQUIRED)
 
 project(rungun)
 
+
+#Dependencies
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(OpenGL REQUIRED)
+
+#Optional
+#Check if aseprite is available to auto-rebuild sprite definitions
+find_program(
+  ASEPRITE_PATH
+  aseprite
+)
+if (ASEPRITE_PATH)
+  message(STATUS "Aseprite found in PATH at " ${ASEPRITE_PATH} ": auto-build sprites ON")
+  set(AUTO_BUILD_SPRITES true)
+else()
+  message(STATUS "Aseprite not found in PATH: auto-build sprites OFF")
+  message(STATUS "  To enable: cmake -DASEPRITE_PATH=/path/to/aseprite")
+  set(AUTO_BUILD_SPRITES false)
+endif()
+
+
 
 #Shared Library for Game and Editor
 add_library(rungun_shared STATIC
@@ -18,6 +37,7 @@ add_library(rungun_shared STATIC
 target_link_libraries(rungun_shared PUBLIC SDL2::SDL2 SDL2_image::SDL2_image)
 target_include_directories(rungun_shared PUBLIC shared)
 target_include_directories(rungun_shared PUBLIC libs/glm)
+
 
 
 #Main Game
@@ -33,7 +53,11 @@ add_executable(rungun
 )
 target_link_libraries(rungun rungun_shared OpenGL::GL ${CMAKE_SOURCE_DIR}/libs/libglad.a)
 target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects libs/glad)
-add_dependencies(rungun update_sprites)
+if (AUTO_BUILD_SPRITES) 
+  add_dependencies(rungun update_sprites)
+endif()
+
+
 
 #Level Editor
 add_executable(levelEdit 
@@ -46,25 +70,27 @@ add_executable(levelEdit
 )
 target_link_libraries(levelEdit rungun_shared)
 
+
+
 #Update Assets
+if (AUTO_BUILD_SPRITES)
+  set(SPRITE_NAMES
+    Player
+    EnergyBar
+    Bird
+  )
 
-set(SPRITE_NAMES
-  Player
-  EnergyBar
-  Bird
-)
+  list(TRANSFORM SPRITE_NAMES APPEND ".aseprite")
+  list(TRANSFORM SPRITE_NAMES PREPEND "${CMAKE_SOURCE_DIR}/Assets/sprites/")
 
-list(TRANSFORM SPRITE_NAMES APPEND ".aseprite")
-list(TRANSFORM SPRITE_NAMES PREPEND "${CMAKE_SOURCE_DIR}/Assets/sprites/")
+  add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/Assets/sprites.png
+    COMMAND ${CMAKE_SOURCE_DIR}/Assets/sprites/generate.sh
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/sprites
+    DEPENDS ${SPRITE_NAMES}
+  )
 
-add_custom_command(
-  OUTPUT ${CMAKE_SOURCE_DIR}/Assets/sprites.png
-  COMMAND ${CMAKE_SOURCE_DIR}/Assets/sprites/generate.sh
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/sprites
-  DEPENDS ${SPRITE_NAMES}
-)
-
-add_custom_target(update_sprites ALL
-  DEPENDS ${CMAKE_SOURCE_DIR}/Assets/sprites.png
-)
-
+  add_custom_target(update_sprites ALL
+    DEPENDS ${CMAKE_SOURCE_DIR}/Assets/sprites.png
+  )
+endif()

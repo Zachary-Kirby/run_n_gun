@@ -20,6 +20,9 @@ Some systems package an old version of SDL2 so ensure you have at least SDL2 2.0
 Otherwise you may want to compile SDL2 manually. SDL2 has some instructions on how to install it
 on your system.
 
+# Optional
+ - Aseprite in PATH or specify using -DASEPRITE_PATH=/path/to/aseprite
+
 ## Linux
 
 ## Build
