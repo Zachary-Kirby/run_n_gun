@@ -53,3 +53,6 @@ To run the editor, simply execute the following command in your terminal:
 ./build/levelEdit
 ```
 
+### Windows
+
+Until a proper Windows port is made and tested, you can use WSL (Windows Subsystem for Linux) to download dependencies, build, and run the program. WSL can run graphical applications from its Linux Terminal, albeit with a slightly weird Window.
