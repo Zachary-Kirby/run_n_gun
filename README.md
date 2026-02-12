@@ -21,7 +21,10 @@ Otherwise you may want to compile SDL2 manually. SDL2 has some instructions on h
 on your system.
 
 # Optional
+
+### Dependencies for automatic sprite definition updates
  - Aseprite in PATH or specify using -DASEPRITE_PATH=/path/to/aseprite
+ - Python3
 
 ## Linux
 
@@ -38,7 +41,7 @@ make -C ./build levelEdit
 
 ## Running
 
-Run the generated executable files from the top directory of the project. The executable files are named `rungun` and `levelEdit`.
+Run the generated executable files from the **top directory of the project**. The executable files are named `rungun` and `levelEdit`.
 
 To run the game, simply execute the following command in your terminal:
 ```bash

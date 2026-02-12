@@ -7,19 +7,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED)
 project(rungun)
 
 
-#Dependencies
+#Required Dependencies
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(OpenGL REQUIRED)
 
-#Optional
-#Check if aseprite is available to auto-rebuild sprite definitions
+#Optional Dependencies
+#Check if Aseprite and Python is available to auto-rebuild sprite definitions
 find_program(
   ASEPRITE_PATH
   aseprite
 )
-if (ASEPRITE_PATH)
-  message(STATUS "Aseprite found in PATH at " ${ASEPRITE_PATH} ": auto-build sprites ON")
+find_package(Python3 COMPONENTS Interpreter)
+if (ASEPRITE_PATH AND Python3_Interpreter_FOUND)
+  message(STATUS "auto-build sprites ON")
+  message(STATUS "  Aseprite found in PATH at " ${ASEPRITE_PATH})
+  message(STATUS "  Python3 found in PATH at " ${Python3_EXECUTABLE})
   set(AUTO_BUILD_SPRITES true)
 else()
   message(STATUS "Aseprite not found in PATH: auto-build sprites OFF")
@@ -82,15 +85,23 @@ if (AUTO_BUILD_SPRITES)
 
   list(TRANSFORM SPRITE_NAMES APPEND ".aseprite")
   list(TRANSFORM SPRITE_NAMES PREPEND "${CMAKE_SOURCE_DIR}/Assets/sprites/")
-
+  
   add_custom_command(
-    OUTPUT ${CMAKE_SOURCE_DIR}/Assets/sprites.png
+    OUTPUT ${CMAKE_SOURCE_DIR}/Assets/sprites.png ${CMAKE_SOURCE_DIR}/Assets/frames.json
     COMMAND ${CMAKE_SOURCE_DIR}/Assets/sprites/generate.sh
     WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Assets/sprites
     DEPENDS ${SPRITE_NAMES}
   )
+  
+  add_custom_command(
+    OUTPUT ${CMAKE_SOURCE_DIR}/Assets/spriteData.bin
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tools/SpriteAnimationConverter.py
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    DEPENDS ${CMAKE_SOURCE_DIR}/Assets/frames.json
+  )
 
   add_custom_target(update_sprites ALL
     DEPENDS ${CMAKE_SOURCE_DIR}/Assets/sprites.png
+    DEPENDS ${CMAKE_SOURCE_DIR}/Assets/spriteData.bin
   )
 endif()
