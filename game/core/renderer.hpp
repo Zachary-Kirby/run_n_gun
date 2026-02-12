@@ -17,6 +17,12 @@ enum class TextureType {
   DEPTH
 };
 
+enum class TextureWrap {
+  REPEAT,
+  MIRRORED_REPEAT,
+  CLAMP_TO_EDGE
+};
+
 class Texture{
 public:
   float w;
@@ -24,7 +30,7 @@ public:
   unsigned int id;
   Texture() {w = 0; h = 0; id = 0;}
   Texture& operator=(Texture&& other);
-  Texture(const char* path);
+  Texture(const char* path, TextureWrap wrapMode = TextureWrap::REPEAT);
   Texture(float w, float h, TextureType type = TextureType::COLOR);
   void bind(){
     glBindTexture(GL_TEXTURE_2D, id);

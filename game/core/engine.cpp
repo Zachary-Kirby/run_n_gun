@@ -83,7 +83,7 @@ void Engine::run()
     
     if (!player.grounded)
     {
-      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Air", 0));
+      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Air", 0, player.velocity.x < 0, false));
     }
     else if (std::abs(player.velocity.x) > 0.1f)
     {

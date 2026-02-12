@@ -123,7 +123,7 @@ void Renderer::init(int screenWidth, int screenHeight)
   
   // Textures
   atlasTexture = Texture("Assets/Atlas.png");
-  spriteAtlas = Texture("Assets/sprites.png");
+  spriteAtlas = Texture("Assets/sprites.png", TextureWrap::MIRRORED_REPEAT);
   gameplayDrawWidth = 320;
   gameplayDrawHeight = 180;
   
@@ -276,7 +276,7 @@ Texture &Texture::operator=(Texture &&other)
   return *this;
 }
 
-Texture::Texture(const char *path)
+Texture::Texture(const char *path, TextureWrap wrapMode)
 {
   SDL_Surface* surface = IMG_Load(path);
   w = (float)surface->w;
@@ -286,8 +286,18 @@ Texture::Texture(const char *path)
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, surface->w, surface->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, surface->pixels);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  if (wrapMode == TextureWrap::REPEAT){
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  }
+  else if (wrapMode == TextureWrap::MIRRORED_REPEAT){
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+  }
+  else if (wrapMode == TextureWrap::CLAMP_TO_EDGE){
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  }
   SDL_FreeSurface(surface);
 }
 

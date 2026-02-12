@@ -83,12 +83,20 @@ Animations::Animations(const char *path)
   }
 }
 
-SpriteDefinition Animations::getFrame(const std::string &animationName, int frameNumber)
+SpriteDefinition Animations::getFrame(const std::string &animationName, int frameNumber, bool xFlip, bool yFlip)
 {
   if (animationDefinitions.find(animationName) != animationDefinitions.end())
   {
     std::vector<unsigned short>& frames = animationDefinitions[animationName];
-    return spriteDefinitions[frames[frameNumber%frames.size()]];
+    SpriteDefinition frame = spriteDefinitions[frames[frameNumber%frames.size()]];
+    //Flipping is done by using flipped texture wrapping and offsetting the texture coordinates
+    if (xFlip)    {
+      frame.x = -frame.x-frame.w;
+    }
+    if (yFlip)    {
+      frame.y = -frame.y-frame.h;
+    }
+    return frame;
   }
   else
   {
@@ -97,7 +105,7 @@ SpriteDefinition Animations::getFrame(const std::string &animationName, int fram
   }
 }
 
-SpriteDefinition Animations::getAnimationFrame(const std::string &animationName, float time)
+SpriteDefinition Animations::getAnimationFrame(const std::string &animationName, float time, bool xFlip, bool yFlip)
 {
   if (animationDefinitions.find(animationName) != animationDefinitions.end())
   {
@@ -106,14 +114,24 @@ SpriteDefinition Animations::getAnimationFrame(const std::string &animationName,
     float timeInAnimation = std::fmod(time, totalDuration);
     //loop through frames until duration accumulated is greater than time in animation
     float currentDuration = 0;
+    unsigned short currentFrame = frames[0];
     for (unsigned short frameID : frames)    {
       currentDuration += spriteDefinitions[frameID].duration;
       if (currentDuration > timeInAnimation)
       {
-        return spriteDefinitions[frameID];
+        currentFrame = frameID;
+        break;
       }
     }
-    return spriteDefinitions[frames.back()];
+    SpriteDefinition frame = spriteDefinitions[currentFrame];
+    //Flipping is done by using flipped texture wrapping and offsetting the texture coordinates
+    if (xFlip)    {
+      frame.x += atlasW;
+    }
+    if (yFlip) {
+      frame.y += atlasH;
+    }
+    return spriteDefinitions[currentFrame];
   }
 }
 

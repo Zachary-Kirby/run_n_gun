@@ -34,6 +34,6 @@ public:
   std::unordered_map<std::string, float> animationTotalDuration;
   std::vector<SpriteDefinition> spriteDefinitions;
   Animations(const char* path);
-  SpriteDefinition getFrame(const std::string& animationName, int frameNumber);
-  SpriteDefinition getAnimationFrame(const std::string& animationName, float time);
+  SpriteDefinition getFrame(const std::string& animationName, int frameNumber, bool xFlip = false, bool yFlip = false);
+  SpriteDefinition getAnimationFrame(const std::string& animationName, float time, bool xFlip = false, bool yFlip = false);
 };
