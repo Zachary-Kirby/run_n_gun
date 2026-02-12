@@ -2,7 +2,7 @@
 
 A simple 2D game based loosely on Contra and Megaman.
 
-![Early Development Image](image.png)
+![Example Video](Example%20Video.gif)
 
 # Dependencies
  - SDL2
