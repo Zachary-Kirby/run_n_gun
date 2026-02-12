@@ -123,7 +123,7 @@ void Renderer::init(int screenWidth, int screenHeight)
   
   // Textures
   atlasTexture = Texture("Assets/Atlas.png");
-  atlasAltTexture = Texture("Assets/AltAtlas.png");
+  spriteAtlas = Texture("Assets/sprites.png");
   gameplayDrawWidth = 320;
   gameplayDrawHeight = 180;
   
@@ -224,6 +224,22 @@ void RenderCopy(Renderer *renderer, const std::array<float, 4>& src, const std::
 }
 
 void RenderCopy(Renderer *renderer, SDL_Rect* src, SDL_Rect* dst, float z)
+{
+  glUseProgram(renderer->defaultShaderProgramID);
+  glBindVertexArray(renderer->vao);
+  glUniform3f(renderer->uniformLocations["position"], dst->x, dst->y, z);
+  glUniform2f(renderer->uniformLocations["scale"], dst->w, dst->h);
+  glUniform4f(renderer->uniformLocations["src"],
+    src->x/((float)renderer->textureSize[0]),
+    src->y/((float)renderer->textureSize[1]),
+    src->w/((float)renderer->textureSize[0]),
+    src->h/((float)renderer->textureSize[1])
+  );
+  glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
+  glBindVertexArray(0);
+}
+
+void RenderCopy(Renderer *renderer, SDL_FRect* src, SDL_FRect* dst, float z)
 {
   glUseProgram(renderer->defaultShaderProgramID);
   glBindVertexArray(renderer->vao);

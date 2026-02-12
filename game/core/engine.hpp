@@ -27,7 +27,7 @@ class Engine {
   std::chrono::duration<double, std::ratio<1, 244>> frame_time {1};
   int windowWidth = 640;
   int windowHeight = 640*9/16;
-  
+  Animations animations{"Assets/spriteData.bin"};
   
   public:
   

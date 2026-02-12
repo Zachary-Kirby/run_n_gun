@@ -6,10 +6,10 @@
 class Renderer;
 
 class Player{
-  Sprite sprite;
   glm::ivec2 spriteOffset;
   bool grounded = false;
   public:
+  Sprite sprite;
   float controlStickX = 0.0f;
   float controlStickY = 0.0f;
   float deadzone = 0.1f;

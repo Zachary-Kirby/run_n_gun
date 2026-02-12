@@ -5,6 +5,7 @@
 #include "constants.hpp"
 #include "renderCircle.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include "animations.hpp"
 
 Engine::Engine()
 {
@@ -17,7 +18,6 @@ Engine::Engine()
   //Temporary to center on my left monitor
   SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2));
   SDL_SetWindowTitle(window, "Run And Gun!");
-  
   //SDL_SetRelativeMouseMode(SDL_TRUE);
 }
 
@@ -32,7 +32,7 @@ void Engine::init()
   player.init(
     {0, 0}, //Position
     16, 16, //Hitbox
-    {0, 8*4, 16, 16, 1}, //Sprite
+    {animations.spriteDefinitions[animations.animationDefinitions["Player_Run"][0]]},//Sprite
     {0, 0} //Sprite Offset
   );
   
@@ -63,11 +63,13 @@ void Engine::init()
 void Engine::run()
 {
   glm::mat4 proj;
+  std::chrono::time_point startTime = std::chrono::steady_clock().now();
   last_frame_time = std::chrono::steady_clock().now();
   float shadowCamX = camera.x;
   while (exit_game == false)
   {
     input();
+    
     
     player.update(level, delta);
     { // Camera Follow
@@ -78,7 +80,11 @@ void Engine::run()
         camera.x += followPoint - (rendererGL.gameplayDrawWidth/2-player.hitbox.w+camera.x);
     }
     
-    
+    float second = std::chrono::duration_cast<std::chrono::milliseconds>(startTime-last_frame_time).count()/1000.0f;
+    int animationLength = animations.animationDefinitions["Player_Run"].size();
+    int relativeFrameID = ((int)(std::abs(second*16)))%animationLength;
+    int spriteDefID = animations.animationDefinitions["Player_Run"][relativeFrameID];
+    player.sprite.setDefinition(animations.spriteDefinitions[spriteDefID]);
     
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update(delta);
@@ -158,7 +164,17 @@ void Engine::run()
     }
 
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
+    
+    rendererGL.spriteAtlas.bind();
+    rendererGL.textureSize[0] = rendererGL.spriteAtlas.w;
+    rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
     player.draw(&rendererGL, camera);
+    
+    rendererGL.atlasTexture.bind();
+    rendererGL.textureSize[0] = rendererGL.atlasTexture.w;
+    rendererGL.textureSize[1] = rendererGL.atlasTexture.h;
+    
+    
     for (auto it = bullets.begin(); it != bullets.end(); )
     {
       Bullet& bullet = *it;

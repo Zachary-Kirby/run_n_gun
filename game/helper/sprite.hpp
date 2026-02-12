@@ -1,5 +1,6 @@
 #pragma once
 #include "SDL2/SDL.h"
+#include "animations.hpp"
 
 class Renderer;
 
@@ -7,17 +8,20 @@ class Sprite
 {
   //Sprite class to handle sprite drawing
   //It doesn't handle the texture lifecycle
-  SDL_Rect src;
-  SDL_Rect dst;
+  SDL_FRect src;
+  SDL_FRect dst;
   int scale;
 public:
   
   Sprite();
   
   Sprite(const Sprite& other);
+  Sprite(SpriteDefinition spriteDefinition);
   Sprite& operator= (const Sprite& other);
   
   Sprite (int x, int y, int w, int h, int scale); 
+  
+  void setDefinition(SpriteDefinition spriteDefinition);
   
   void init (Sprite other);
   

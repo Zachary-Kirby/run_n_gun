@@ -51,6 +51,7 @@ add_executable(rungun
   game/core/player.cpp
   game/core/bullet.cpp
   game/helper/sprite.cpp
+  game/helper/animations.cpp
   game/levelObjects/bird.cpp
   game/core/renderer.cpp
 )

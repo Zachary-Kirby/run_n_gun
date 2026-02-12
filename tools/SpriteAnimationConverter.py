@@ -20,7 +20,7 @@ Animation definition list:
   2 bytes: number of animation definitions
 
 Animation definition:
-  2 bytes: length of name
+  1 bytes: length of name
   N bytes: name
   2 bytes: number of frames
   2N bytes: frame ID

@@ -85,7 +85,7 @@ public:
   unsigned int circleShaderProgramID;
   unsigned int coloredShaderProgramID;
   Texture atlasTexture;
-  Texture atlasAltTexture;
+  Texture spriteAtlas;
 
   Texture cloudsTexture;
   Texture backgroundTexture;
@@ -116,6 +116,7 @@ void RenderCopy(Renderer* renderer, float* src, float* dst, float z=0.0f);
 
 void RenderCopy(Renderer *renderer, const std::array<float, 4>& src, const std::array<float, 4>& dst, float z=0.0f);
 
+void RenderCopy(Renderer *renderer, SDL_FRect* src, SDL_FRect* dst, float z=0.0f);
 void RenderCopy(Renderer *renderer, SDL_Rect* src, SDL_Rect* dst, float z=0.0f);
 
 void RenderCircle(Renderer* renderer, float x, float y, float radius, float z=0.0f);
