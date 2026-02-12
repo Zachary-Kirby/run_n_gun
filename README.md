@@ -56,3 +56,14 @@ To run the editor, simply execute the following command in your terminal:
 ### Windows
 
 Until a proper Windows port is made and tested, you can use WSL (Windows Subsystem for Linux) to download dependencies, build, and run the program. WSL can run graphical applications from its Linux Terminal, albeit with a slightly weird Window.
+
+# Goals
+ - Add animations
+ - Add several enemy types
+ - Create three to four areas with 3 sub-areas each
+ - Create three to four bosses, each with some powerup to enhance the player
+ - Use procedural animation and shaders to create interesting enemy types
+ - Create decent workflow for Asset creation
+ - Learn build automation
+ - Create one looped song per sub area and boss
+ - Document the structure well for future games
