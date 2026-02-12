@@ -4,6 +4,13 @@ A simple 2D game based loosely on Contra and Megaman.
 
 ![Early Development Image](image.png)
 
+# Dependencies
+ - SDL2
+ - SDL2_image
+ - OpenGL
+ - Glad
+ - GLM
+
 # Prerequisites
  - Debian-based Linux
  - CMake >= 3.12
