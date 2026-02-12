@@ -1,6 +1,7 @@
 #include "animations.hpp"
 #include <fstream>
 #include <iostream>
+#include <cmath>
 /*
 Sprite definition list:
   2 bytes: atlas width
@@ -66,6 +67,53 @@ Animations::Animations(const char *path)
       animationDefinitions[name] = frames;
     }
     file.close();
+    for (auto& [name, frames] : animationDefinitions)
+    {
+      float totalDuration = 0;
+      for (unsigned short frameID : frames)
+      {
+        totalDuration += spriteDefinitions[frameID].duration;
+      }
+      animationTotalDuration[name] = totalDuration;
+    }
+  }
+  else
+  {
+    std::cerr << "ERROR: ANIMATION FILE NOT FOUND: " << path << std::endl;
+  }
+}
+
+SpriteDefinition Animations::getFrame(const std::string &animationName, int frameNumber)
+{
+  if (animationDefinitions.find(animationName) != animationDefinitions.end())
+  {
+    std::vector<unsigned short>& frames = animationDefinitions[animationName];
+    return spriteDefinitions[frames[frameNumber%frames.size()]];
+  }
+  else
+  {
+    std::cerr << "ERROR: ANIMATION NOT FOUND: " << animationName << std::endl;
+    return SpriteDefinition();
+  }
+}
+
+SpriteDefinition Animations::getAnimationFrame(const std::string &animationName, float time)
+{
+  if (animationDefinitions.find(animationName) != animationDefinitions.end())
+  {
+    std::vector<unsigned short>& frames = animationDefinitions[animationName];
+    float totalDuration = animationTotalDuration[animationName];
+    float timeInAnimation = std::fmod(time, totalDuration);
+    //loop through frames until duration accumulated is greater than time in animation
+    float currentDuration = 0;
+    for (unsigned short frameID : frames)    {
+      currentDuration += spriteDefinitions[frameID].duration;
+      if (currentDuration > timeInAnimation)
+      {
+        return spriteDefinitions[frameID];
+      }
+    }
+    return spriteDefinitions[frames.back()];
   }
 }
 

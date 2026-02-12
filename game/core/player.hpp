@@ -7,8 +7,8 @@ class Renderer;
 
 class Player{
   glm::ivec2 spriteOffset;
-  bool grounded = false;
   public:
+  bool grounded = false;
   Sprite sprite;
   float controlStickX = 0.0f;
   float controlStickY = 0.0f;

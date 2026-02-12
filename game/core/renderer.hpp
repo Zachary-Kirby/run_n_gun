@@ -10,6 +10,7 @@
 #include <string>
 #include <unordered_map>
 #include <array>
+#include "animations.hpp"
 
 enum class TextureType {
   COLOR,
@@ -86,6 +87,7 @@ public:
   unsigned int coloredShaderProgramID;
   Texture atlasTexture;
   Texture spriteAtlas;
+  Animations spriteAnimations{"Assets/spriteData.bin"};
 
   Texture cloudsTexture;
   Texture backgroundTexture;
@@ -117,6 +119,7 @@ void RenderCopy(Renderer* renderer, float* src, float* dst, float z=0.0f);
 void RenderCopy(Renderer *renderer, const std::array<float, 4>& src, const std::array<float, 4>& dst, float z=0.0f);
 
 void RenderCopy(Renderer *renderer, SDL_FRect* src, SDL_FRect* dst, float z=0.0f);
+
 void RenderCopy(Renderer *renderer, SDL_Rect* src, SDL_Rect* dst, float z=0.0f);
 
 void RenderCircle(Renderer* renderer, float x, float y, float radius, float z=0.0f);

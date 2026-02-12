@@ -32,7 +32,7 @@ void Engine::init()
   player.init(
     {0, 0}, //Position
     16, 16, //Hitbox
-    {animations.spriteDefinitions[animations.animationDefinitions["Player_Run"][0]]},//Sprite
+    {rendererGL.spriteAnimations.getFrame("Player_Idle", 0)},//Sprite
     {0, 0} //Sprite Offset
   );
   
@@ -68,6 +68,7 @@ void Engine::run()
   float shadowCamX = camera.x;
   while (exit_game == false)
   {
+    float second = std::chrono::duration_cast<std::chrono::milliseconds>(last_frame_time-startTime).count()/1000.0f;
     input();
     
     
@@ -80,11 +81,18 @@ void Engine::run()
         camera.x += followPoint - (rendererGL.gameplayDrawWidth/2-player.hitbox.w+camera.x);
     }
     
-    float second = std::chrono::duration_cast<std::chrono::milliseconds>(startTime-last_frame_time).count()/1000.0f;
-    int animationLength = animations.animationDefinitions["Player_Run"].size();
-    int relativeFrameID = ((int)(std::abs(second*16)))%animationLength;
-    int spriteDefID = animations.animationDefinitions["Player_Run"][relativeFrameID];
-    player.sprite.setDefinition(animations.spriteDefinitions[spriteDefID]);
+    if (!player.grounded)
+    {
+      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Air", 0));
+    }
+    else if (std::abs(player.velocity.x) > 0.1f)
+    {
+      player.sprite.setDefinition(rendererGL.spriteAnimations.getAnimationFrame("Player_Run", second));
+    }
+    else
+    {
+      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Idle", 0));
+    }
     
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update(delta);
