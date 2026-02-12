@@ -25,6 +25,7 @@ if (ASEPRITE_PATH AND Python3_Interpreter_FOUND)
   message(STATUS "  Python3 found in PATH at " ${Python3_EXECUTABLE})
   set(AUTO_BUILD_SPRITES true)
 else()
+  #TODO change this error to actually say if it is Aseprite or python missing
   message(STATUS "Aseprite not found in PATH: auto-build sprites OFF")
   message(STATUS "  To enable: cmake -DASEPRITE_PATH=/path/to/aseprite")
   set(AUTO_BUILD_SPRITES false)

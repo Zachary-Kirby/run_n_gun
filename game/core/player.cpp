@@ -64,6 +64,8 @@ void Player::update(Level &level, float delta)
     if (collision.cancelVec.y > 0) grounded = true;
     if (velocity.y > 0.0f) grounded = false;
   }
+  if (velocity.x < 0.0f) facingLeft = true;
+  if (velocity.x > 0.0f) facingLeft = false;
   if (std::abs(controlStickX) < deadzone)
   {
     if (std::abs(velocity.x*delta) >= 100.0f)

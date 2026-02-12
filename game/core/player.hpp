@@ -2,8 +2,10 @@
 
 #include <glm/glm.hpp>
 #include "sprite.hpp"
+#include "rect.hpp"
 
 class Renderer;
+class Level;
 
 class Player{
   glm::ivec2 spriteOffset;
@@ -15,6 +17,7 @@ class Player{
   float deadzone = 0.1f;
   fRect hitbox;
   glm::vec2 velocity;
+  bool facingLeft = false;
   
   Player();
   

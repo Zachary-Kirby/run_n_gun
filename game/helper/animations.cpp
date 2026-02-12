@@ -126,12 +126,12 @@ SpriteDefinition Animations::getAnimationFrame(const std::string &animationName,
     SpriteDefinition frame = spriteDefinitions[currentFrame];
     //Flipping is done by using flipped texture wrapping and offsetting the texture coordinates
     if (xFlip)    {
-      frame.x += atlasW;
+      frame.x = -frame.x-frame.w;
     }
     if (yFlip) {
-      frame.y += atlasH;
+      frame.y = -frame.y-frame.h;
     }
-    return spriteDefinitions[currentFrame];
+    return frame; 
   }
 }
 

@@ -83,15 +83,15 @@ void Engine::run()
     
     if (!player.grounded)
     {
-      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Air", 0, player.velocity.x < 0, false));
+      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Air", 0, player.facingLeft, false));
     }
     else if (std::abs(player.velocity.x) > 0.1f)
     {
-      player.sprite.setDefinition(rendererGL.spriteAnimations.getAnimationFrame("Player_Run", second));
+      player.sprite.setDefinition(rendererGL.spriteAnimations.getAnimationFrame("Player_Run", second, player.facingLeft, false));
     }
     else
     {
-      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Idle", 0));
+      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Idle", 0, player.facingLeft));
     }
     
     for (Bullet& bullet : bullets)
@@ -173,6 +173,17 @@ void Engine::run()
 
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
     
+
+    for (auto it = bullets.begin(); it != bullets.end(); )
+    {
+      Bullet& bullet = *it;
+      if (bullet.active) {
+        bullet.draw(&rendererGL, camera); 
+        it++;
+      }
+      else {it = bullets.erase(it);}
+    }
+    
     rendererGL.spriteAtlas.bind();
     rendererGL.textureSize[0] = rendererGL.spriteAtlas.w;
     rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
@@ -183,16 +194,7 @@ void Engine::run()
     rendererGL.textureSize[1] = rendererGL.atlasTexture.h;
     
     
-    for (auto it = bullets.begin(); it != bullets.end(); )
-    {
-      Bullet& bullet = *it;
-      if (bullet.active) {
-        bullet.draw(&rendererGL, camera); 
-        it++;
-      }
-      else {it = bullets.erase(it);}
-    }
-    for (auto bird : birds) if (bird.active) bird.draw(&rendererGL, camera);
+   for (auto bird : birds) if (bird.active) bird.draw(&rendererGL, camera);
     RenderCircle(&rendererGL,
       (int)(player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x), 
       (int)(player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y),
