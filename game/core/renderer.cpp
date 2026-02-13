@@ -112,8 +112,7 @@ void Renderer::init(int screenWidth, int screenHeight)
   //Set Default Uniforms
   glUseProgram(defaultShaderProgramID);
   uniformLocations["projection"] = glGetUniformLocation(defaultShaderProgramID, "projection");
-  uniformLocations["position"] = glGetUniformLocation(defaultShaderProgramID, "position");
-  uniformLocations["scale"] = glGetUniformLocation(defaultShaderProgramID, "scale");
+  uniformLocations["transform"] = glGetUniformLocation(defaultShaderProgramID, "transform");
   uniformLocations["src"] = glGetUniformLocation(defaultShaderProgramID, "src");
   uniformLocations["atlas"] = glGetUniformLocation(defaultShaderProgramID, "atlas");
   
@@ -191,12 +190,34 @@ void SetGradient(Renderer *renderer, float r, float g, float b, float a, float r
   glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(renderer->verticies), renderer->verticies);
 }
 
+glm::mat4 createSpriteTransform(glm::vec3 position, glm::vec2 scale, float rotation, glm::vec2 pivot)
+{
+    float c = cos(rotation);
+    float s = sin(rotation);
+    
+    float px = pivot.x * (scale.x * c - scale.x) - pivot.y * scale.y * s;
+    float py = pivot.x * scale.x * s + pivot.y * (scale.y * c - scale.y);
+    
+    return glm::mat4(
+        scale.x * c,  scale.x * s,  0.0f, 0.0f,
+       -scale.y * s,  scale.y * c,  0.0f, 0.0f,
+        0.0f,         0.0f,         1.0f, 0.0f,
+        position.x + px, position.y + py, position.z, 1.0f
+    );
+}
+
+void updateTransform(unsigned int programID, float x, float y, float z, float w, float h, float rotation, float pivotX, float pivotY)
+{
+  //TODO make this more optimal
+  glm::mat4 spriteTransform = createSpriteTransform({x, y, z}, {w, h}, 0, {0, 0});
+  glUniformMatrix4fv(glGetUniformLocation(programID, "transform"), 1, false, glm::value_ptr(spriteTransform));
+}
+
 void RenderRect(Renderer *renderer, float x, float y, float width, float height, float z)
 {
   glUseProgram(renderer->coloredShaderProgramID);
   glBindVertexArray(renderer->vao);
-  glUniform3f(glGetUniformLocation(renderer->coloredShaderProgramID, "position"), x, y, z);
-  glUniform2f(glGetUniformLocation(renderer->coloredShaderProgramID, "scale"), width, height);
+  updateTransform(renderer->coloredShaderProgramID, x, y, z, width, height, 0, 0, 0);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
   glBindVertexArray(0);
 }
@@ -205,8 +226,7 @@ void RenderCopy(Renderer *renderer, float *src, float *dst, float z)
 {
   glUseProgram(renderer->defaultShaderProgramID);
   glBindVertexArray(renderer->vao);
-  glUniform3f(renderer->uniformLocations["position"], dst[0], dst[1], z);
-  glUniform2f(renderer->uniformLocations["scale"], dst[2], dst[3]);
+  updateTransform(renderer->defaultShaderProgramID, dst[0], dst[1], z, dst[2], dst[3], 0, 0, 0);
   glUniform4f(renderer->uniformLocations["src"], src[0]/renderer->textureSize[0], src[1]/renderer->textureSize[1], src[2]/renderer->textureSize[0], src[3]/renderer->textureSize[1]);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
   glBindVertexArray(0);
@@ -216,8 +236,7 @@ void RenderCopy(Renderer *renderer, const std::array<float, 4>& src, const std::
 {
   glUseProgram(renderer->defaultShaderProgramID);
   glBindVertexArray(renderer->vao);
-  glUniform3f(renderer->uniformLocations["position"], dst[0], dst[1], z);
-  glUniform2f(renderer->uniformLocations["scale"], dst[2], dst[3]);
+  updateTransform(renderer->defaultShaderProgramID, dst[0], dst[1], z, dst[2], dst[3], 0, 0, 0);
   glUniform4f(renderer->uniformLocations["src"], src[0]/renderer->textureSize[0], src[1]/renderer->textureSize[1], src[2]/renderer->textureSize[0], src[3]/renderer->textureSize[1]);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
   glBindVertexArray(0);
@@ -227,8 +246,7 @@ void RenderCopy(Renderer *renderer, SDL_Rect* src, SDL_Rect* dst, float z)
 {
   glUseProgram(renderer->defaultShaderProgramID);
   glBindVertexArray(renderer->vao);
-  glUniform3f(renderer->uniformLocations["position"], dst->x, dst->y, z);
-  glUniform2f(renderer->uniformLocations["scale"], dst->w, dst->h);
+  updateTransform(renderer->defaultShaderProgramID, dst->x, dst->y, z, dst->w, dst->h, 0, 0, 0);
   glUniform4f(renderer->uniformLocations["src"],
     src->x/((float)renderer->textureSize[0]),
     src->y/((float)renderer->textureSize[1]),
@@ -243,8 +261,7 @@ void RenderCopy(Renderer *renderer, SDL_FRect* src, SDL_FRect* dst, float z)
 {
   glUseProgram(renderer->defaultShaderProgramID);
   glBindVertexArray(renderer->vao);
-  glUniform3f(renderer->uniformLocations["position"], dst->x, dst->y, z);
-  glUniform2f(renderer->uniformLocations["scale"], dst->w, dst->h);
+  updateTransform(renderer->defaultShaderProgramID, dst->x, dst->y, z, dst->w, dst->h, 0, 0, 0);
   glUniform4f(renderer->uniformLocations["src"],
     src->x/((float)renderer->textureSize[0]),
     src->y/((float)renderer->textureSize[1]),
@@ -259,8 +276,7 @@ void RenderCircle(Renderer *renderer, float x, float y, float radius, float z)
 {
   glUseProgram(renderer->circleShaderProgramID);
   glBindVertexArray(renderer->vao);
-  glUniform3f(glGetUniformLocation(renderer->circleShaderProgramID, "position"), x-radius/2, y-radius/2, z);
-  glUniform2f(glGetUniformLocation(renderer->circleShaderProgramID, "scale"), radius, radius);
+  updateTransform(renderer->defaultShaderProgramID, x-radius/2, y-radius/2, z, radius, radius, 0, 0, 0);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
   glBindVertexArray(0);
 }

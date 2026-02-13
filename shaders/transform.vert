@@ -13,7 +13,7 @@ out vec2 st;
 
 void main ()
 {
-    gl_Position = projection * transform * vec4(iposition, 1.0); 
+    gl_Position = projection * transform * vec4(iposition, 0.0);
     vertexColor = icolor;
     uv = vec2((iposition.x)*src.z+src.x, (iposition.y)*src.w+src.y);
     st = iposition.xy;
