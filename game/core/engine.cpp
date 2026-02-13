@@ -292,6 +292,13 @@ void Engine::input()
         SDL_bool mode = SDL_GetRelativeMouseMode();
         SDL_SetRelativeMouseMode(mode ? SDL_FALSE : SDL_TRUE);
       }
+      if (event.key.keysym.sym == SDLK_F11){
+        unsigned int flags = SDL_GetWindowFlags(window);
+        if (SDL_WINDOW_FULLSCREEN_DESKTOP & flags)
+          SDL_SetWindowFullscreen(window, 0);
+        else
+          SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN_DESKTOP);
+      }
     }
     if (event.type == SDL_KEYUP && event.key.repeat == false)
     {
