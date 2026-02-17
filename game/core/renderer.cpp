@@ -195,8 +195,10 @@ glm::mat4 createSpriteTransform(glm::vec3 position, glm::vec2 scale, float rotat
     float c = cos(rotation);
     float s = sin(rotation);
     
-    float px = pivot.x * (scale.x * c - scale.x) - pivot.y * scale.y * s;
-    float py = pivot.x * scale.x * s + pivot.y * (scale.y * c - scale.y);
+    // Apply pivot: translate to -pivot, rotate/scale, translate back by +pivot
+    // After rotation/scale, the pivot point needs to be adjusted
+    float px = pivot.x * scale.x * c - pivot.y * scale.y * s;
+    float py = pivot.x * scale.x * s + pivot.y * scale.y * c;
     
     return glm::mat4(
         scale.x * c,  scale.x * s,  0.0f, 0.0f,
@@ -209,7 +211,7 @@ glm::mat4 createSpriteTransform(glm::vec3 position, glm::vec2 scale, float rotat
 void updateTransform(unsigned int programID, float x, float y, float z, float w, float h, float rotation, float pivotX, float pivotY)
 {
   //TODO make this more optimal
-  glm::mat4 spriteTransform = createSpriteTransform({x, y, z}, {w, h}, 0, {0, 0});
+  glm::mat4 spriteTransform = createSpriteTransform({x, y, z}, {w, h}, rotation, {pivotX, pivotY});
   glUniformMatrix4fv(glGetUniformLocation(programID, "transform"), 1, false, glm::value_ptr(spriteTransform));
 }
 

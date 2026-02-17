@@ -55,7 +55,7 @@ void Engine::init()
     if (point.type == "pole")
     {
       int length = std::stoi(point.parameters);
-      poles.emplace_back(point.x, point.y+length, length);
+      poles.emplace_back(this, point.x, point.y+length, length);
     }
   }
   
@@ -84,6 +84,11 @@ void Engine::run()
         camera.x += followPoint - (rendererGL.gameplayDrawWidth/2+player.hitbox.w+camera.x);
       if (followPoint < rendererGL.gameplayDrawWidth/2-player.hitbox.w+camera.x)
         camera.x += followPoint - (rendererGL.gameplayDrawWidth/2-player.hitbox.w+camera.x);
+    }
+    
+    for (Pole& pole: poles)
+    {
+      pole.update(delta);
     }
     
     if (!player.grounded)
