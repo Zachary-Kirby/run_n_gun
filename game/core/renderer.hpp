@@ -124,7 +124,7 @@ void RenderCopy(Renderer* renderer, float* src, float* dst, float z=0.0f);
 
 void RenderCopy(Renderer *renderer, const std::array<float, 4>& src, const std::array<float, 4>& dst, float z=0.0f);
 
-void RenderCopy(Renderer *renderer, SDL_FRect* src, SDL_FRect* dst, float z=0.0f);
+void RenderCopy(Renderer *renderer, SDL_FRect* src, SDL_FRect* dst, float z=0.0f, float rotation = 0.0f, float xPivot = 0.0f, float yPivot = 0.0f);
 
 void RenderCopy(Renderer *renderer, SDL_Rect* src, SDL_Rect* dst, float z=0.0f);
 

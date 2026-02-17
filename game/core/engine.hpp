@@ -6,12 +6,13 @@
 #include <chrono>
 #include <list>
 
+#include "renderer.hpp"
 #include "level.hpp"
 #include "player.hpp"
 #include <iostream>
 #include "bird.hpp"
 #include "bullet.hpp"
-#include "renderer.hpp"
+#include "pole.hpp"
 
 class Engine {
   SDL_GLContext context;
@@ -41,6 +42,7 @@ class Engine {
   
   Player player;
   std::vector<Bird> birds;
+  std::vector<Pole> poles;
   std::vector<Bullet> bullets;
   glm::vec2 camera {.0f, 50.0f};
   

@@ -257,11 +257,19 @@ void RenderCopy(Renderer *renderer, SDL_Rect* src, SDL_Rect* dst, float z)
   glBindVertexArray(0);
 }
 
-void RenderCopy(Renderer *renderer, SDL_FRect* src, SDL_FRect* dst, float z)
+/// @brief Render a texture rectangle
+/// @param renderer rendering context
+/// @param src source rectange from texture in texture slot zero
+/// @param dst destination rectangle
+/// @param z rendering layer
+/// @param rotation rotation to apply in radians
+/// @param xPivot rotation point relative to left side of sprite
+/// @param yPivot rotation point relative to top side of sprite
+void RenderCopy(Renderer *renderer, SDL_FRect* src, SDL_FRect* dst, float z, float rotation, float xPivot, float yPivot)
 {
   glUseProgram(renderer->defaultShaderProgramID);
   glBindVertexArray(renderer->vao);
-  updateTransform(renderer->defaultShaderProgramID, dst->x, dst->y, z, dst->w, dst->h, 0, 0, 0);
+  updateTransform(renderer->defaultShaderProgramID, dst->x, dst->y, z, dst->w, dst->h, rotation, xPivot, yPivot);
   glUniform4f(renderer->uniformLocations["src"],
     src->x/((float)renderer->textureSize[0]),
     src->y/((float)renderer->textureSize[1]),
@@ -276,7 +284,7 @@ void RenderCircle(Renderer *renderer, float x, float y, float radius, float z)
 {
   glUseProgram(renderer->circleShaderProgramID);
   glBindVertexArray(renderer->vao);
-  updateTransform(renderer->defaultShaderProgramID, x-radius/2, y-radius/2, z, radius, radius, 0, 0, 0);
+  updateTransform(renderer->circleShaderProgramID, x-radius/2, y-radius/2, z, radius, radius, 0, 0, 0);
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, (void*)0);
   glBindVertexArray(0);
 }

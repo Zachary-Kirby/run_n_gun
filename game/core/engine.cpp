@@ -52,6 +52,11 @@ void Engine::init()
       birds.emplace_back(this, birdSprite, glm::vec2(point.x, point.y));
       point.active = false; // too lazy to just remove the point from the vector. Honestly it would be better as a linked list probably
     }
+    if (point.type == "pole")
+    {
+      int length = std::stoi(point.parameters);
+      poles.emplace_back(point.x, point.y+length, length);
+    }
   }
   
   //gameplayDrawTexture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
@@ -194,11 +199,22 @@ void Engine::run()
     rendererGL.textureSize[1] = rendererGL.atlasTexture.h;
     
     
-   for (auto bird : birds) if (bird.active) bird.draw(&rendererGL, camera);
+    for (auto bird : birds)
+    {
+      if (bird.active) bird.draw(&rendererGL, camera);
+    }
     RenderCircle(&rendererGL,
       (int)(player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x), 
       (int)(player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y),
       6.0f);
+    
+    for (Pole& pole: poles)
+    {
+      pole.draw(&rendererGL, camera);
+    }
+    
+    
+    
     RenderTarget::unbind();
     //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glViewport(0,windowHeight/2-(windowWidth/16*9)/2,windowWidth,windowWidth/16*9);
