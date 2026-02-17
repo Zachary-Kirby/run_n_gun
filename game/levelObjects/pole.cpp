@@ -16,24 +16,37 @@ void Pole::update(float delta)
   auto preEndPoint = glm::vec2(pivotX + std::cos(angle)*length, pivotY + std::sin(angle)*length);
   
   angle += angularVelocity*delta;
+  angularVelocity = angularVelocity - std::copysignf(delta*0.2, angularVelocity);
   
   auto endPoint = glm::vec2(pivotX + std::cos(angle)*length, pivotY + std::sin(angle)*length);
   
+  if (angle+3.14159f/2.0f>0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*30.0f*delta;
+  if (angle+3.14159f/2.0f<0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*30.0f*delta;
   auto dif = endPoint - preEndPoint;
-  
+  if (std::sin(angle) > 0) 
+  {
+    return;
+  }
   if (engine->player.hitbox.collide(endPoint) && engine->player.velocity.y > 0.0f)
   {
     //TODO do the angle math properly.
-    if (angle+3.14159f/2.0f>0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*0.4;
-    if (angle+3.14159f/2.0f<0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*0.4;
-    angularVelocity += -engine->player.velocity.x/length*0.02;
+    angularVelocity += -engine->player.velocity.x/length*delta*30.0f;
     engine->player.velocity.y = std::min(engine->player.velocity.y, 0.0f);
     engine->player.hitbox.y = endPoint.y-engine->player.hitbox.h;
     engine->player.grounded = true;
   }
-  if (engine->player.hitbox.x+engine->player.hitbox.w>endPoint.x && engine->player.hitbox.x < endPoint.x && engine->player.hitbox.y < endPoint.y && engine->player.hitbox.y - endPoint.y < 17)
+  if (
+    engine->player.hitbox.x+ engine->player.hitbox.w>endPoint.x && 
+    engine->player.hitbox.x < endPoint.x && 
+    engine->player.hitbox.y < endPoint.y && 
+    engine->player.hitbox.y > endPoint.y-32)
   {
+    if (engine->player.velocity.y > 0)
+    {
+      engine->player.grounded = true;
+    }
     engine->player.hitbox.x += dif.x;
+    engine->player.hitbox.y += dif.y;
   }
 }
 
