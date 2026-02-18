@@ -28,7 +28,7 @@ public:
   glm::ivec2 mousePos, preMousePos;
   int mouseState = 0, preMouseState = 0;
   
-  glm::ivec2 camera;
+  glm::ivec2 camera {0,0};
   
   Level level;
   Pallete pallete;
