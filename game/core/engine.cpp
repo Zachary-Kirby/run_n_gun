@@ -55,7 +55,7 @@ void Engine::init()
     if (point.type == "pole")
     {
       int length = std::stoi(point.parameters);
-      poles.emplace_back(this, point.x, point.y+length, length);
+      poles.emplace_back(this, (SDL_FRect){32, 0, 8, 24}, point.x, point.y+length/2, length);
     }
   }
   

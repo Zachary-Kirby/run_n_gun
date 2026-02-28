@@ -22,14 +22,14 @@ void Pole::update(float delta)
   
   if (angle+3.14159f/2.0f>0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*30.0f*delta;
   if (angle+3.14159f/2.0f<0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*30.0f*delta;
-  if (std::sin(angle) > 0) 
-  {
-    return;
-  }
+  //if (std::sin(angle) > 0) 
+  //{
+  //  return;
+  //}
   if (engine->player.hitbox.collide(endPoint) && engine->player.velocity.y >= 0.0f)
   {
     //TODO do the angle math properly.
-    angularVelocity += -engine->player.velocity.x/length*delta*30.0f;
+    angularVelocity += -engine->player.velocity.x/length*delta*60.0f;
     engine->player.velocity.y = std::min(engine->player.velocity.y, 0.0f);
     engine->player.hitbox.y = endPoint.y-engine->player.hitbox.h;
     engine->player.grounded = true;
@@ -66,7 +66,7 @@ void Pole::draw(Renderer* renderer, glm::vec2 camera)
   float endX = pivotX + std::cos(angle)*length;
   float endY = pivotY + std::sin(angle)*length;
   //debug code
-  SDL_FRect src{5*8, 8, 8, 8};
+  //SDL_FRect src{5*8, 8, 8, 8};
   SDL_FRect dst{pivotX-camera.x, pivotY-camera.y, 8,length};
   RenderCopy(renderer, &src,  &dst, 0.0f, angle-3.14159f/2.0f, -0.5, 0);
   //RenderCircle(renderer, pivotX-camera.x, pivotY-camera.y, 4.0f);
