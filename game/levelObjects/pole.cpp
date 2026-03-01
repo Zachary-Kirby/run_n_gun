@@ -20,27 +20,30 @@ void Pole::update(float delta)
   
   auto endPoint = glm::vec2(pivotX + std::cos(angle)*length, pivotY + std::sin(angle)*length);
   
-  if (angle+3.14159f/2.0f>0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*30.0f*delta;
-  if (angle+3.14159f/2.0f<0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*30.0f*delta;
   //if (std::sin(angle) > 0) 
   //{
   //  return;
   //}
   if (engine->player.hitbox.collide(endPoint) && engine->player.velocity.y >= 0.0f)
   {
+    if (angle+3.14159f/2.0f>0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*200.0f*delta;
+    if (angle+3.14159f/2.0f<0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*200.0f*delta;
     //TODO do the angle math properly.
     angularVelocity += -engine->player.velocity.x/length*delta*60.0f;
+    if (abs(angle+3.14159f/2.0f) < 3.14159f/8.0f)
+    {
+      angularVelocity += -engine->player.velocity.x/length*delta*60.0f;
+      angularVelocity *= 1.0f;
+    }
+    angularVelocity = std::min(std::max(angularVelocity, -3.14159f), 3.14159f);
     engine->player.velocity.y = std::min(engine->player.velocity.y, 0.0f);
     engine->player.hitbox.y = endPoint.y-engine->player.hitbox.h;
     engine->player.grounded = true;
   }
   else
   {
-    if (std::abs(angle+3.14159f/2.0f) < 0.4f)
-    {
-      angle -= std::sin(angle+3.14159f/2.0f)*delta;
-      angularVelocity = angularVelocity * 0.8;
-    }
+    angularVelocity -= std::sin(angle+3.14159f/2.0f)*delta*200.0f;
+    angularVelocity = angularVelocity * 0.99;
   }
   endPoint = glm::vec2(pivotX + std::cos(angle)*length, pivotY + std::sin(angle)*length);
   auto dif = endPoint - preEndPoint;
