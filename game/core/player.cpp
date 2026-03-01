@@ -6,7 +6,7 @@
 #include "level.hpp"
 #include "renderer.hpp"
 #include "player.hpp"
-
+#include "SDL_mixer.h"
 
 Player::Player()
 {

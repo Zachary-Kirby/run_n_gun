@@ -6,10 +6,17 @@
 #include "renderCircle.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "animations.hpp"
+#include "SDL_mixer.h"
+#include <filesystem>
 
 Engine::Engine()
 {
-  SDL_Init(SDL_INIT_VIDEO);
+  std::cout << std::filesystem::current_path() << std::endl;
+  SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
+  Mix_Init(MIX_INIT_OGG);
+  Mix_OpenAudio(48000, AUDIO_S16, 1, 2048);
+  Mix_Volume(0, 32);
+  Mix_AllocateChannels(8);
   window = SDL_CreateWindow("Run And Gun!", SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2), 640, 640*9/16, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   context = SDL_GL_CreateContext(window);
   
@@ -29,6 +36,8 @@ void Engine::init()
     {rendererGL.spriteAnimations.getFrame("Player_Idle", 0)},//Sprite
     {0, 0} //Sprite Offset
   );
+  
+  laserSound.init("Assets/sounds/random.wav");
   
   level.init(atlas);
   level.load("good.lvl");
@@ -321,6 +330,7 @@ void Engine::input()
     {
       if (event.button.button == SDL_BUTTON_LEFT)
       {
+        laserSound.play(0);
         bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*320.0f, aimPoint.y*320.0f}});
       }
     }

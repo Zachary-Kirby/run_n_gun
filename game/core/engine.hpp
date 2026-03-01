@@ -13,6 +13,7 @@
 #include "bird.hpp"
 #include "bullet.hpp"
 #include "pole.hpp"
+#include "sound.hpp"
 
 class Engine {
   SDL_GLContext context;
@@ -29,6 +30,9 @@ class Engine {
   int windowWidth = 640;
   int windowHeight = 640*9/16;
   
+  //Sound Scope ensures that Mixer gets de-initialized after all sounds by being before the sounds
+  SoundScope soundScope;
+  Sound laserSound;
   
   public:
   
