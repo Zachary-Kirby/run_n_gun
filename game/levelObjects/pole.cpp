@@ -12,7 +12,12 @@
 
 void Pole::update(float delta)
 {
-  
+  if (delta >= 1.0f/60.0f)
+  {
+    update(delta/2.0f);
+    update(delta/2.0f);
+    return;
+  }
   auto preEndPoint = glm::vec2(pivotX + std::cos(angle)*length, pivotY + std::sin(angle)*length);
   
   angle += angularVelocity*delta;
@@ -21,31 +26,36 @@ void Pole::update(float delta)
   
   if (engine->player.hitbox.collide(endPoint) && engine->player.velocity.y >= 0.0f)
   {
-    if (angle+3.14159f/2.0f>0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*200.0f*delta;
-    if (angle+3.14159f/2.0f<0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*200.0f*delta;
+    if (angle+3.14159f/2.0f>0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*300.0f*delta;
+    if (angle+3.14159f/2.0f<0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*300.0f*delta;
     angularVelocity += -engine->player.velocity.x/length*delta*60.0f;
     if (abs(angle+3.14159f/2.0f) < 3.14159f/8.0f)
     {
       angularVelocity += -engine->player.velocity.x/length*delta*60.0f;
-      angularVelocity *= 1.0f;
     }
     angularVelocity = std::min(std::max(angularVelocity, -3.14159f), 3.14159f);
     engine->player.velocity.y = std::min(engine->player.velocity.y, 0.0f);
     engine->player.hitbox.y = endPoint.y-engine->player.hitbox.h;
     engine->player.grounded = true;
   }
-  else
+  
   {
     angularVelocity -= std::sin(angle+3.14159f/2.0f)*delta*200.0f;
-    angularVelocity = angularVelocity * 0.99;
+    // angularVelocity = angularVelocity * 0.99;
+    bool angularVelocitySign = std::copysignf(1.0f, angularVelocity);
+    angularVelocity = angularVelocity - std::copysignf(delta, angularVelocity);
+    if (angularVelocitySign != std::copysignf(1.0f, angularVelocity))
+    {
+      //angularVelocity = angularVelocity * 0.99f;
+    }
   }
   endPoint = glm::vec2(pivotX + std::cos(angle)*length, pivotY + std::sin(angle)*length);
   auto dif = endPoint - preEndPoint;
   if (
-    engine->player.hitbox.x+ engine->player.hitbox.w>endPoint.x && 
-    engine->player.hitbox.x < endPoint.x && 
-    engine->player.hitbox.y < endPoint.y && 
-    engine->player.hitbox.y > endPoint.y-18)
+    engine->player.hitbox.x+ engine->player.hitbox.w+4>preEndPoint.x && 
+    engine->player.hitbox.x-4 < preEndPoint.x && 
+    engine->player.hitbox.y < preEndPoint.y && 
+    engine->player.hitbox.y > preEndPoint.y-20)
   {
     if (engine->player.velocity.y > 0)
     {

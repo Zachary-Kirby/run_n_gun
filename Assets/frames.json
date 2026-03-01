@@ -37,25 +37,79 @@
    },
    {
     "filename": "EnergyBar_Health:0",
-    "frame": { "x": 32, "y": 0, "w": 4, "h": 8 },
+    "frame": { "x": 32, "y": 0, "w": 5, "h": 8 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 4, "h": 8 },
-    "sourceSize": { "w": 4, "h": 8 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 5, "h": 8 },
+    "sourceSize": { "w": 5, "h": 8 },
     "duration": 100
    },
    {
     "filename": "EnergyBar_Health:1",
-    "frame": { "x": 36, "y": 0, "w": 4, "h": 8 },
+    "frame": { "x": 37, "y": 0, "w": 5, "h": 8 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 4, "h": 8 },
-    "sourceSize": { "w": 4, "h": 8 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 5, "h": 8 },
+    "sourceSize": { "w": 5, "h": 8 },
+    "duration": 100
+   },
+   {
+    "filename": "PayerDeathParticle_:0",
+    "frame": { "x": 42, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "PayerDeathParticle_:1",
+    "frame": { "x": 58, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "PayerDeathParticle_:2",
+    "frame": { "x": 74, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "PayerDeathParticle_:3",
+    "frame": { "x": 90, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "PayerDeathParticle_:4",
+    "frame": { "x": 106, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "PayerDeathParticle_:5",
+    "frame": { "x": 122, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
     "duration": 100
    },
    {
     "filename": "Player_Idle:0",
-    "frame": { "x": 40, "y": 0, "w": 16, "h": 16 },
+    "frame": { "x": 138, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -64,7 +118,7 @@
    },
    {
     "filename": "Player_Air:0",
-    "frame": { "x": 56, "y": 0, "w": 16, "h": 16 },
+    "frame": { "x": 154, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -73,7 +127,7 @@
    },
    {
     "filename": "Player_Run:0",
-    "frame": { "x": 72, "y": 0, "w": 16, "h": 16 },
+    "frame": { "x": 170, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -82,7 +136,7 @@
    },
    {
     "filename": "Player_Run:1",
-    "frame": { "x": 88, "y": 0, "w": 16, "h": 16 },
+    "frame": { "x": 186, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -91,7 +145,7 @@
    },
    {
     "filename": "Player_Run:2",
-    "frame": { "x": 104, "y": 0, "w": 16, "h": 16 },
+    "frame": { "x": 202, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
@@ -100,7 +154,7 @@
    },
    {
     "filename": "Player_Run:3",
-    "frame": { "x": 120, "y": 0, "w": 16, "h": 16 },
+    "frame": { "x": 218, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },

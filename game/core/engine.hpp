@@ -14,6 +14,7 @@
 #include "bullet.hpp"
 #include "pole.hpp"
 #include "sound.hpp"
+#include "particle.hpp"
 
 class Engine {
   SDL_GLContext context;
@@ -50,6 +51,7 @@ class Engine {
   std::vector<Bird> birds;
   std::vector<Pole> poles;
   std::vector<Bullet> bullets;
+  std::vector<Particle> particles;
   glm::vec2 camera {.0f, 50.0f};
   
   glm::vec2 aimPoint = {.0f, .0f}; //used for player shooting

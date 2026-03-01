@@ -32,6 +32,7 @@ Engine::Engine()
 void Engine::init()
 {
   player.init(
+    this,
     {0, 0}, //Position
     16, 16, //Hitbox
     {rendererGL.spriteAnimations.getFrame("Player_Idle", 0)},//Sprite
@@ -64,7 +65,7 @@ void Engine::init()
     if (point.type == "pole")
     {
       int length = std::stoi(point.parameters);
-      poles.emplace_back(this, (SDL_FRect){32, 0, 8, 24}, point.x, point.y+length/2, length);
+      poles.emplace_back(this, (SDL_FRect){32, 0, 8, 24}, point.x, point.y+length, length);
     }
   }
   
@@ -96,6 +97,20 @@ void Engine::run()
       pole.update(delta);
     }
     
+    
+    for (auto it = particles.begin(); it!=particles.end();)
+    {
+      Particle& particle = *it;
+      particle.update(delta);
+      if (particle.lifetime < 0.0f)
+      {
+        particles.erase(it);
+      }
+      else
+      {
+        it++;
+      }
+    }
     
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update(delta);
@@ -196,6 +211,20 @@ void Engine::run()
     for (auto bird : birds)
     {
       if (bird.active) bird.draw(&rendererGL, camera);
+    }
+    
+    for (Particle& particle: particles)
+    {
+      particle.draw(&rendererGL, camera, second);
+    }
+    
+    Sprite playerHealthBox = rendererGL.spriteAnimations.getFrame("EnergyBar_Health", 0);
+    for (int x = 0; x < player.maxHealth*(playerHealthBox.src.w-1); x=x+playerHealthBox.src.w-1)
+    {
+      if (player.health <= x/(playerHealthBox.src.w-1))
+        playerHealthBox.setDefinition(rendererGL.spriteAnimations.getFrame("EnergyBar_Health", 1));
+      playerHealthBox.setPostion(x%80+4, (x/80)*playerHealthBox.src.h+8);
+      playerHealthBox.draw(&rendererGL);
     }
     
     rendererGL.atlasTexture.bind();
@@ -338,6 +367,7 @@ void Engine::input()
     {
       if (event.button.button == SDL_BUTTON_LEFT)
       {
+        player.drainHealth();
         laserSound.play(0);
         bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*320.0f, aimPoint.y*320.0f}});
       }

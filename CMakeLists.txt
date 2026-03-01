@@ -104,6 +104,7 @@ if (AUTO_BUILD_SPRITES)
     Player
     EnergyBar
     Bird
+    PayerDeathParticle
   )
 
   list(TRANSFORM SPRITE_NAMES APPEND ".aseprite")

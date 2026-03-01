@@ -8,10 +8,10 @@ class Sprite
 {
   //Sprite class to handle sprite drawing
   //It doesn't handle the texture lifecycle
-  SDL_FRect src;
-  SDL_FRect dst;
   int scale;
-public:
+  public:
+  SDL_FRect dst;
+  SDL_FRect src;
   
   Sprite();
   

@@ -7,6 +7,7 @@
 #include "renderer.hpp"
 #include "player.hpp"
 #include "SDL_mixer.h"
+#include "engine.hpp"
 
 Player::Player()
 {
@@ -15,8 +16,9 @@ Player::Player()
   velocity = {0, 0};
 }
 
-void Player::init(glm::vec2 pos, int hitboxWidth, int hitboxHeight, Sprite isprite, glm::ivec2 spriteOffset)
+void Player::init(Engine* theEngine, glm::vec2 pos, int hitboxWidth, int hitboxHeight, Sprite isprite, glm::ivec2 spriteOffset)
 {
+  engine = theEngine;
   hitbox.x = pos.x; hitbox.y = pos.y;
   hitbox.w = hitboxWidth;
   hitbox.h = hitboxHeight;
@@ -51,8 +53,39 @@ void Player::jumpLetGo()
   }
 }
 
+void Player::dealDamage()
+{
+  health -= 1;
+}
+
+void Player::drainHealth()
+{
+  if (health > 1)
+    health -= 1;
+}
+
+void Player::deathAnimation()
+{
+  auto& particles = engine->particles;
+  particles.push_back(Particle({hitbox.x, hitbox.y}, "PayerDeathParticle_", 1.0f, {128.0f, 0.0f}));
+  particles.push_back(Particle({hitbox.x, hitbox.y}, "PayerDeathParticle_", 1.0f, {-128.0f, 0.0f}));
+  particles.push_back(Particle({hitbox.x, hitbox.y}, "PayerDeathParticle_", 1.0f, {0.0f, 128.0f}));
+  particles.push_back(Particle({hitbox.x, hitbox.y}, "PayerDeathParticle_", 1.0f, {0.0f, -128.0f}));
+
+  particles.push_back(Particle({hitbox.x, hitbox.y}, "PayerDeathParticle_", 1.0f, glm::vec2{128.0f, 128.0f}*0.707f));
+  particles.push_back(Particle({hitbox.x, hitbox.y}, "PayerDeathParticle_", 1.0f, glm::vec2{-128.0f, -128.0f}*0.707f));
+  particles.push_back(Particle({hitbox.x, hitbox.y}, "PayerDeathParticle_", 1.0f, glm::vec2{-128.0f, 128.0f}*0.707f));
+  particles.push_back(Particle({hitbox.x, hitbox.y}, "PayerDeathParticle_", 1.0f, glm::vec2{128.0f, -128.0f}*0.707f));
+}
+
 void Player::update(Level &level, float delta)
 {
+  if (healthRegenTimer <= 0)
+  {
+    healthRegenTimer = 1.0f;
+    health = std::min(health+1, maxHealth);
+  }
+  healthRegenTimer -= delta;
   int collisionMask = 0b00000;
   if (controlStickY > 0.0f) collisionMask = 0b00010;
   for (int i=0; i<2; i++)
