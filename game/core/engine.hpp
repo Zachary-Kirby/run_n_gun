@@ -36,6 +36,7 @@ class Engine {
   SoundScope soundScope;
   Sound laserSound;
   Sound explodeiateSound;
+  Sound robotHurtSound;
   Music song1;
   
   

@@ -12,8 +12,9 @@ class Player{
   glm::ivec2 spriteOffset;
   Engine* engine;
   public:
-  int health = 40;
-  int maxHealth = 40;
+  float invincibilityTime = 0.0f;
+  int maxHealth = 20;
+  int health = maxHealth;
   bool grounded = false;
   float healthRegenTimer = 0.0f;
   Sprite sprite;

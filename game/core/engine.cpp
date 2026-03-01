@@ -41,6 +41,7 @@ void Engine::init()
   
   laserSound.init("Assets/sounds/laserShoot.wav");
   explodeiateSound.init("Assets/sounds/explodiate.wav");
+  robotHurtSound.init("Assets/sounds/robotHurt.wav");
   //song1.init("Assets/sounds/JourneyToKaizo.ogg");
   song1.init("Assets/sounds/AirJourney.wav");
   

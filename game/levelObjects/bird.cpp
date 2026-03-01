@@ -56,6 +56,10 @@ void Bird::init(Sprite sprite, glm::vec2 position)
 void Bird::update(float delta)
 {
   if (!active) return;
+  if (hitbox.collide(engine->player.hitbox))
+  {
+    engine->player.dealDamage();
+  }
   for (auto it = engine->bullets.begin(); it != engine->bullets.end(); it++)
   {
     Bullet& bullet = *it;

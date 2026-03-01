@@ -55,7 +55,12 @@ void Player::jumpLetGo()
 
 void Player::dealDamage()
 {
-  health -= 1;
+  if (invincibilityTime < 0.0f)
+  {
+    engine->robotHurtSound.play(1);
+    health -= 4;
+    invincibilityTime = 1.0f;
+  }
 }
 
 void Player::drainHealth()
@@ -86,6 +91,7 @@ void Player::update(Level &level, float delta)
     health = std::min(health+1, maxHealth);
   }
   healthRegenTimer -= delta;
+  invincibilityTime -= delta;
   int collisionMask = 0b00000;
   if (controlStickY > 0.0f) collisionMask = 0b00010;
   for (int i=0; i<2; i++)
@@ -143,5 +149,10 @@ void Player::draw(Renderer *renderer, glm::vec2 camera, float second)
       sprite.setDefinition(renderer->spriteAnimations.getFrame("Player_Idle", 0, facingLeft));
     }
   sprite.setPostion(hitbox.x+spriteOffset.x-camera.x, hitbox.y+spriteOffset.y-camera.y);
-  sprite.draw(renderer);
+  
+  if (invincibilityTime < 0.0f || (int)(invincibilityTime*30.0f) % 2 == 0)
+  {
+    sprite.draw(renderer);
+  }
+  
 }
