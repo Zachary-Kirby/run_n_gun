@@ -12,6 +12,15 @@ public:
   
 };
 
+class Music
+{
+  Mix_Music* data = nullptr;
+public:
+  void init(const char* musicFilePath);
+  void play(int loops = -1);
+  ~Music();
+};
+
 class SoundScope
 {
 public:

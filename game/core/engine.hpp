@@ -33,6 +33,7 @@ class Engine {
   //Sound Scope ensures that Mixer gets de-initialized after all sounds by being before the sounds
   SoundScope soundScope;
   Sound laserSound;
+  Music song1;
   
   public:
   

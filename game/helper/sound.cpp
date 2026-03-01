@@ -19,3 +19,22 @@ Sound::~Sound()
 {
   Mix_FreeChunk(data);
 }
+
+void Music::init(const char *musicFilePath)
+{
+  data = Mix_LoadMUS(musicFilePath);
+  if (!data)
+  {
+    std::cerr << "music didn't load: " << musicFilePath;
+  }
+}
+
+void Music::play(int loops)
+{
+  Mix_PlayMusic(data, loops);
+}
+
+Music::~Music()
+{
+  Mix_FreeMusic(data);
+}

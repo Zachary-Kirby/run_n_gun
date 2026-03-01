@@ -15,7 +15,8 @@ Engine::Engine()
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
   Mix_Init(MIX_INIT_OGG);
   Mix_OpenAudio(48000, AUDIO_S16, 1, 2048);
-  Mix_Volume(0, 32);
+  Mix_Volume(0, 8);
+  Mix_VolumeMusic(8);
   Mix_AllocateChannels(8);
   window = SDL_CreateWindow("Run And Gun!", SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2), 640, 640*9/16, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   context = SDL_GL_CreateContext(window);
@@ -37,8 +38,10 @@ void Engine::init()
     {0, 0} //Sprite Offset
   );
   
-  laserSound.init("Assets/sounds/random.wav");
+  laserSound.init("Assets/sounds/laserShoot.wav");
+  song1.init("Assets/sounds/JourneyToKaizo.ogg");
   
+  song1.play();
   level.init(atlas);
   level.load("good.lvl");
   for (auto point : level.points)
