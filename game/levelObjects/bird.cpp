@@ -67,6 +67,7 @@ void Bird::update(float delta)
       {
         state = BirdState::DEAD;
         active = false; //TODO temporary until death animation is added
+        engine->explodeiateSound.play();
       }
     }
   }

@@ -39,7 +39,9 @@ void Engine::init()
   );
   
   laserSound.init("Assets/sounds/laserShoot.wav");
-  song1.init("Assets/sounds/JourneyToKaizo.ogg");
+  explodeiateSound.init("Assets/sounds/explodiate.wav");
+  //song1.init("Assets/sounds/JourneyToKaizo.ogg");
+  song1.init("Assets/sounds/AirJourney.wav");
   
   song1.play();
   level.init(atlas);
@@ -54,7 +56,8 @@ void Engine::init()
     if (point.type == "bird")
     {
       
-      Sprite birdSprite{0, 7*8, 8, 8, 1};
+      
+      Sprite birdSprite{rendererGL.spriteAnimations.getFrame("Bird_Flying", 0)};
       birds.emplace_back(this, birdSprite, glm::vec2(point.x, point.y));
       point.active = false; // too lazy to just remove the point from the vector. Honestly it would be better as a linked list probably
     }
@@ -108,6 +111,7 @@ void Engine::run()
     proj = glm::ortho(0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight, 0.0f, -1.0f, 1.0f);
     rendererGL.setProjectionMatrix(proj);
     
+    //TODO make the background layers swappable in some way
     { // Sky gradient
       float r1 =  99.0f/255.0f;
       float g1 = 155.0f/255.0f;
@@ -121,7 +125,7 @@ void Engine::run()
       RenderRect(&rendererGL, 0, 0, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight);
       SetColor(&rendererGL, 1.0f, 1.0f, 1.0f, 1.0f);
     }
-
+    
     
     {// Clouds Layer 1
       //TODO cache and save uniform locations in the renderer class instead of looking them up every time
@@ -181,23 +185,24 @@ void Engine::run()
         bullet.draw(&rendererGL, camera); 
         it++;
       }
-      else {it = bullets.erase(it);}
+      else {it = bullets.erase(it); }
     }
     
     rendererGL.spriteAtlas.bind();
     rendererGL.textureSize[0] = rendererGL.spriteAtlas.w;
     rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
     player.draw(&rendererGL, camera, second);
+
+    for (auto bird : birds)
+    {
+      if (bird.active) bird.draw(&rendererGL, camera);
+    }
     
     rendererGL.atlasTexture.bind();
     rendererGL.textureSize[0] = rendererGL.atlasTexture.w;
     rendererGL.textureSize[1] = rendererGL.atlasTexture.h;
     
     
-    for (auto bird : birds)
-    {
-      if (bird.active) bird.draw(&rendererGL, camera);
-    }
     RenderCircle(&rendererGL,
       (int)(player.hitbox.x+player.hitbox.w/2.0f+secretAimPoint.x*8.0f-camera.x), 
       (int)(player.hitbox.y+player.hitbox.h/2.0f+secretAimPoint.y*8.0f-camera.y),

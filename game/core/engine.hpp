@@ -31,11 +31,12 @@ class Engine {
   int windowHeight = 640*9/16;
   
   //Sound Scope ensures that Mixer gets de-initialized after all sounds by being before the sounds
+  public:
   SoundScope soundScope;
   Sound laserSound;
+  Sound explodeiateSound;
   Music song1;
   
-  public:
   
   
   //These are all used by a system, but level does not depend on any entity and is more
