@@ -31,5 +31,5 @@ class Player{
 
   void update(Level& level, float delta);
   
-  void draw(Renderer* renderer, glm::vec2 camera);
+  void draw(Renderer* renderer, glm::vec2 camera, float second);
 };

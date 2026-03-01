@@ -133,6 +133,11 @@ SpriteDefinition Animations::getAnimationFrame(const std::string &animationName,
     }
     return frame; 
   }
+  else
+  {
+    std::cerr << "ERROR: ANIMATION NOT FOUND: " << animationName << std::endl;
+    return SpriteDefinition();
+  }
 }
 
 SpriteDefinition::SpriteDefinition(FileSpriteDefinition &fileSprite)

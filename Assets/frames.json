@@ -36,12 +36,21 @@
     "duration": 100
    },
    {
-    "filename": "EnergyBar_:0",
-    "frame": { "x": 32, "y": 0, "w": 8, "h": 8 },
+    "filename": "EnergyBar_Health:0",
+    "frame": { "x": 32, "y": 0, "w": 4, "h": 8 },
     "rotated": false,
     "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 8, "h": 8 },
-    "sourceSize": { "w": 8, "h": 8 },
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 4, "h": 8 },
+    "sourceSize": { "w": 4, "h": 8 },
+    "duration": 100
+   },
+   {
+    "filename": "EnergyBar_Health:1",
+    "frame": { "x": 36, "y": 0, "w": 4, "h": 8 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 4, "h": 8 },
+    "sourceSize": { "w": 4, "h": 8 },
     "duration": 100
    },
    {
@@ -108,6 +117,7 @@
   "scale": "1",
   "frameTags": [
    { "name": "Bird_Flying", "from": 0, "to": 3, "direction": "forward", "color": "#000000ff" },
+   { "name": "EnergyBar_Health", "from": 0, "to": 1, "direction": "forward", "color": "#000000ff" },
    { "name": "Player_Idle", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
    { "name": "Player_Air", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
    { "name": "Player_Run", "from": 2, "to": 5, "direction": "forward", "color": "#000000ff" }

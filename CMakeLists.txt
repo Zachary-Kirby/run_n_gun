@@ -3,14 +3,30 @@ cmake_minimum_required(VERSION 3.12)
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}")
 
 project(rungun)
 
+include(FetchContent)
 
 #Required Dependencies
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(OpenGL REQUIRED)
+
+#Disabled some completely uneeded options
+set(SDL2MIXER_OPUS OFF)
+set(SDL2MIXER_MOD_XMP OFF)
+set(SDL2MIXER_MOD OFF)
+set(SDL2MIXER_MIDI_FLUIDSYNTH OFF)
+set(SDL2MIXER_WAVPACK OFF)
+FetchContent_Declare(
+  SDL2_mixer
+  GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+  GIT_TAG 171eb2d420d5643e4ee11514a06e04a41a463bbd
+  EXCLUDE_FROM_ALL
+)
+FetchContent_MakeAvailable(SDL2_mixer)
 
 #Optional Dependencies
 #Check if Aseprite and Python is available to auto-rebuild sprite definitions
@@ -33,12 +49,15 @@ endif()
 
 
 
+#add_subdirectory("${CMAKE_SOURCE_DIR}/libs/SDL2_mixer-2.8.1/" EXCLUDE_FROM_ALL)
+
+
 #Shared Library for Game and Editor
 add_library(rungun_shared STATIC
   shared/levelObjects.cpp
 )
 #It makes it easier to share SDL with the rest of the project
-target_link_libraries(rungun_shared PUBLIC SDL2::SDL2 SDL2_image::SDL2_image)
+target_link_libraries(rungun_shared PUBLIC SDL2::SDL2 SDL2_image::SDL2_image SDL2_mixer::SDL2_mixer)
 target_include_directories(rungun_shared PUBLIC shared)
 target_include_directories(rungun_shared PUBLIC libs/glm)
 

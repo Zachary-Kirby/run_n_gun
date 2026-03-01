@@ -95,8 +95,20 @@ void Player::update(Level &level, float delta)
   
 }
 
-void Player::draw(Renderer *renderer, glm::vec2 camera)
+void Player::draw(Renderer *renderer, glm::vec2 camera, float second)
 {
+    if (!grounded)
+    {
+      sprite.setDefinition(renderer->spriteAnimations.getFrame("Player_Air", 0, facingLeft, false));
+    }
+    else if (std::abs(velocity.x) > 0.1f)
+    {
+      sprite.setDefinition(renderer->spriteAnimations.getAnimationFrame("Player_Run", second, facingLeft, false));
+    }
+    else
+    {
+      sprite.setDefinition(renderer->spriteAnimations.getFrame("Player_Idle", 0, facingLeft));
+    }
   sprite.setPostion(hitbox.x+spriteOffset.x-camera.x, hitbox.y+spriteOffset.y-camera.y);
   sprite.draw(renderer);
 }

@@ -23,12 +23,6 @@ Engine::Engine()
 
 void Engine::init()
 {
-  //atlas = IMG_LoadTexture(rendererSDL, "Assets/Atlas.png");
-  //if (!atlas)
-  //{
-  //  std::cerr << "Failed to load atlas: " << IMG_GetError() << std::endl;
-  //  exit(1);
-  //}
   player.init(
     {0, 0}, //Position
     16, 16, //Hitbox
@@ -59,10 +53,6 @@ void Engine::init()
     }
   }
   
-  //gameplayDrawTexture = SDL_CreateTexture(rendererSDL, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_TARGET, gameplayDrawWidth, gameplayDrawHeight);
-  //background = IMG_LoadTexture(rendererSDL, "Assets/Background1.png");
-  //clouds = IMG_LoadTexture(rendererSDL, "Assets/clouds.png");
-  //SDL_QueryTexture(background, NULL, NULL, &backgroundWidth, &backgroundHeight);
 }
 
 void Engine::run()
@@ -91,18 +81,6 @@ void Engine::run()
       pole.update(delta);
     }
     
-    if (!player.grounded)
-    {
-      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Air", 0, player.facingLeft, false));
-    }
-    else if (std::abs(player.velocity.x) > 0.1f)
-    {
-      player.sprite.setDefinition(rendererGL.spriteAnimations.getAnimationFrame("Player_Run", second, player.facingLeft, false));
-    }
-    else
-    {
-      player.sprite.setDefinition(rendererGL.spriteAnimations.getFrame("Player_Idle", 0, player.facingLeft));
-    }
     
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update(delta);
@@ -197,7 +175,7 @@ void Engine::run()
     rendererGL.spriteAtlas.bind();
     rendererGL.textureSize[0] = rendererGL.spriteAtlas.w;
     rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
-    player.draw(&rendererGL, camera);
+    player.draw(&rendererGL, camera, second);
     
     rendererGL.atlasTexture.bind();
     rendererGL.textureSize[0] = rendererGL.atlasTexture.w;
