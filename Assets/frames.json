@@ -164,7 +164,7 @@
  ],
  "meta": {
   "app": "http://www.aseprite.org/",
-  "version": "1.3.16.1-x64",
+  "version": "1.3.16.1-dev",
   "image": "sprites.png",
   "format": "RGBA8888",
   "size": { "w": 256, "h": 256 },

@@ -26,8 +26,7 @@ void Pole::update(float delta)
   
   if (engine->player.hitbox.collide(endPoint) && engine->player.velocity.y >= 0.0f)
   {
-    if (angle+3.14159f/2.0f>0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*300.0f*delta;
-    if (angle+3.14159f/2.0f<0) angularVelocity+=std::sin(angle+3.14159f/2.0f)*300.0f*delta;
+    angularVelocity+=std::sin(angle+3.14159f/2.0f)*600.0f*delta;
     angularVelocity += -engine->player.velocity.x/length*delta*60.0f;
     if (abs(angle+3.14159f/2.0f) < 3.14159f/8.0f)
     {
@@ -43,11 +42,7 @@ void Pole::update(float delta)
     angularVelocity -= std::sin(angle+3.14159f/2.0f)*delta*200.0f;
     // angularVelocity = angularVelocity * 0.99;
     bool angularVelocitySign = std::copysignf(1.0f, angularVelocity);
-    angularVelocity = angularVelocity - std::copysignf(delta, angularVelocity);
-    if (angularVelocitySign != std::copysignf(1.0f, angularVelocity))
-    {
-      //angularVelocity = angularVelocity * 0.99f;
-    }
+    angularVelocity = angularVelocity - std::copysignf(delta*2.0f, angularVelocity);
   }
   endPoint = glm::vec2(pivotX + std::cos(angle)*length, pivotY + std::sin(angle)*length);
   auto dif = endPoint - preEndPoint;
