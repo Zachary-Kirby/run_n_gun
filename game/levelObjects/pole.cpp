@@ -6,6 +6,7 @@
  * meaning that either the code is in the main loop or I need something more special...
  * A player move needs to know that a pole platform is something that is can collide with?
  * I could try the naive approach of just moving the player up if it is colliding
+ * The solution I did kinda just hacks away the problem by just moving the player directly.
  * */
 
 #include <cmath>

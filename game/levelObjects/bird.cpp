@@ -23,6 +23,7 @@ Bird::Bird(const Bird &bird)
   active = bird.active;
   hitbox = bird.hitbox;
   health = bird.health;
+  state = bird.state;
   sprite = Sprite(bird.sprite);
 }
 
@@ -32,6 +33,7 @@ Bird &Bird::operator=(const Bird &other)
   active = other.active;
   this->sprite = other.sprite;
   this->hitbox = other.hitbox;
+  this->state = other.state;
   health = other.health;
   return *this;
 }
@@ -91,6 +93,7 @@ void Bird::update(float delta)
     }
     break;
   case BirdState::SWOOPLOW:
+  case BirdState::SWOOPHIGH:
     swoopProgress += delta;
     hitbox = swoop(swoopStartPos.x, swoopStartPos.y, swoopTargetPos.x, swoopTargetPos.y, swoopProgress);
     //check if bird got so far past the player on the other side of the start pos
@@ -125,10 +128,33 @@ void Bird::update(float delta)
   default:
     break;
   }
+  //debug the state
+  if (state == BirdState::SWOOPLOW || state == BirdState::SWOOPHIGH)
+    std::cout << "state: " << (int)state << std::endl;
 }
 
-void Bird::draw(Renderer *renderer, glm::vec2 camera)
+void Bird::draw(Renderer *renderer, glm::vec2 camera, float time)
 {
+  const char* stateNames[] = {"STATIC", "SWOOPLOW", "SWOOPHIGH", "RECOVER", "FOLLOW", "DEAD"};
+  if (hitbox.centerX() - camera.x < -16 || hitbox.centerX() - camera.x > renderer->gameplayDrawWidth + 16)
+    return;
+  std::cout << "state: " << stateNames[(int)state] << std::endl;
+  switch (state)
+  {
+  case BirdState::STATIC:
+  case BirdState::FOLLOW:
+  sprite.setDefinition(renderer->spriteAnimations.getAnimationFrame("Bird_Flying", time, engine->player.hitbox.centerX() > hitbox.centerX(), false));
+  break;
+  case BirdState::RECOVER:
+  case BirdState::SWOOPLOW:
+  case BirdState::SWOOPHIGH:
+    std::cout << "ran" << std::endl;
+    sprite.setDefinition(renderer->spriteAnimations.getFrame("Bird_Flying", 3, swoopTargetPos.x > swoopStartPos.x, false));
+    break;
+  case BirdState::DEAD:
+  default:
+    break; //TODO add death animation
+  }
   sprite.setPostion(hitbox.x-camera.x, hitbox.y-camera.y);
   sprite.draw(renderer);
 }

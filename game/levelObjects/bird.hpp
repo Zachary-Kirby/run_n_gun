@@ -38,5 +38,5 @@ public:
   
   void init(Sprite sprite, glm::vec2 position);
   void update(float delta);
-  void draw(Renderer* renderer, glm::vec2 camera);
+  void draw(Renderer* renderer, glm::vec2 camera, float time);
 };

@@ -209,9 +209,9 @@ void Engine::run()
     rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
     player.draw(&rendererGL, camera, second);
 
-    for (auto bird : birds)
+    for (auto& bird : birds)
     {
-      if (bird.active) bird.draw(&rendererGL, camera);
+      if (bird.active) bird.draw(&rendererGL, camera, second);
     }
     
     for (Particle& particle: particles)
