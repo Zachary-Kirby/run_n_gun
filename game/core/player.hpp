@@ -12,6 +12,8 @@ class Player{
   glm::ivec2 spriteOffset;
   Engine* engine;
   public:
+  float deathBarrierY = 512.0f; //default, but can be changed for different levels
+  glm::vec2 lastSafePosition{0.0f, 0.0f};
   float invincibilityTime = 0.0f;
   int maxHealth = 20;
   int health = maxHealth;

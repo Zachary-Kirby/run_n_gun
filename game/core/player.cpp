@@ -20,6 +20,7 @@ void Player::init(Engine* theEngine, glm::vec2 pos, int hitboxWidth, int hitboxH
 {
   engine = theEngine;
   hitbox.x = pos.x; hitbox.y = pos.y;
+  lastSafePosition = pos;     
   hitbox.w = hitboxWidth;
   hitbox.h = hitboxHeight;
   sprite.init(isprite);
@@ -100,54 +101,55 @@ void Player::update(Level &level, float delta)
     hitbox = collision.position;
     if (collision.cancelVec.x != 0) velocity.x = 0;
     if (collision.cancelVec.y != 0) velocity.y = 0;
-    if (collision.cancelVec.y > 0) grounded = true;
+    if (collision.cancelVec.y > 0) {
+      grounded = true;
+      lastSafePosition = hitbox.topleft();
+    }
     if (velocity.y > 0.0f) grounded = false;
   }
-  if (velocity.x < 0.0f) facingLeft = true;
-  if (velocity.x > 0.0f) facingLeft = false;
-  if (std::abs(controlStickX) < deadzone)
-  {
-    if (std::abs(velocity.x*delta) >= 100.0f)
-    {
-      velocity.x = velocity.x - std::copysignf(0.4f*5000.0f, velocity.x) * delta;
-    }
-    else
-    {
-      velocity.x = 0;
-    }
-  }
-  else
-  {
-    
-  //keep the player from accelerating more than a certain amount while not capping velocity from other sources
-  float cap = 0.7f*0.75f*250.0f;
-  if (controlStickX > 0.0f && velocity.x < cap){velocity.x = std::min(velocity.x+controlStickX*1600.0f*delta, cap);}
-  if (controlStickX < 0.0f && velocity.x > -cap){velocity.x = std::max(velocity.x+controlStickX*1600.0f*delta, -cap);}
+  if (controlStickX < 0.0f) facingLeft = true;
+  if (controlStickX > 0.0f) facingLeft = false;
   
-  //velocity.x += controlStickX * 0.02f;
-    
+  velocity.x = velocity.x - std::copysignf(std::min(0.4f*2000.0f * delta, std::abs(velocity.x)), velocity.x) ;
+  
+  if (std::abs(controlStickX) > deadzone)
+  {
+    //keep the player from accelerating more than a certain amount while not capping velocity from other sources
+    float cap = 0.7f*0.75f*250.0f;
+    if (controlStickX > 0.0f && velocity.x < cap){velocity.x = std::min(velocity.x+controlStickX*1600.0f*delta, cap);}
+    if (controlStickX < 0.0f && velocity.x > -cap){velocity.x = std::max(velocity.x+controlStickX*1600.0f*delta, -cap);}
   }
   
+  if (health <= 0)
+  {
+    deathAnimation();
+    //TODO instead of respawning at last safe position, respawn at a checkpoint or something
+    health = maxHealth;
+    hitbox = lastSafePosition;
+  }
   velocity += glm::vec2(0.0f, 800.0f) * delta;
-  
-  
+  if (hitbox.y > deathBarrierY)
+  {
+    hitbox = lastSafePosition;
+    dealDamage(8);
+  }
   
 }
 
 void Player::draw(Renderer *renderer, glm::vec2 camera, float second)
 {
-    if (!grounded)
-    {
-      sprite.setDefinition(renderer->spriteAnimations.getFrame("Player_Air", 0, facingLeft, false));
-    }
-    else if (std::abs(velocity.x) > 0.1f)
-    {
-      sprite.setDefinition(renderer->spriteAnimations.getAnimationFrame("Player_Run", second, facingLeft, false));
-    }
-    else
-    {
-      sprite.setDefinition(renderer->spriteAnimations.getFrame("Player_Idle", 0, facingLeft));
-    }
+  if (!grounded)
+  {
+    sprite.setDefinition(renderer->spriteAnimations.getFrame("Player_Air", 0, facingLeft, false));
+  }
+  else if (std::abs(controlStickX) > 0.1f)
+  {
+    sprite.setDefinition(renderer->spriteAnimations.getAnimationFrame("Player_Run", second, facingLeft, false));
+  }
+  else
+  {
+    sprite.setDefinition(renderer->spriteAnimations.getFrame("Player_Idle", 0, facingLeft));
+  }
   sprite.setPostion(hitbox.x+spriteOffset.x-camera.x, hitbox.y+spriteOffset.y-camera.y);
   
   if (invincibilityTime < 0.0f || (int)(invincibilityTime*30.0f) % 2 == 0)

@@ -107,6 +107,7 @@ if (AUTO_BUILD_SPRITES)
     Bird
     PayerDeathParticle
     WimdyBird
+    BulletFrog
   )
 
   list(TRANSFORM SPRITE_NAMES APPEND ".aseprite")

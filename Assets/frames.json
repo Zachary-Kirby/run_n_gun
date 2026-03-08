@@ -36,8 +36,44 @@
     "duration": 50
    },
    {
+    "filename": "BulletFrog_Idle:0",
+    "frame": { "x": 32, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "BulletFrog_Shoot:0",
+    "frame": { "x": 48, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "BulletFrog_Up:0",
+    "frame": { "x": 64, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "BulletFrog_Down:0",
+    "frame": { "x": 80, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
     "filename": "EnergyBar_Health:0",
-    "frame": { "x": 32, "y": 0, "w": 5, "h": 8 },
+    "frame": { "x": 96, "y": 0, "w": 5, "h": 8 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 5, "h": 8 },
@@ -46,7 +82,7 @@
    },
    {
     "filename": "EnergyBar_Health:1",
-    "frame": { "x": 37, "y": 0, "w": 5, "h": 8 },
+    "frame": { "x": 101, "y": 0, "w": 5, "h": 8 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 5, "h": 8 },
@@ -55,42 +91,6 @@
    },
    {
     "filename": "PayerDeathParticle_:0",
-    "frame": { "x": 42, "y": 0, "w": 16, "h": 16 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
-    "sourceSize": { "w": 16, "h": 16 },
-    "duration": 100
-   },
-   {
-    "filename": "PayerDeathParticle_:1",
-    "frame": { "x": 58, "y": 0, "w": 16, "h": 16 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
-    "sourceSize": { "w": 16, "h": 16 },
-    "duration": 100
-   },
-   {
-    "filename": "PayerDeathParticle_:2",
-    "frame": { "x": 74, "y": 0, "w": 16, "h": 16 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
-    "sourceSize": { "w": 16, "h": 16 },
-    "duration": 100
-   },
-   {
-    "filename": "PayerDeathParticle_:3",
-    "frame": { "x": 90, "y": 0, "w": 16, "h": 16 },
-    "rotated": false,
-    "trimmed": false,
-    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
-    "sourceSize": { "w": 16, "h": 16 },
-    "duration": 100
-   },
-   {
-    "filename": "PayerDeathParticle_:4",
     "frame": { "x": 106, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -99,7 +99,7 @@
     "duration": 100
    },
    {
-    "filename": "PayerDeathParticle_:5",
+    "filename": "PayerDeathParticle_:1",
     "frame": { "x": 122, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -108,7 +108,7 @@
     "duration": 100
    },
    {
-    "filename": "Player_Idle:0",
+    "filename": "PayerDeathParticle_:2",
     "frame": { "x": 138, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -117,7 +117,7 @@
     "duration": 100
    },
    {
-    "filename": "Player_Air:0",
+    "filename": "PayerDeathParticle_:3",
     "frame": { "x": 154, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -126,7 +126,7 @@
     "duration": 100
    },
    {
-    "filename": "Player_Run:0",
+    "filename": "PayerDeathParticle_:4",
     "frame": { "x": 170, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -135,7 +135,7 @@
     "duration": 100
    },
    {
-    "filename": "Player_Run:1",
+    "filename": "PayerDeathParticle_:5",
     "frame": { "x": 186, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -144,7 +144,7 @@
     "duration": 100
    },
    {
-    "filename": "Player_Run:2",
+    "filename": "Player_Idle:0",
     "frame": { "x": 202, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -153,7 +153,7 @@
     "duration": 100
    },
    {
-    "filename": "Player_Run:3",
+    "filename": "Player_Air:0",
     "frame": { "x": 218, "y": 0, "w": 16, "h": 16 },
     "rotated": false,
     "trimmed": false,
@@ -162,8 +162,44 @@
     "duration": 100
    },
    {
+    "filename": "Player_Run:0",
+    "frame": { "x": 234, "y": 0, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "Player_Run:1",
+    "frame": { "x": 0, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "Player_Run:2",
+    "frame": { "x": 16, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
+    "filename": "Player_Run:3",
+    "frame": { "x": 32, "y": 16, "w": 16, "h": 16 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 16, "h": 16 },
+    "sourceSize": { "w": 16, "h": 16 },
+    "duration": 100
+   },
+   {
     "filename": "WimdyBird_Idle:0",
-    "frame": { "x": 0, "y": 16, "w": 32, "h": 32 },
+    "frame": { "x": 48, "y": 16, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
@@ -172,7 +208,7 @@
    },
    {
     "filename": "WimdyBird_Flap:0",
-    "frame": { "x": 32, "y": 16, "w": 32, "h": 32 },
+    "frame": { "x": 80, "y": 16, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
@@ -181,7 +217,7 @@
    },
    {
     "filename": "WimdyBird_Flap:1",
-    "frame": { "x": 64, "y": 16, "w": 32, "h": 32 },
+    "frame": { "x": 112, "y": 16, "w": 32, "h": 32 },
     "rotated": false,
     "trimmed": false,
     "spriteSourceSize": { "x": 0, "y": 0, "w": 32, "h": 32 },
@@ -198,6 +234,10 @@
   "scale": "1",
   "frameTags": [
    { "name": "Bird_Flying", "from": 0, "to": 3, "direction": "forward", "color": "#000000ff" },
+   { "name": "BulletFrog_Idle", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
+   { "name": "BulletFrog_Shoot", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
+   { "name": "BulletFrog_Up", "from": 2, "to": 2, "direction": "forward", "color": "#000000ff" },
+   { "name": "BulletFrog_Down", "from": 3, "to": 3, "direction": "forward", "color": "#000000ff" },
    { "name": "EnergyBar_Health", "from": 0, "to": 1, "direction": "forward", "color": "#000000ff" },
    { "name": "Player_Idle", "from": 0, "to": 0, "direction": "forward", "color": "#000000ff" },
    { "name": "Player_Air", "from": 1, "to": 1, "direction": "forward", "color": "#000000ff" },
