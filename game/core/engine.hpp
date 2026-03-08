@@ -15,6 +15,7 @@
 #include "pole.hpp"
 #include "sound.hpp"
 #include "particle.hpp"
+#include "wimdybird.hpp"
 
 class Engine {
   SDL_GLContext context;
@@ -37,6 +38,8 @@ class Engine {
   Sound laserSound;
   Sound explodeiateSound;
   Sound robotHurtSound;
+  Sound ooSound;
+  Sound shortNoiseSound;
   Music song1;
   
   
@@ -50,6 +53,7 @@ class Engine {
   
   Player player;
   std::vector<Bird> birds;
+  std::vector<WimdyBird> wimdyBirds;
   std::vector<Pole> poles;
   std::vector<Bullet> bullets;
   std::vector<Particle> particles;

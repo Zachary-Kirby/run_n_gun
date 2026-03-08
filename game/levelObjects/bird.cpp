@@ -116,7 +116,7 @@ void Bird::update(float delta)
     }
     break;
   case BirdState::FOLLOW:
-    hitbox.x += std::copysignf(320.0f, player.hitbox.centerX() - hitbox.centerX()) * delta;
+    hitbox.x += std::copysignf(160.0f, player.hitbox.centerX() - hitbox.centerX()) * delta;
     if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80.0f )
     {
       swoopProgress = 0.0f;
@@ -128,9 +128,6 @@ void Bird::update(float delta)
   default:
     break;
   }
-  //debug the state
-  if (state == BirdState::SWOOPLOW || state == BirdState::SWOOPHIGH)
-    std::cout << "state: " << (int)state << std::endl;
 }
 
 void Bird::draw(Renderer *renderer, glm::vec2 camera, float time)
@@ -138,7 +135,6 @@ void Bird::draw(Renderer *renderer, glm::vec2 camera, float time)
   const char* stateNames[] = {"STATIC", "SWOOPLOW", "SWOOPHIGH", "RECOVER", "FOLLOW", "DEAD"};
   if (hitbox.centerX() - camera.x < -16 || hitbox.centerX() - camera.x > renderer->gameplayDrawWidth + 16)
     return;
-  std::cout << "state: " << stateNames[(int)state] << std::endl;
   switch (state)
   {
   case BirdState::STATIC:
@@ -148,7 +144,6 @@ void Bird::draw(Renderer *renderer, glm::vec2 camera, float time)
   case BirdState::RECOVER:
   case BirdState::SWOOPLOW:
   case BirdState::SWOOPHIGH:
-    std::cout << "ran" << std::endl;
     sprite.setDefinition(renderer->spriteAnimations.getFrame("Bird_Flying", 3, swoopTargetPos.x > swoopStartPos.x, false));
     break;
   case BirdState::DEAD:

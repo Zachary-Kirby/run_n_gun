@@ -60,6 +60,7 @@ class fRect
   fRect(float x, float y, float w, float h) : x(x), y(y), w(w), h(h)
   {}
   
+  fRect(glm::vec2 pos) : x(pos.x), y(pos.y), w(0), h(0){}
   fRect(Rect other) : x(other.x), y(other.y), w(other.w), h(other.h){}
   fRect(const Rect& other) : x(other.x), y(other.y), w(other.w), h(other.h){}
   fRect& operator=(const fRect& other) {x=other.x; y=other.y; w=other.w; h=other.h; return *this;}

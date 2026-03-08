@@ -76,6 +76,7 @@ add_executable(rungun
   game/core/renderer.cpp
   game/levelObjects/pole.cpp
   game/helper/sound.cpp
+  game/levelObjects/wimdybird.cpp
 )
 target_link_libraries(rungun rungun_shared OpenGL::GL ${CMAKE_SOURCE_DIR}/libs/libglad.a)
 target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects libs/glad)
@@ -105,6 +106,7 @@ if (AUTO_BUILD_SPRITES)
     EnergyBar
     Bird
     PayerDeathParticle
+    WimdyBird
   )
 
   list(TRANSFORM SPRITE_NAMES APPEND ".aseprite")

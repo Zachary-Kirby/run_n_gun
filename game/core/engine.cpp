@@ -15,8 +15,8 @@ Engine::Engine()
   SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO);
   Mix_Init(MIX_INIT_OGG);
   Mix_OpenAudio(48000, AUDIO_S16, 1, 2048);
-  Mix_Volume(0, 8);
-  Mix_VolumeMusic(8);
+  Mix_Volume(0, 32);
+  Mix_VolumeMusic(32);
   Mix_AllocateChannels(8);
   window = SDL_CreateWindow("Run And Gun!", SDL_WINDOWPOS_CENTERED_DISPLAY(2), SDL_WINDOWPOS_CENTERED_DISPLAY(2), 640, 640*9/16, SDL_WINDOW_SHOWN | SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
   context = SDL_GL_CreateContext(window);
@@ -42,6 +42,8 @@ void Engine::init()
   laserSound.init("Assets/sounds/laserShoot.wav");
   explodeiateSound.init("Assets/sounds/explodiate.wav");
   robotHurtSound.init("Assets/sounds/robotHurt.wav");
+  ooSound.init("Assets/sounds/oo.wav");
+  shortNoiseSound.init("Assets/sounds/shortNoise.wav");
   //song1.init("Assets/sounds/JourneyToKaizo.ogg");
   song1.init("Assets/sounds/AirJourney.wav");
   
@@ -67,6 +69,27 @@ void Engine::init()
     {
       int length = std::stoi(point.parameters);
       poles.emplace_back(this, (SDL_FRect){32, 0, 8, 24}, point.x, point.y+length, length);
+      point.active = false; // lazy again
+    }
+    if (point.type == "wimdybird")
+    {
+      Sprite birdSprite{rendererGL.spriteAnimations.getFrame("WimdyBird_Idle", 0)};
+      
+      //snap the bird to the ground below it up to a certain distance.
+      float groundY = point.y/level.tileSize*level.tileSize; //snap to the grid
+      for (int i=0; i<20; i++)
+      {
+        if (level.get(point.x/level.tileSize, groundY/level.tileSize, 1) == 0)
+        {
+          groundY = groundY + level.tileSize;
+        }
+        else
+        {
+          break;
+        }
+      }
+      wimdyBirds.emplace_back(this, birdSprite, glm::vec2(point.x, groundY - birdSprite.src.h));
+      point.active = false; // lazy again
     }
   }
   
@@ -83,6 +106,7 @@ void Engine::run()
     float second = std::chrono::duration_cast<std::chrono::milliseconds>(last_frame_time-startTime).count()/1000.0f;
     input();
     
+    //---Update---
     
     player.update(level, delta);
     { // Camera Follow
@@ -116,6 +140,8 @@ void Engine::run()
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update(delta);
     for (Bird& bird : birds)
+      if (bird.active) bird.update(delta);
+    for (WimdyBird& bird : wimdyBirds)
       if (bird.active) bird.update(delta);
     
     //Draw gameplay
@@ -204,12 +230,18 @@ void Engine::run()
       else {it = bullets.erase(it); }
     }
     
+    //Set up sprite shader and atlas texture for all sprites
     rendererGL.spriteAtlas.bind();
     rendererGL.textureSize[0] = rendererGL.spriteAtlas.w;
     rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
     player.draw(&rendererGL, camera, second);
 
     for (auto& bird : birds)
+    {
+      if (bird.active) bird.draw(&rendererGL, camera, second);
+    }
+    
+    for (auto& bird : wimdyBirds)
     {
       if (bird.active) bird.draw(&rendererGL, camera, second);
     }
@@ -228,6 +260,7 @@ void Engine::run()
       playerHealthBox.draw(&rendererGL);
     }
     
+    //reset to atlas for things that don't use the sprite shader and sprite atlas
     rendererGL.atlasTexture.bind();
     rendererGL.textureSize[0] = rendererGL.atlasTexture.w;
     rendererGL.textureSize[1] = rendererGL.atlasTexture.h;
@@ -246,7 +279,6 @@ void Engine::run()
     
     
     RenderTarget::unbind();
-    //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glViewport(0,windowHeight/2-(windowWidth/16*9)/2,windowWidth,windowWidth/16*9);
     proj = glm::ortho(0.0f, (float)windowWidth, (float)(windowWidth/16*9), 0.0f, -1.0f, 1.0f);
     rendererGL.setProjectionMatrix(proj);
@@ -254,8 +286,6 @@ void Engine::run()
     rendererGL.textureSize[0] = 1.0f;
     rendererGL.textureSize[1] = 1.0f;
     
-    //TODO BUG: RenderCopy only uses the atlas for pixel coordinate sources, meaning that it doesn't
-    //work with other textures as expected
     
     RenderCopy(&rendererGL,
      {0.0f,-1.0f,1.0f,1.0f}, 
@@ -270,7 +300,6 @@ void Engine::run()
     std::this_thread::sleep_until(last_frame_time + frame_time);
     delta = 0.001f*std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::steady_clock().now() - last_frame_time).count();
     last_frame_time = std::chrono::steady_clock().now();
-    //SDL_RenderPresent(renderer);
     SDL_GL_SwapWindow(window);
   }
 }

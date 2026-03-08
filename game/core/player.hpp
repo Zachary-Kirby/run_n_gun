@@ -35,7 +35,7 @@ class Player{
 
   void jumpLetGo();
   
-  void dealDamage();
+  void dealDamage(int damage = 4);
   
   void drainHealth();
   

@@ -53,12 +53,12 @@ void Player::jumpLetGo()
   }
 }
 
-void Player::dealDamage()
+void Player::dealDamage(int damage)
 {
   if (invincibilityTime < 0.0f)
   {
     engine->robotHurtSound.play(1);
-    health -= 4;
+    health -= damage;
     invincibilityTime = 1.0f;
   }
 }
