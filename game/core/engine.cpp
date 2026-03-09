@@ -145,14 +145,18 @@ void Engine::run()
       if (bird.active) bird.update(delta);
     
     //Draw gameplay
+    glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
     rendererGL.gameplayRenderTarget.bind();
     
-    //glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
-    //glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0,0,rendererGL.gameplayDrawWidth, rendererGL.gameplayDrawHeight);
     proj = glm::ortho(0.0f, (float)rendererGL.gameplayDrawWidth, (float)rendererGL.gameplayDrawHeight, 0.0f, -1.0f, 1.0f);
     rendererGL.setProjectionMatrix(proj);
     
+    /*
+    * How do I want to handle loading didfferent layers? I want to do toggles for the clouds at least.
+    * Then I could just swap out the background layer. (I also need at least maybe one layer for the level)
+    */
     //TODO make the background layers swappable in some way
     { // Sky gradient
       float r1 =  99.0f/255.0f;
