@@ -70,6 +70,8 @@ class Engine {
   
   void run();
   
+  void reloadLevel();
+  
   void input();
   
   ~Engine();

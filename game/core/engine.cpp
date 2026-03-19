@@ -31,14 +31,6 @@ Engine::Engine()
 
 void Engine::init()
 {
-  player.init(
-    this,
-    {0, 0}, //Position
-    16, 16, //Hitbox
-    {rendererGL.spriteAnimations.getFrame("Player_Idle", 0)},//Sprite
-    {0, 0} //Sprite Offset
-  );
-  
   laserSound.init("Assets/sounds/laserShoot.wav");
   explodeiateSound.init("Assets/sounds/explodiate.wav");
   robotHurtSound.init("Assets/sounds/robotHurt.wav");
@@ -49,6 +41,25 @@ void Engine::init()
   
   song1.play();
   level.init(atlas);
+  reloadLevel();
+}
+
+void Engine::reloadLevel()
+{
+  player.init(
+    this,
+    {0, 0}, //Position
+    16, 16, //Hitbox
+    {rendererGL.spriteAnimations.getFrame("Player_Idle", 0)},//Sprite
+    {0, 0} //Sprite Offset
+  );
+  
+  poles.clear();
+  birds.clear();
+  wimdyBirds.clear();
+  bullets.clear();
+  
+  level.points.clear();
   level.load("good.lvl");
   for (auto point : level.points)
   {
@@ -56,20 +67,17 @@ void Engine::init()
     {
       player.hitbox.x = point.x-player.hitbox.w/2;
       player.hitbox.y = point.y-player.hitbox.h/2;
+      player.checkpoint = glm::vec2(player.hitbox.x, player.hitbox.y);
     }
     if (point.type == "bird")
     {
-      
-      
       Sprite birdSprite{rendererGL.spriteAnimations.getFrame("Bird_Flying", 0)};
       birds.emplace_back(this, birdSprite, glm::vec2(point.x, point.y));
-      point.active = false; // too lazy to just remove the point from the vector. Honestly it would be better as a linked list probably
     }
     if (point.type == "pole")
     {
       int length = std::stoi(point.parameters);
       poles.emplace_back(this, (SDL_FRect){32, 0, 8, 24}, point.x, point.y+length, length);
-      point.active = false; // lazy again
     }
     if (point.type == "wimdybird")
     {
@@ -89,10 +97,8 @@ void Engine::init()
         }
       }
       wimdyBirds.emplace_back(this, birdSprite, glm::vec2(point.x, groundY - birdSprite.src.h));
-      point.active = false; // lazy again
     }
   }
-  
 }
 
 void Engine::run()
@@ -366,7 +372,7 @@ void Engine::input()
         player.jump();
       }
       if (event.key.keysym.sym == SDLK_ESCAPE) exit_game = true;
-      if (event.key.keysym.sym == SDLK_r) {player.hitbox.x = 0; player.hitbox.y = 0; }
+      if (event.key.keysym.sym == SDLK_r) { reloadLevel(); }
       if (event.key.keysym.sym == SDLK_BACKQUOTE) {
         SDL_bool mode = SDL_GetRelativeMouseMode();
         SDL_SetRelativeMouseMode(mode ? SDL_FALSE : SDL_TRUE);

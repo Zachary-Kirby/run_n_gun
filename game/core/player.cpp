@@ -25,6 +25,7 @@ void Player::init(Engine* theEngine, glm::vec2 pos, int hitboxWidth, int hitboxH
   hitbox.h = hitboxHeight;
   sprite.init(isprite);
   this->spriteOffset = spriteOffset;
+  checkpoint = pos;
 }
 
 Player::Player(glm::vec2 pos, int hitboxWidth, int hitboxHeight, Sprite isprite, glm::ivec2 spriteOffset)
@@ -33,8 +34,6 @@ Player::Player(glm::vec2 pos, int hitboxWidth, int hitboxHeight, Sprite isprite,
   hitbox.x = pos.x; hitbox.y = pos.y;
   hitbox.w = hitboxWidth;
   hitbox.h = hitboxHeight;
-  
-  
   velocity = glm::vec2(0.0f);
 }
 
@@ -122,10 +121,11 @@ void Player::update(Level &level, float delta)
   
   if (health <= 0)
   {
+    engine->reloadLevel();
     deathAnimation();
     //TODO instead of respawning at last safe position, respawn at a checkpoint or something
     health = maxHealth;
-    hitbox = lastSafePosition;
+    hitbox = checkpoint;
   }
   velocity += glm::vec2(0.0f, 800.0f) * delta;
   if (hitbox.y > deathBarrierY)

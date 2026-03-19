@@ -9,7 +9,7 @@ void Bullet::init(Sprite sprite, glm::vec2 position, glm::vec2 velocity)
   this->hitbox.x = position.x;
   this->hitbox.y = position.y;
   active = true;
-  lifetime = 2.0f;
+  lifetime = 0.3f;
 }
 
 void Bullet::update(float delta)
