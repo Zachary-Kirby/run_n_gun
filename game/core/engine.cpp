@@ -410,6 +410,7 @@ void Engine::input()
         player.drainHealth();
         laserSound.play(0);
         bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*320.0f, aimPoint.y*320.0f}});
+        player.fireTimer = 0.0f;
       }
     }
   }

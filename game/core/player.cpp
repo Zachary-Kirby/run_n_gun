@@ -85,11 +85,12 @@ void Player::deathAnimation()
 
 void Player::update(Level &level, float delta)
 {
-  if (healthRegenTimer <= 0)
+  if (healthRegenTimer <= 0 && standingTimer > 0.2f && fireTimer < -0.5f && invincibilityTime < -4.0f)
   {
-    healthRegenTimer = 1.0f;
+    healthRegenTimer = 0.1f;
     health = std::min(health+1, maxHealth);
   }
+  fireTimer -= delta;
   healthRegenTimer -= delta;
   invincibilityTime -= delta;
   int collisionMask = 0b00000;
@@ -134,6 +135,14 @@ void Player::update(Level &level, float delta)
     dealDamage(8);
   }
   
+  if (std::abs(controlStickX)<deadzone)
+  {
+    standingTimer += delta;
+  }
+  else
+  {
+    standingTimer = 0.0f;
+  }
 }
 
 void Player::draw(Renderer *renderer, glm::vec2 camera, float second)

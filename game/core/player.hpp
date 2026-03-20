@@ -8,10 +8,16 @@ class Engine;
 class Renderer;
 class Level;
 
+//Technically many of these things like regen, invincibility, deathBarrier, etc, could be
+//separate functions that do things to the player rather than be attributes and logic directly on
+//the player
+
 class Player{
   glm::ivec2 spriteOffset;
   Engine* engine;
   public:
+  float standingTimer=0;
+  float fireTimer=0;
   float deathBarrierY = 512.0f; //default, but can be changed for different levels
   glm::vec2 lastSafePosition{0.0f, 0.0f};
   glm::vec2 checkpoint{0.0f, 0.0f};

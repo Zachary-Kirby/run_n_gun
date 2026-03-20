@@ -8,6 +8,10 @@ void Bullet::init(Sprite sprite, glm::vec2 position, glm::vec2 velocity)
   this->sprite = sprite;
   this->hitbox.x = position.x;
   this->hitbox.y = position.y;
+  hitbox.w*=2;
+  hitbox.h*=2;
+  hitbox.x-=hitbox.w/2;
+  hitbox.y-=hitbox.h/2;
   active = true;
   lifetime = 0.3f;
 }
