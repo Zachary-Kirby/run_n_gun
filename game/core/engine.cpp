@@ -42,6 +42,8 @@ void Engine::init()
   song1.play();
   level.init(atlas);
   reloadLevel();
+  
+  entityManager.spawnTest(0, 50);
 }
 
 void Engine::reloadLevel()
@@ -55,7 +57,6 @@ void Engine::reloadLevel()
   );
   
   poles.clear();
-  birds.clear();
   wimdyBirds.clear();
   bullets.clear();
   
@@ -71,8 +72,6 @@ void Engine::reloadLevel()
     }
     if (point.type == "bird")
     {
-      Sprite birdSprite{rendererGL.spriteAnimations.getFrame("Bird_Flying", 0)};
-      birds.emplace_back(this, birdSprite, glm::vec2(point.x, point.y));
     }
     if (point.type == "pole")
     {
@@ -145,8 +144,6 @@ void Engine::run()
     
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update(delta);
-    for (Bird& bird : birds)
-      if (bird.active) bird.update(delta);
     for (WimdyBird& bird : wimdyBirds)
       if (bird.active) bird.update(delta);
     
@@ -246,10 +243,6 @@ void Engine::run()
     rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
     player.draw(&rendererGL, camera, second);
 
-    for (auto& bird : birds)
-    {
-      if (bird.active) bird.draw(&rendererGL, camera, second);
-    }
     
     for (auto& bird : wimdyBirds)
     {
@@ -269,6 +262,8 @@ void Engine::run()
       playerHealthBox.setPostion(x%80+4, (x/80)*playerHealthBox.src.h+8);
       playerHealthBox.draw(&rendererGL);
     }
+    
+    entityManager.renderSprites(&rendererGL, camera, second);
     
     //reset to atlas for things that don't use the sprite shader and sprite atlas
     rendererGL.atlasTexture.bind();

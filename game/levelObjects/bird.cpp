@@ -9,11 +9,9 @@ glm::vec2 swoop(float startX, float startY, float targetX, float targetY, float 
   float y = std::lerp(std::lerp(startY, targetY+40, t), std::lerp(targetY, targetY, t), t);
   return {x, y};
 }
-  
+
 Bird::Bird()
 {
-  this->engine = nullptr;
-  active = false;
   this->sprite = Sprite();
 }
 
