@@ -54,7 +54,6 @@ class Engine {
   Level level;
   
   Player player;
-  std::vector<Bird> birds;
   std::vector<WimdyBird> wimdyBirds;
   std::vector<Pole> poles;
   std::vector<Bullet> bullets;

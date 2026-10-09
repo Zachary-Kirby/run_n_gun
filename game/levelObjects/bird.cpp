@@ -1,6 +1,6 @@
 #include "bird.hpp"
-#include "engine.hpp"
 #include <cmath>
+#include "birdaicomponent.hpp"
 
 glm::vec2 swoop(float startX, float startY, float targetX, float targetY, float t)
 {
@@ -10,144 +10,100 @@ glm::vec2 swoop(float startX, float startY, float targetX, float targetY, float 
   return {x, y};
 }
 
-Bird::Bird()
+//TODO handle player hitbox damage
+//handle bullets hitting bird
+//requires explodiate sound and state dead
+void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerHitbox, float time, float delta)
 {
-  this->sprite = Sprite();
-}
-
-Bird::Bird(const Bird &bird)
-{
-  engine = bird.engine;
-  active = bird.active;
-  hitbox = bird.hitbox;
-  health = bird.health;
-  state = bird.state;
-  sprite = Sprite(bird.sprite);
-}
-
-Bird &Bird::operator=(const Bird &other)
-{
-  this->engine = other.engine;
-  active = other.active;
-  this->sprite = other.sprite;
-  this->hitbox = other.hitbox;
-  this->state = other.state;
-  health = other.health;
-  return *this;
-}
-
-Bird::Bird(Engine *engine, Sprite sprite, glm::vec2 position)
-{
-  this->engine = engine;
-  active = true;
-  this->sprite.init(sprite);
-  hitbox.x = position.x - hitbox.w / 2;
-  hitbox.y = position.y - hitbox.h / 2;
-}
-
-void Bird::init(Sprite sprite, glm::vec2 position)
-{
-  active = true;
-  this->sprite.init(sprite);
-  hitbox.x = position.x - hitbox.w / 2;
-  hitbox.y = position.y - hitbox.h / 2;
-}
-
-void Bird::update(float delta)
-{
-  if (!active) return;
-  if (hitbox.collide(engine->player.hitbox))
-  {
-    engine->player.dealDamage();
-  }
-  for (auto it = engine->bullets.begin(); it != engine->bullets.end(); it++)
-  {
-    Bullet& bullet = *it;
-    if (bullet.active && hitbox.collide(bullet.hitbox))
-    {
-      health--;
-      bullet.active = false;
-      if (health <= 0)
-      {
-        state = BirdState::DEAD;
-        active = false; //TODO temporary until death animation is added
-        engine->explodeiateSound.play();
-      }
-    }
-  }
   
-  Player& player = engine->player;
-  bool notAtHeight = swoopStartPos.y < hitbox.centerY();
-  int direction = 1;
-  switch (state)
+  for (int k = 0; k < em.birdAI.itemCount(); k++)
   {
-  case BirdState::STATIC:
-    if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80.0f)
+    int slotID = em.birdAI.getEntitySlotID(k);
+    Entity& entity = em.entities[slotID];
+    Sprite& sprite = em.sprites[slotID];
+    fRect& hitbox = em.hitboxs[slotID];
+    BirdAI& birdAI = em.birdAI[slotID];
+
+    bool notAtHeight = birdAI.swoopStartPos.y < hitbox.centerY();
+    int direction = 1;
+    switch (birdAI.state)
     {
-      swoopProgress = 0.0f;
-      swoopTargetPos = player.hitbox.center();
-      state = BirdState::SWOOPLOW;
-      swoopStartPos = hitbox.center();
+    case BirdState::STATIC:
+      if (std::abs(playerHitbox.centerX() - hitbox.centerX()) < 80.0f)
+      {
+        birdAI.swoopProgress = 0.0f;
+        birdAI.swoopTargetPos = playerHitbox.center();
+        birdAI.state = BirdState::SWOOPLOW;
+        birdAI.swoopStartPos = hitbox.center();
+      }
+      break;
+    case BirdState::SWOOPLOW:
+    case BirdState::SWOOPHIGH:
+      birdAI.swoopProgress += delta;
+      hitbox = swoop(birdAI.swoopStartPos.x, birdAI.swoopStartPos.y, birdAI.swoopTargetPos.x, birdAI.swoopTargetPos.y, birdAI.swoopProgress);
+      //check if bird got so far past the player on the other side of the start pos
+      if (birdAI.swoopProgress > 1.4f)
+      {
+        birdAI.state = BirdState::RECOVER;
+      }
+      break;
+    case BirdState::RECOVER:
+      
+      if (birdAI.swoopTargetPos.y < birdAI.swoopStartPos.y) {notAtHeight = birdAI.swoopStartPos.y > hitbox.centerY(); direction = -1;}
+      if (notAtHeight)
+      {
+        hitbox.x += std::copysignf(160.0f, birdAI.swoopTargetPos.x - birdAI.swoopStartPos.x) * delta;
+        hitbox.y -= 320.0f * direction * delta;
+      } else
+      {
+        hitbox.y = birdAI.swoopStartPos.y - hitbox.h/2.0f;
+        birdAI.state = BirdState::FOLLOW;
+      }
+      break;
+    case BirdState::FOLLOW:
+      hitbox.x += std::copysignf(160.0f, playerHitbox.centerX() - hitbox.centerX()) * delta;
+      if (std::abs(playerHitbox.centerX() - hitbox.centerX()) < 80.0f )
+      {
+        birdAI.swoopProgress = 0.0f;
+        birdAI.swoopTargetPos = playerHitbox.center();
+        birdAI.state = BirdState::SWOOPLOW;
+        birdAI.swoopStartPos = hitbox.center();
+      }
+      break;
+    default:
+      break;
     }
-    break;
-  case BirdState::SWOOPLOW:
-  case BirdState::SWOOPHIGH:
-    swoopProgress += delta;
-    hitbox = swoop(swoopStartPos.x, swoopStartPos.y, swoopTargetPos.x, swoopTargetPos.y, swoopProgress);
-    //check if bird got so far past the player on the other side of the start pos
-    if (swoopProgress > 1.4f)
+  
+  //Animation
+  const char* stateNames[] = {"STATIC", "SWOOPLOW", "SWOOPHIGH", "RECOVER", "FOLLOW", "DEAD"};
+
+    switch (birdAI.state)
     {
-      state = BirdState::RECOVER;
+    case BirdState::STATIC:
+    case BirdState::FOLLOW:
+        sprite.setDefinition(spriteAnimations.getAnimationFrame("Bird_Flying", time, playerHitbox.centerX() > hitbox.centerX(), false));
+    break;
+    case BirdState::RECOVER:
+    case BirdState::SWOOPLOW:
+    case BirdState::SWOOPHIGH:
+        sprite.setDefinition(spriteAnimations.getFrame("Bird_Flying", 3, birdAI.swoopTargetPos.x > birdAI.swoopStartPos.x, false));
+      break;
+    case BirdState::DEAD:
+    default:
+      break; //TODO add death animation
     }
-    break;
-  case BirdState::RECOVER:
-    
-    if (swoopTargetPos.y < swoopStartPos.y) {notAtHeight = swoopStartPos.y > hitbox.centerY(); direction = -1;}
-    if (notAtHeight)
-    {
-      hitbox.x += std::copysignf(160.0f, swoopTargetPos.x - swoopStartPos.x) * delta;
-      hitbox.y -= 320.0f * direction * delta;
-    } else
-    {
-      hitbox.y = swoopStartPos.y - hitbox.h/2.0f;
-      state = BirdState::FOLLOW;
-    }
-    break;
-  case BirdState::FOLLOW:
-    hitbox.x += std::copysignf(160.0f, player.hitbox.centerX() - hitbox.centerX()) * delta;
-    if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 80.0f )
-    {
-      swoopProgress = 0.0f;
-      swoopTargetPos = player.hitbox.center();
-      state = BirdState::SWOOPLOW;
-      swoopStartPos = hitbox.center();
-    }
-    break;
-  default:
-    break;
+    entity.position.x = hitbox.x;
+    entity.position.y = hitbox.y;
   }
 }
 
-void Bird::draw(Renderer *renderer, glm::vec2 camera, float time)
-{
-  const char* stateNames[] = {"STATIC", "SWOOPLOW", "SWOOPHIGH", "RECOVER", "FOLLOW", "DEAD"};
-  if (hitbox.centerX() - camera.x < -16 || hitbox.centerX() - camera.x > renderer->gameplayDrawWidth + 16)
-    return;
-  switch (state)
-  {
-  case BirdState::STATIC:
-  case BirdState::FOLLOW:
-  sprite.setDefinition(renderer->spriteAnimations.getAnimationFrame("Bird_Flying", time, engine->player.hitbox.centerX() > hitbox.centerX(), false));
-  break;
-  case BirdState::RECOVER:
-  case BirdState::SWOOPLOW:
-  case BirdState::SWOOPHIGH:
-    sprite.setDefinition(renderer->spriteAnimations.getFrame("Bird_Flying", 3, swoopTargetPos.x > swoopStartPos.x, false));
-    break;
-  case BirdState::DEAD:
-  default:
-    break; //TODO add death animation
-  }
-  sprite.setPostion(hitbox.x-camera.x, hitbox.y-camera.y);
-  sprite.draw(renderer);
-}
+int spawnBird(EntityManager &em, float x, float y)
+{ 
+  int slotID = em.popSlot();
+  em.entities[slotID].ID = em.nextID(); //not sure if I actually need this
+  em.entities[slotID].position = {x, y};
+  em.sprites.insert(Sprite(0, 0, 8, 8, 1), slotID);
+  em.hitboxs.insert(fRect(x, y, 8, 8), slotID);
+  em.birdAI.insert(BirdAI{}, slotID);
+  return slotID;
+};

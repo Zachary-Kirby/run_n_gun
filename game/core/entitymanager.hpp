@@ -4,8 +4,11 @@
 #include <glm/vec2.hpp>
 #include "entity.hpp"
 #include "sprite.hpp"
+#include "rect.hpp"
+#include "birdaicomponent.hpp"
 
 #include <iostream>
+
 
 #define MAXENT 200
 
@@ -15,6 +18,7 @@ class SparseSet
   /*
     Map an integer to a compact array of the items
   */
+  //TODO, I don't need the vector of items to actually be the same size as indices and keys
   std::vector<int> indices; // sparse mappings to the dense indirection layer
   std::vector<int> keys; // maps back to the corresponding index, I use this for knowing how to swap the real data in memory
   int itemsTop = 0;
@@ -23,7 +27,7 @@ class SparseSet
   public:
   std::vector<T> items;
   
-  SparseSet() { resize(MAXENT) };
+  SparseSet() { resize(MAXENT); };
   
   void resize(size_t s)
   {
@@ -38,7 +42,7 @@ class SparseSet
     return itemsTop;
   }
   
-  int getEntityID(int k){
+  int getEntitySlotID(int k){
     return keys[k];
   }
   
@@ -94,6 +98,11 @@ class SparseSet
 //updating each AI is then as simple as creating a system for each AI component that loops through them.
 //TODO figure out how I want to structure systems. Do I want many functions that take the entity manager? How much is just duplicate code for looping?
 
+
+
+
+
+
 class EntityManager{
     int ID = 0;
     
@@ -103,7 +112,8 @@ class EntityManager{
 
     SparseSet<Sprite> sprites;
     SparseSet<glm::vec2> velocities;
-    
+    SparseSet<BirdAI> birdAI;
+    SparseSet<fRect> hitboxs;
     
     
     EntityManager()
@@ -115,6 +125,16 @@ class EntityManager{
       }
     }
     
+    int nextID(){
+      return ID++;
+    }
+    
+    int popSlot(){
+      //function that is supposd to find a free slot ID for a new entity.
+      int slot = freeSlots[freeSlots.size()-1]; freeSlots.pop_back();
+      return slot;
+    }
+    
     int spawnTest (float x, float y)
     {
       int slotID = freeSlots[freeSlots.size()-1]; freeSlots.pop_back();
@@ -124,16 +144,7 @@ class EntityManager{
       return slotID;
     }
     
-    void renderSprites(Renderer *renderer, glm::vec2 camera, float time)
-    {
-      for (int i = 0; i < sprites.itemCount(); i++)
-      {
-        Entity& entity = entities[sprites.getEntityID(i)];
-        std::cout<<i << " " << sprites.getEntityID(i) << std::endl;
-        sprites.items[i].setPostion(entity.position[0] - camera[0], entity.position[1] - camera[1]);
-        sprites.items[i].draw(renderer);
-      }
-    }
+    
     
     // for every component there is a dense and a sparse. The sparse maps the entity ID to the dense array of components
     

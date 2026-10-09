@@ -1,5 +1,8 @@
 #include "sprite.hpp"
-#include "renderer.hpp"
+
+class Renderer;
+
+void RenderCopy(Renderer *renderer, float *src, float *dst, float z);
 
 Sprite::Sprite()
 {
@@ -65,5 +68,5 @@ void Sprite::setPostion(int x, int y)
 
 void Sprite::draw(Renderer *renderer)
 {
-  RenderCopy(renderer, &src, &dst);
+  RenderCopy(renderer, &src.x, &dst.x, 0.0f);
 }

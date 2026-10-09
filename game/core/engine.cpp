@@ -9,6 +9,9 @@
 #include "SDL_mixer.h"
 #include <filesystem>
 
+#include "renderSystem.hpp"
+#include "bird.hpp"
+
 Engine::Engine()
 {
   std::cout << std::filesystem::current_path() << std::endl;
@@ -72,6 +75,7 @@ void Engine::reloadLevel()
     }
     if (point.type == "bird")
     {
+      spawnBird(entityManager, point.x, point.y);
     }
     if (point.type == "pole")
     {
@@ -142,8 +146,11 @@ void Engine::run()
       }
     }
     
+    
+    
     for (Bullet& bullet : bullets)
       if (bullet.active) bullet.update(delta);
+    handleBirdAI(entityManager, rendererGL.spriteAnimations, player.hitbox, second, delta);
     for (WimdyBird& bird : wimdyBirds)
       if (bird.active) bird.update(delta);
     
@@ -242,7 +249,7 @@ void Engine::run()
     rendererGL.textureSize[0] = rendererGL.spriteAtlas.w;
     rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
     player.draw(&rendererGL, camera, second);
-
+    
     
     for (auto& bird : wimdyBirds)
     {
@@ -263,7 +270,7 @@ void Engine::run()
       playerHealthBox.draw(&rendererGL);
     }
     
-    entityManager.renderSprites(&rendererGL, camera, second);
+    renderSprites(entityManager, &rendererGL, rendererGL.gameplayDrawWidth, camera, second);
     
     //reset to atlas for things that don't use the sprite shader and sprite atlas
     rendererGL.atlasTexture.bind();
