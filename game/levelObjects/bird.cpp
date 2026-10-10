@@ -1,6 +1,8 @@
 #include "bird.hpp"
 #include <cmath>
 #include "birdaicomponent.hpp"
+#include "sprite.hpp"
+#include "contactdamagecomponent.hpp"
 
 glm::vec2 swoop(float startX, float startY, float targetX, float targetY, float t)
 {
@@ -105,5 +107,7 @@ int spawnBird(EntityManager &em, float x, float y)
   em.sprites.insert(Sprite(0, 0, 8, 8, 1), slotID);
   em.hitboxs.insert(fRect(x, y, 8, 8), slotID);
   em.birdAI.insert(BirdAI{}, slotID);
+  em.contactDamage.insert({4}, slotID);
+  em.health.insert({1, 0, DamageType::Player}, slotID);
   return slotID;
 };

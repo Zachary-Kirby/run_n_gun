@@ -29,6 +29,7 @@ void WimdyBird::update(float delta)
   {
     player.dealDamage();
   }
+  /*
   for (auto it = engine->bullets.begin(); it != engine->bullets.end(); it++)
   {
     Bullet& bullet = *it;
@@ -47,6 +48,7 @@ void WimdyBird::update(float delta)
       }
     }
   }
+  */
   
   if (player.hitbox.center().x > hitbox.center().x) facingRight = true;
   else facingRight = false;

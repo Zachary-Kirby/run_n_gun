@@ -1,42 +1,8 @@
 #pragma once
 
-#include <SDL2/SDL.h>
-#include <glm/vec2.hpp>
-#include "sprite.hpp"
-#include "rect.hpp"
-#include "entity.hpp"
+#include "entitymanager.hpp"
+#include "damagetypes.hpp"
 
-class Renderer;
+void handleBullets(EntityManager& em, float delta);
 
-class Bullet{
-  Sprite sprite;
-  float lifetime;
-  public:
-  glm::vec2 velocity;
-  fRect hitbox;
-  bool active = false;
-  Bullet(Sprite sprite, glm::vec2 position, glm::vec2 velocity)
-  {
-    init(sprite, position, velocity);
-  }
-  Bullet(const Bullet& other)
-  {
-    this->sprite = other.sprite;
-    this->hitbox = other.hitbox;
-    this->velocity = other.velocity;
-    this->lifetime = other.lifetime;
-    this->active = other.active;
-  }
-  Bullet& operator=(const Bullet& other)
-  {
-    this->sprite = other.sprite;
-    this->hitbox = other.hitbox;
-    this->velocity = other.velocity;
-    this->lifetime = other.lifetime;
-    this->active = other.active;
-    return *this;
-  }
-  void init(Sprite sprite, glm::vec2 position, glm::vec2 velocity);
-  void update(float delta);
-  void draw(Renderer* renderer, glm::vec2 camera);
-};
+int createBullet(const Sprite sprite, EntityManager& em, float x, float y, float xv, float yv, DamageType damageType, DamageType recieveDamageType, float lifetime = 2.0f);

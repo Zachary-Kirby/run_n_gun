@@ -78,7 +78,11 @@ add_executable(rungun
   game/helper/sound.cpp
   game/levelObjects/wimdybird.cpp
   game/core/entitymanager.cpp
-  game/core/renderSystem.cpp
+  game/core/rendersystem.cpp
+  game/helper/sparseset.hpp
+  game/core/contactdamagesystem.cpp
+  game/core/healthsystem.cpp
+  game/core/lifetimesystem.cpp
 )
 target_link_libraries(rungun rungun_shared OpenGL::GL ${CMAKE_SOURCE_DIR}/libs/libglad.a)
 target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects libs/glad)
@@ -110,6 +114,7 @@ if (AUTO_BUILD_SPRITES)
     PayerDeathParticle
     WimdyBird
     BulletFrog
+    Bullet
   )
 
   list(TRANSFORM SPRITE_NAMES APPEND ".aseprite")

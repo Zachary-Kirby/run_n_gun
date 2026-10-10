@@ -9,8 +9,12 @@
 #include "SDL_mixer.h"
 #include <filesystem>
 
-#include "renderSystem.hpp"
+#include "rendersystem.hpp"
+#include "contactdamagesystem.hpp"
 #include "bird.hpp"
+#include "lifetimesystem.hpp"
+#include "healthsystem.hpp"
+#include "bullet.hpp"
 
 Engine::Engine()
 {
@@ -46,7 +50,6 @@ void Engine::init()
   level.init(atlas);
   reloadLevel();
   
-  entityManager.spawnTest(0, 50);
 }
 
 void Engine::reloadLevel()
@@ -61,7 +64,6 @@ void Engine::reloadLevel()
   
   poles.clear();
   wimdyBirds.clear();
-  bullets.clear();
   
   level.points.clear();
   level.load("good.lvl");
@@ -148,12 +150,22 @@ void Engine::run()
     
     
     
-    for (Bullet& bullet : bullets)
-      if (bullet.active) bullet.update(delta);
+    
     handleBirdAI(entityManager, rendererGL.spriteAnimations, player.hitbox, second, delta);
+    
+    handleBullets(entityManager, delta);
     for (WimdyBird& bird : wimdyBirds)
       if (bird.active) bird.update(delta);
     
+    int playerDamagedAmount = 0; 
+    contactDamageSystem(entityManager, player.hitbox, playerDamagedAmount);
+    if (playerDamagedAmount != 0) player.dealDamage(playerDamagedAmount);
+    
+    handleHealth(entityManager);
+    handleLifetime(entityManager, delta);
+    
+    entityManager.handleRemove();
+
     //Draw gameplay
     glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -234,15 +246,6 @@ void Engine::run()
     level.draw(&rendererGL, 0, 0, camera.x, camera.y);
     
 
-    for (auto it = bullets.begin(); it != bullets.end(); )
-    {
-      Bullet& bullet = *it;
-      if (bullet.active) {
-        bullet.draw(&rendererGL, camera); 
-        it++;
-      }
-      else {it = bullets.erase(it); }
-    }
     
     //Set up sprite shader and atlas texture for all sprites
     rendererGL.spriteAtlas.bind();
@@ -411,7 +414,9 @@ void Engine::input()
       {
         player.drainHealth();
         laserSound.play(0);
-        bullets.push_back({{2*8, 4*8, 8, 8, 1}, player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4}, {aimPoint.x*320.0f, aimPoint.y*320.0f}});
+        glm::vec2 shootPoint = player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4};
+        glm::vec2 shootVelocity = {aimPoint.x*320.0f, aimPoint.y*320.0f};
+        createBullet(rendererGL.spriteAnimations.getFrame("Bullet_Bullet", 0), entityManager, shootPoint.x, shootPoint.y, shootVelocity.x, shootVelocity.y, DamageType::Player, DamageType::Enemy);
         player.fireTimer = 0.0f;
       }
     }

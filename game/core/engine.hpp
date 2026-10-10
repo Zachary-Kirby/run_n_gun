@@ -56,7 +56,6 @@ class Engine {
   Player player;
   std::vector<WimdyBird> wimdyBirds;
   std::vector<Pole> poles;
-  std::vector<Bullet> bullets;
   std::vector<Particle> particles;
   EntityManager entityManager;
   glm::vec2 camera {.0f, 50.0f};

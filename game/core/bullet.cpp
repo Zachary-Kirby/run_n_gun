@@ -1,34 +1,30 @@
 #include "bullet.hpp"
-#include "renderer.hpp"
+#include <iostream>
 
-//TODO this is mostly duplicate code
-void Bullet::init(Sprite sprite, glm::vec2 position, glm::vec2 velocity)
-{
-  this->velocity = velocity;
-  this->sprite = sprite;
-  this->hitbox.x = position.x;
-  this->hitbox.y = position.y;
-  hitbox.w*=2;
-  hitbox.h*=2;
-  hitbox.x-=hitbox.w/2;
-  hitbox.y-=hitbox.h/2;
-  active = true;
-  lifetime = 0.3f;
-}
 
-void Bullet::update(float delta)
+void handleBullets(EntityManager &em, float delta)
 {
-  hitbox.x += velocity.x * delta;
-  hitbox.y += velocity.y * delta;
-  lifetime = lifetime - delta;
-  if (lifetime <= 0){
-    active = false;
+  for (int k = 0; k < em.contactDamage.itemCount(); k++){
+    int slotID = em.contactDamage.getEntitySlotID(k);
+    //Assuming both lifetime and contact damage components exist, then peform bullet logic
+    if (em.lifetime.has(slotID)){
+      
+      em.entities[slotID].position += em.velocities[slotID] * delta;
+      em.hitboxs[slotID].x = em.entities[slotID].position.x;
+      em.hitboxs[slotID].y = em.entities[slotID].position.y;
+    }
   }
 }
 
-//TODO this is duplicate code
-void Bullet::draw(Renderer *renderer, glm::vec2 camera)
-{
-  sprite.setPostion(hitbox.x-camera.x, hitbox.y-camera.y);
-  sprite.draw(renderer);
+int createBullet(const Sprite sprite, EntityManager& em, float x, float y, float vx, float vy, DamageType damageType, DamageType recieveDamageType, float lifetime){
+  int slotID = em.popSlot();
+  em.entities[slotID].ID = em.nextID();
+  em.entities[slotID].position = {x, y};
+  em.sprites.insert(sprite, slotID);
+  em.hitboxs.insert(fRect(x, y, 8, 8), slotID);
+  em.velocities.insert({vx, vy}, slotID);
+  em.contactDamage.insert({4, damageType}, slotID);
+  em.health.insert({1, 0, recieveDamageType}, slotID); 
+  em.lifetime.insert(lifetime, slotID);
+  return slotID;
 }
