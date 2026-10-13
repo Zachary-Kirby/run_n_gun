@@ -15,6 +15,8 @@
 #include "lifetimesystem.hpp"
 #include "healthsystem.hpp"
 #include "bullet.hpp"
+#include "bulletfrog.hpp"
+#include "physicssystem.hpp"
 
 Engine::Engine()
 {
@@ -63,8 +65,8 @@ void Engine::reloadLevel()
   );
   
   poles.clear();
-  wimdyBirds.clear();
-  
+  entityManager.clear();
+
   level.points.clear();
   level.load("good.lvl");
   for (auto point : level.points)
@@ -84,6 +86,22 @@ void Engine::reloadLevel()
       int length = std::stoi(point.parameters);
       poles.emplace_back(this, (SDL_FRect){32, 0, 8, 24}, point.x, point.y+length, length);
     }
+    if (point.type == "bulletfrog"){
+      float groundY = point.y/level.tileSize*level.tileSize; //snap to the grid
+      for (int i=0; i<20; i++)
+      {
+        if (level.get(point.x/level.tileSize, groundY/level.tileSize, 1) == 0)
+        {
+          groundY = groundY + level.tileSize;
+        }
+        else
+        {
+          break;
+        }
+      }
+      Sprite frogSprite{rendererGL.spriteAnimations.getFrame("BulletFrog_Idle", 0)};
+      createFrog(entityManager, rendererGL.spriteAnimations, point.x, groundY - frogSprite.src.h);
+    }
     if (point.type == "wimdybird")
     {
       Sprite birdSprite{rendererGL.spriteAnimations.getFrame("WimdyBird_Idle", 0)};
@@ -101,7 +119,7 @@ void Engine::reloadLevel()
           break;
         }
       }
-      wimdyBirds.emplace_back(this, birdSprite, glm::vec2(point.x, groundY - birdSprite.src.h));
+      spawnWimdyBird(entityManager, birdSprite, point.x, groundY - birdSprite.src.h);
     }
   }
 }
@@ -148,14 +166,14 @@ void Engine::run()
       }
     }
     
-    
-    
-    
-    handleBirdAI(entityManager, rendererGL.spriteAnimations, player.hitbox, second, delta);
+    handleBirdAI(entityManager, rendererGL.spriteAnimations, player.hitbox, second, delta, explodeiateSound);
+    handleFrogAI(entityManager, rendererGL.spriteAnimations, player.hitbox.centerX(), delta);
     
     handleBullets(entityManager, delta);
-    for (WimdyBird& bird : wimdyBirds)
-      if (bird.active) bird.update(delta);
+    glm::vec2 playerPush{0.0f, 0.0f};
+    handleWimdyBirdAI(entityManager, rendererGL.spriteAnimations, player.hitbox, second, delta, playerPush,
+      shortNoiseSound, ooSound, explodeiateSound);
+    player.velocity += playerPush;
     
     int playerDamagedAmount = 0; 
     contactDamageSystem(entityManager, player.hitbox, playerDamagedAmount);
@@ -163,6 +181,8 @@ void Engine::run()
     
     handleHealth(entityManager);
     handleLifetime(entityManager, delta);
+    
+    handlePhysics(entityManager, level, delta);
     
     entityManager.handleRemove();
 
@@ -253,11 +273,6 @@ void Engine::run()
     rendererGL.textureSize[1] = rendererGL.spriteAtlas.h;
     player.draw(&rendererGL, camera, second);
     
-    
-    for (auto& bird : wimdyBirds)
-    {
-      if (bird.active) bird.draw(&rendererGL, camera, second);
-    }
     
     for (Particle& particle: particles)
     {
@@ -416,7 +431,7 @@ void Engine::input()
         laserSound.play(0);
         glm::vec2 shootPoint = player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4};
         glm::vec2 shootVelocity = {aimPoint.x*320.0f, aimPoint.y*320.0f};
-        createBullet(rendererGL.spriteAnimations.getFrame("Bullet_Bullet", 0), entityManager, shootPoint.x, shootPoint.y, shootVelocity.x, shootVelocity.y, DamageType::Player, DamageType::Enemy);
+        createBullet(rendererGL.spriteAnimations.getFrame("Bullet_Bullet", 0), entityManager, shootPoint.x, shootPoint.y, shootVelocity.x, shootVelocity.y, DamageType::Player, DamageType::Enemy, 0.5f, 1);
         player.fireTimer = 0.0f;
       }
     }

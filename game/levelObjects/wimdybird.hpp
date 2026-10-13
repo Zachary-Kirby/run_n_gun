@@ -1,26 +1,14 @@
 #pragma once
 
-#include "sprite.hpp"
 #include "rect.hpp"
+#include "entitymanager.hpp"
+#include "animations.hpp"
+#include "sound.hpp"
+#include "sprite.hpp"
 #include "glm/vec2.hpp"
 
-class Engine;
-class Renderer;
+//playerPush is added to (not overwritten) with the velocity change the player should get this frame.
+void handleWimdyBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerHitbox, float time, float delta,
+  glm::vec2& playerPush, Sound& flapSound, Sound& hurtSound, Sound& deathSound);
 
-class WimdyBird
-{
-  Engine* engine = nullptr;
-  Sprite sprite;
-  fRect hitbox;
-  bool facingRight = false;
-  int health = 3;
-  bool flapping = false;
-  float flapTimer = 0.0f;
-  public:
-  bool active = true;
-  WimdyBird() = default;
-  WimdyBird(Engine* engine, Sprite sprite, glm::vec2 pos);
-  WimdyBird(const WimdyBird& other);
-  void update(float delta);
-  void draw(Renderer* renderer, glm::vec2 camera, float second);
-};
+int spawnWimdyBird(EntityManager& em, Sprite sprite, float x, float y);

@@ -4,6 +4,7 @@
 #include "sprite.hpp"
 #include "contactdamagecomponent.hpp"
 
+
 glm::vec2 swoop(float startX, float startY, float targetX, float targetY, float t)
 {
   float directionX = std::copysignf(1.0f, targetX - startX);
@@ -15,7 +16,7 @@ glm::vec2 swoop(float startX, float startY, float targetX, float targetY, float 
 //TODO handle player hitbox damage
 //handle bullets hitting bird
 //requires explodiate sound and state dead
-void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerHitbox, float time, float delta)
+void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerHitbox, float time, float delta, Sound& deathSound)
 {
   
   for (int k = 0; k < em.birdAI.itemCount(); k++)
@@ -26,10 +27,16 @@ void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerH
     fRect& hitbox = em.hitboxs[slotID];
     BirdAI& birdAI = em.birdAI[slotID];
 
+    if (em.health[slotID].health <= 0) birdAI.state = BirdState::DEAD;
+
     bool notAtHeight = birdAI.swoopStartPos.y < hitbox.centerY();
     int direction = 1;
     switch (birdAI.state)
     {
+    case BirdState::DEAD:
+      //TODO play a death animation and only then remove
+      entity.remove = true;
+      break;
     case BirdState::STATIC:
       if (std::abs(playerHitbox.centerX() - hitbox.centerX()) < 80.0f)
       {
@@ -92,6 +99,9 @@ void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerH
       break;
     case BirdState::DEAD:
     default:
+      //NOTE that if I move the bird in an animation that the contact damage component needs to be removed
+      //else the bird can hurt the player even when dead.
+      deathSound.play();
       break; //TODO add death animation
     }
     entity.position.x = hitbox.x;
@@ -102,6 +112,9 @@ void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerH
 int spawnBird(EntityManager &em, float x, float y)
 { 
   int slotID = em.popSlot();
+  if (slotID < 0)
+    return slotID;
+
   em.entities[slotID].ID = em.nextID(); //not sure if I actually need this
   em.entities[slotID].position = {x, y};
   em.sprites.insert(Sprite(0, 0, 8, 8, 1), slotID);

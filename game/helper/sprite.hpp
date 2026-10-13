@@ -12,6 +12,7 @@ class Sprite
   public:
   SDL_FRect dst;
   SDL_FRect src;
+  bool visible = true;
   
   Sprite();
   

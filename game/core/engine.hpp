@@ -54,7 +54,6 @@ class Engine {
   Level level;
   
   Player player;
-  std::vector<WimdyBird> wimdyBirds;
   std::vector<Pole> poles;
   std::vector<Particle> particles;
   EntityManager entityManager;

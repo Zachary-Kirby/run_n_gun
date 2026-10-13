@@ -68,5 +68,6 @@ void Sprite::setPostion(int x, int y)
 
 void Sprite::draw(Renderer *renderer)
 {
+  if (!visible) return; // If it matters I could indicate how likely this branch is
   RenderCopy(renderer, &src.x, &dst.x, 0.0f);
 }

@@ -6,9 +6,12 @@
 #include "sprite.hpp"
 #include "rect.hpp"
 #include "birdaicomponent.hpp"
+#include "wimdybirdaicomponent.hpp"
 #include "sparseset.hpp"
 #include "contactdamagecomponent.hpp"
 #include "healthcomponent.hpp"
+#include "bulletfrogaicomponent.hpp"
+#include "physicscomponent.hpp"
 
 #include <iostream>
 
@@ -31,10 +34,13 @@ class EntityManager{
     SparseSet<Sprite> sprites{MAXENT};
     SparseSet<glm::vec2> velocities{MAXENT};
     SparseSet<BirdAI> birdAI{MAXENT};
+    SparseSet<WimdyBirdAI> wimdyBirdAI{MAXENT};
     SparseSet<fRect> hitboxs{MAXENT};
     SparseSet<ContactDamage> contactDamage{MAXENT};
     SparseSet<Health> health{MAXENT};
     SparseSet<float> lifetime{MAXENT};
+    SparseSet<BulletFrogAI> bulletFrogAI{MAXENT};
+    SparseSet<Physics> physics{MAXENT};
     
     
     EntityManager()
@@ -46,12 +52,36 @@ class EntityManager{
       }
     }
     
+    void clear(){
+      //remove every entity and component, used when reloading the level
+      for (int i = 0; i < entities.size(); i++)
+      {
+        entities[i] = Entity{};
+      }
+      freeSlots.clear();
+      for (int i = MAXENT-1; i >= 0; i--)
+      {
+        freeSlots.push_back(i);
+      }
+      sprites.clear();
+      velocities.clear();
+      birdAI.clear();
+      wimdyBirdAI.clear();
+      hitboxs.clear();
+      contactDamage.clear();
+      health.clear();
+      lifetime.clear();
+      bulletFrogAI.clear();
+      physics.clear();
+    }
+
     int nextID(){
       return ID++;
     }
     
     int popSlot(){
       //function that is supposed to find a free slot ID for a new entity.
+      if (freeSlots.size() <= 0) return -1;
       int slot = freeSlots[freeSlots.size()-1]; freeSlots.pop_back();
       return slot;
     }
@@ -65,10 +95,13 @@ class EntityManager{
           sprites.remove(i);
           velocities.remove(i);
           birdAI.remove(i);
+          wimdyBirdAI.remove(i);
           hitboxs.remove(i);
           contactDamage.remove(i);
           health.remove(i);
           lifetime.remove(i);
+          bulletFrogAI.remove(i);
+          physics.remove(i);
           entity.remove = false;
         }
       }

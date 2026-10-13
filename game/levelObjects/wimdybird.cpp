@@ -1,93 +1,75 @@
 #include "wimdybird.hpp"
-#include "engine.hpp"
-#include "glm/vec2.hpp"
-#include  <cmath>
+#include "wimdybirdaicomponent.hpp"
+#include "contactdamagecomponent.hpp"
+#include <cmath>
 
-
-
-
-WimdyBird::WimdyBird(Engine* engine, Sprite sprite, glm::vec2 pos) : engine(engine), sprite(sprite)
+void handleWimdyBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerHitbox, float time, float delta,
+  glm::vec2& playerPush, Sound& flapSound, Sound& hurtSound, Sound& deathSound)
 {
-  hitbox = fRect(pos.x, pos.y, sprite.src.w, sprite.src.h);
-}
-
-WimdyBird::WimdyBird(const WimdyBird &other)
-{
-  engine = other.engine;
-  sprite = other.sprite;
-  hitbox = other.hitbox;
-  active = other.active;
-  facingRight = other.facingRight;
-  flapping = other.flapping;
-  health = other.health;
-}
-
-void WimdyBird::update(float delta)
-{
-  Player& player = engine->player;
-  if (hitbox.collide(player.hitbox))
+  for (int k = 0; k < em.wimdyBirdAI.itemCount(); k++)
   {
-    player.dealDamage();
-  }
-  /*
-  for (auto it = engine->bullets.begin(); it != engine->bullets.end(); it++)
-  {
-    Bullet& bullet = *it;
-    if (bullet.active && hitbox.collide(bullet.hitbox))
+    int slotID = em.wimdyBirdAI.getEntitySlotID(k);
+    Entity& entity = em.entities[slotID];
+    Sprite& sprite = em.sprites[slotID];
+    fRect& hitbox = em.hitboxs[slotID];
+    WimdyBirdAI& ai = em.wimdyBirdAI[slotID];
+    int health = em.health[slotID].health;
+
+    if (health <= 0)
     {
-      health--;
-      bullet.active = false;
-      if (health <= 0)
-      {
-        active = false; //TODO temporary until death animation is added
-        engine->explodeiateSound.play();
-      }
-      else
-      {
-        engine->ooSound.play();
-      }
+      //TODO play a death animation and only then remove
+      deathSound.play();
+      entity.remove = true;
+      continue;
     }
-  }
-  */
-  
-  if (player.hitbox.center().x > hitbox.center().x) facingRight = true;
-  else facingRight = false;
-  
-  //blow player when close enough
-  if (std::abs(player.hitbox.centerX() - hitbox.centerX()) < 128.0f && std::abs(player.hitbox.centerY() - hitbox.centerY()) < 16.0f)
-  {
-    flapping = true;
-    float blowDir = player.hitbox.centerX() - hitbox.centerX();
-    player.velocity.x += std::copysignf(1.0f, blowDir) * 1650.0f * delta;
-  }
-  else
-  {
-    flapping = false;
-  }
-  
-  flapTimer -= delta;
-  if (flapTimer <= 0.0f)
-  {
-    flapTimer = 40.0f/1000.0f;
-    if (flapping)
+    if (health < ai.lastHealth) hurtSound.play(); //TODO also initiate a flicker when hit
+    ai.lastHealth = health;
+
+    ai.facingRight = playerHitbox.center().x > hitbox.center().x;
+
+    //blow player when close enough
+    if (std::abs(playerHitbox.centerX() - hitbox.centerX()) < 128.0f && std::abs(playerHitbox.centerY() - hitbox.centerY()) < 16.0f)
     {
-      engine->shortNoiseSound.play();
+      ai.flapping = true;
+      float blowDir = playerHitbox.centerX() - hitbox.centerX();
+      playerPush.x += std::copysignf(1.0f, blowDir) * 1650.0f * delta;
     }
+    else
+    {
+      ai.flapping = false;
+    }
+
+    ai.flapTimer -= delta;
+    if (ai.flapTimer <= 0.0f)
+    {
+      ai.flapTimer = 40.0f/1000.0f;
+      if (ai.flapping) flapSound.play();
+    }
+
+    if (ai.flapping)
+      sprite.setDefinition(spriteAnimations.getAnimationFrame("WimdyBird_Flap", time, ai.facingRight));
+    else
+      sprite.setDefinition(spriteAnimations.getFrame("WimdyBird_Idle", 0, ai.facingRight));
+
+    entity.position.x = hitbox.x;
+    entity.position.y = hitbox.y;
   }
 }
 
-void WimdyBird::draw(Renderer *renderer, glm::vec2 camera, float second)
+int spawnWimdyBird(EntityManager& em, Sprite sprite, float x, float y)
 {
-  if (!active) return;
-  if (flapping)
-  {
-    std::cout << "flapping: " << flapping << std::endl;
-    sprite.setDefinition(renderer->spriteAnimations.getAnimationFrame("WimdyBird_Flap", second, facingRight));
-  }
-  else
-  {
-    sprite.setDefinition(renderer->spriteAnimations.getFrame("WimdyBird_Idle", 0, facingRight));
-  }
-  sprite.setPostion(hitbox.x - camera.x, hitbox.y - camera.y);
-  sprite.draw(renderer);
+  int slotID = em.popSlot();
+  if (slotID < 0)
+    return slotID;
+
+  em.entities[slotID].ID = em.nextID();
+  em.entities[slotID].position = {x, y};
+  em.sprites.insert(sprite, slotID);
+  em.hitboxs.insert(fRect(x, y, sprite.src.w, sprite.src.h), slotID);
+  WimdyBirdAI ai;
+  ai.lastHealth = 3;
+  em.wimdyBirdAI.insert(ai, slotID);
+  em.contactDamage.insert({4}, slotID);
+  em.health.insert({3, 0, DamageType::Player}, slotID);
+  return slotID;
 }

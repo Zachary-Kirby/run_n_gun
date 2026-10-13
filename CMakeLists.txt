@@ -83,6 +83,8 @@ add_executable(rungun
   game/core/contactdamagesystem.cpp
   game/core/healthsystem.cpp
   game/core/lifetimesystem.cpp
+  game/levelObjects/bulletfrog.cpp
+  game/core/physicssystem.cpp
 )
 target_link_libraries(rungun rungun_shared OpenGL::GL ${CMAKE_SOURCE_DIR}/libs/libglad.a)
 target_include_directories(rungun PRIVATE game/core game/helper game/levelObjects libs/glad)

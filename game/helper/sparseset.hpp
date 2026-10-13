@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 template <typename T>
 class SparseSet
@@ -28,6 +29,12 @@ class SparseSet
     items.resize(size);
   };
   
+  void clear()
+  {
+    indices.assign(size, -1);
+    itemsTop = 0;
+  }
+
   int itemCount() {
     return itemsTop;
   }
@@ -74,11 +81,20 @@ class SparseSet
   
   T& operator[] (int i)
   {
+    if (i < 0 || (size_t)i >= size || indices[i] == -1)
+    {
+      // invalid access, log it and hand back a default object so the caller can't crash
+      std::cerr << "SparseSet: invalid access at index " << i << "\n";
+      static T fallback;
+      fallback = T();
+      return fallback;
+    }
     return items[indices[i]];
   };
-  
+
   bool has(int i){
     //return whether that entity ID has this component
+    if (i < 0 || (size_t)i >= size) return false;
     return indices[i] != -1;
   }
 };
