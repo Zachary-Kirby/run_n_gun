@@ -27,15 +27,35 @@ void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerH
     fRect& hitbox = em.hitboxs[slotID];
     BirdAI& birdAI = em.birdAI[slotID];
 
-    if (em.health[slotID].health <= 0) birdAI.state = BirdState::DEAD;
+    if (em.health[slotID].health <= 0) {                                                            //handle health and removal
+      if (birdAI.state != BirdState::DEAD){
+        deathSound.play();
+        
+        float dist = 99999.0f; //find nearest and copy the velocity
+        for (int kk = 0; kk < em.lifetime.itemCount(); kk++){
+          int ii = em.lifetime.getEntitySlotID(kk);
+          float otherDist = (em.entities[ii].position - entity.position).length();
+          if (em.contactDamage.has(ii) && otherDist < dist){
+            em.velocities[slotID] = em.velocities[ii] * 0.5f;
+          }
+        }
+      }
+      birdAI.state = BirdState::DEAD;
+    }
 
+      const float a = 200.0f;
     bool notAtHeight = birdAI.swoopStartPos.y < hitbox.centerY();
     int direction = 1;
     switch (birdAI.state)
     {
     case BirdState::DEAD:
-      //TODO play a death animation and only then remove
-      entity.remove = true;
+      //NOTE that if I move the bird in an animation that the contact damage component needs to be removed
+      //else the bird can hurt the player even when dead.
+      em.contactDamage.remove(slotID);
+      if (entity.position.y > 9999.0f)
+        entity.remove = true;
+      hitbox = hitbox + em.velocities[slotID]*delta;
+      em.velocities[slotID].y += 800.0f * delta;
       break;
     case BirdState::STATIC:
       if (std::abs(playerHitbox.centerX() - hitbox.centerX()) < 80.0f)
@@ -98,10 +118,9 @@ void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerH
         sprite.setDefinition(spriteAnimations.getFrame("Bird_Flying", 3, birdAI.swoopTargetPos.x > birdAI.swoopStartPos.x, false));
       break;
     case BirdState::DEAD:
+        sprite.setDefinition(spriteAnimations.getFrame("Bird_Flying", 3, false, true));
     default:
-      //NOTE that if I move the bird in an animation that the contact damage component needs to be removed
-      //else the bird can hurt the player even when dead.
-      deathSound.play();
+
       break; //TODO add death animation
     }
     entity.position.x = hitbox.x;
@@ -121,6 +140,7 @@ int spawnBird(EntityManager &em, float x, float y)
   em.hitboxs.insert(fRect(x, y, 8, 8), slotID);
   em.birdAI.insert(BirdAI{}, slotID);
   em.contactDamage.insert({4}, slotID);
+  em.velocities.insert({0, 0}, slotID);
   em.health.insert({1, 0, DamageType::Player}, slotID);
   return slotID;
 };

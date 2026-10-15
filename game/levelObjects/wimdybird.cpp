@@ -17,12 +17,27 @@ void handleWimdyBirdAI(EntityManager& em, Animations& spriteAnimations, fRect pl
 
     if (health <= 0)
     {
-      //TODO play a death animation and only then remove
-      deathSound.play();
-      entity.remove = true;
+      glm::vec2& velocity = em.velocities[slotID];
+      if (health != -99){
+        em.health[slotID].health = -99;
+        em.contactDamage.remove(slotID);
+        velocity.y = -10.0f;
+        deathSound.play();
+      }
+      
+      if (velocity.y > 0.0f){
+        sprite.setDefinition(spriteAnimations.getFrame("WimdyBird_Flap", 1, ai.facingRight, true));
+      }
+      
+      if (velocity.y > 400.0f){
+        entity.remove = true;
+      }
+      
+      velocity.y += 800.0f * delta;
+      entity.position = entity.position + velocity * delta;
       continue;
     }
-    if (health < ai.lastHealth) hurtSound.play(); //TODO also initiate a flicker when hit
+    if (health < ai.lastHealth) hurtSound.play();
     ai.lastHealth = health;
 
     ai.facingRight = playerHitbox.center().x > hitbox.center().x;
@@ -33,6 +48,12 @@ void handleWimdyBirdAI(EntityManager& em, Animations& spriteAnimations, fRect pl
       ai.flapping = true;
       float blowDir = playerHitbox.centerX() - hitbox.centerX();
       playerPush.x += std::copysignf(1.0f, blowDir) * 1650.0f * delta;
+      for (int kk = 0; kk < em.lifetime.itemCount(); kk++){
+        int ii = em.lifetime.getEntitySlotID(kk);
+        if (em.contactDamage.has(ii) && em.velocities.has(ii)){
+          em.velocities[ii].x += playerPush.x;
+        }
+      }
     }
     else
     {
@@ -71,5 +92,6 @@ int spawnWimdyBird(EntityManager& em, Sprite sprite, float x, float y)
   em.wimdyBirdAI.insert(ai, slotID);
   em.contactDamage.insert({4}, slotID);
   em.health.insert({3, 0, DamageType::Player}, slotID);
+  em.velocities.insert({0,0}, slotID);
   return slotID;
 }

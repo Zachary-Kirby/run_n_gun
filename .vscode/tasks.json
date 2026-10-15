@@ -5,6 +5,8 @@
       "type": "shell",
       "command": "make",
       "args": [
+        "-j",
+        "16",
         "rungun"
       ],
       "options": {
@@ -24,6 +26,8 @@
       "type": "shell",
       "command": "make",
       "args": [
+        "-j",
+        "16",
         "levelEdit"
       ],
       "options": {

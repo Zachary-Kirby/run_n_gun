@@ -11,6 +11,7 @@ void handleBullets(EntityManager &em, float delta)
       //A bullet has no death animation, so it is removed as soon as its health runs out
       if (em.health[slotID].health <= 0){
         em.entities[slotID].remove = true;
+        em.contactDamage[slotID].damage = 0;
       }
       em.entities[slotID].position += em.velocities[slotID] * delta;
       em.hitboxs[slotID].x = em.entities[slotID].position.x;
