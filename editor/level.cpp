@@ -121,7 +121,7 @@ void Level::save(char *levelName)
   delete path;
   if (file.is_open())
   {
-    //file << (unsigned int)width << (unsigned int) height;
+    file << (unsigned int)width << (unsigned int) height;
     for (int layer=0; layer<layerCount; layer++)
     {
       for (int y=0; y<height; y++)
@@ -151,14 +151,14 @@ void Level::load(char* levelName)
   if (file.is_open())
   {
     char* buffer = new char[width * height * layerCount];
-    file.read(buffer, width * height * layerCount);
+    file.read(buffer, sizeof(int)*2 + width * height * layerCount);
     for (int layer=0; layer<layerCount; layer++)
     {
       for (int y=0; y<height; y++)
       {
         for (int x=0; x<width; x++)
         {
-          set(x,y,(unsigned char)buffer[y * width + x + layer * width * height], layer);
+          set(x,y,(unsigned char)buffer[sizeof(int)*2 + y * width + x + layer * width * height], layer);
         }
       }
     }

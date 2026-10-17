@@ -26,6 +26,7 @@ void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerH
     Sprite& sprite = em.sprites[slotID];
     fRect& hitbox = em.hitboxs[slotID];
     BirdAI& birdAI = em.birdAI[slotID];
+    Health& health = em.health[slotID];
 
     if (em.health[slotID].health <= 0) {                                                            //handle health and removal
       if (birdAI.state != BirdState::DEAD){
@@ -102,7 +103,7 @@ void handleBirdAI(EntityManager& em, Animations& spriteAnimations, fRect playerH
     default:
       break;
     }
-  
+  if (birdAI.swoopTargetPos.x > birdAI.swoopStartPos.x) health.vulnerableDirection = (VulnerableDirections)~(int)VulnerableDirections::RIGHT; else health.vulnerableDirection = (VulnerableDirections)~(int)VulnerableDirections::LEFT;
   //Animation
   const char* stateNames[] = {"STATIC", "SWOOPLOW", "SWOOPHIGH", "RECOVER", "FOLLOW", "DEAD"};
 
@@ -141,6 +142,6 @@ int spawnBird(EntityManager &em, float x, float y)
   em.birdAI.insert(BirdAI{}, slotID);
   em.contactDamage.insert({4}, slotID);
   em.velocities.insert({0, 0}, slotID);
-  em.health.insert({1, 0, DamageType::Player}, slotID);
+  em.health.insert({1, 0, DamageType::Player, VulnerableDirections::LEFT}, slotID);
   return slotID;
 };

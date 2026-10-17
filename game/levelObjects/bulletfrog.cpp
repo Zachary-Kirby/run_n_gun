@@ -9,7 +9,7 @@
 
 #include <cmath>
 
-void handleFrogAI(EntityManager& em, Animations& animations, float playerX, float delta){
+void handleFrogAI(EntityManager& em, Animations& animations, float playerX, float delta, Sound& ribbitSound, Sound& frogHurtSound){
   const float jumpVelocityY = 90.5f*4.0f;
   const float jumpVelocityX = 90.5f*1.0f;
 
@@ -22,6 +22,9 @@ void handleFrogAI(EntityManager& em, Animations& animations, float playerX, floa
     Physics& physics = em.physics[slotID];
     fRect& hitbox = em.hitboxs[slotID];
     Sprite& sprite = em.sprites[slotID];
+    
+    if (health.preHealth > health.health)
+      frogHurtSound.play();
     
     if (health.health <= 0)
       entity.remove = true;
@@ -51,6 +54,7 @@ void handleFrogAI(EntityManager& em, Animations& animations, float playerX, floa
         velocity.y = -jumpVelocityY;
         velocity.x = xv * jumpVelocityX;
         physics.grounded = false;
+        ribbitSound.play();
       } else{
         frogAI.prepareShotTimer = 1.5f;
       }

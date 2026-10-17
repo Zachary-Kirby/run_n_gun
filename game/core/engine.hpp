@@ -42,6 +42,9 @@ class Engine {
   Sound robotHurtSound;
   Sound ooSound;
   Sound shortNoiseSound;
+  Sound dingSound;
+  Sound ribbitSound;
+  Sound frogHurtSound;
   Music song1;
   
   

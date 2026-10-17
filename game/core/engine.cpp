@@ -45,6 +45,9 @@ void Engine::init()
   robotHurtSound.init("Assets/sounds/robotHurt.wav");
   ooSound.init("Assets/sounds/oo.wav");
   shortNoiseSound.init("Assets/sounds/shortNoise.wav");
+  dingSound.init("Assets/sounds/ding.wav");
+  ribbitSound.init("Assets/sounds/frogRibbit.wav");
+  frogHurtSound.init("Assets/sounds/frogHurt.wav");
   //song1.init("Assets/sounds/JourneyToKaizo.ogg");
   song1.init("Assets/sounds/AirJourney.wav");
   
@@ -167,7 +170,7 @@ void Engine::run()
     }
     
     handleBirdAI(entityManager, rendererGL.spriteAnimations, player.hitbox, second, delta, explodeiateSound);
-    handleFrogAI(entityManager, rendererGL.spriteAnimations, player.hitbox.centerX(), delta);
+    handleFrogAI(entityManager, rendererGL.spriteAnimations, player.hitbox.centerX(), delta, ribbitSound, frogHurtSound);
     
     handleBullets(entityManager, delta);
     glm::vec2 playerPush{0.0f, 0.0f};
@@ -176,7 +179,7 @@ void Engine::run()
     player.velocity += playerPush;
     
     int playerDamagedAmount = 0; 
-    contactDamageSystem(entityManager, player.hitbox, playerDamagedAmount);
+    contactDamageSystem(entityManager, player.hitbox, playerDamagedAmount, dingSound);
     if (playerDamagedAmount != 0) player.dealDamage(playerDamagedAmount);
     
     handleHealth(entityManager);
@@ -431,7 +434,7 @@ void Engine::input()
         laserSound.play(0);
         glm::vec2 shootPoint = player.hitbox.center()+aimPoint*4.0f-glm::vec2{4, 4};
         glm::vec2 shootVelocity = {aimPoint.x*320.0f, aimPoint.y*320.0f};
-        createBullet(rendererGL.spriteAnimations.getFrame("Bullet_Bullet", 0), entityManager, shootPoint.x, shootPoint.y, shootVelocity.x, shootVelocity.y, DamageType::Player, DamageType::Enemy, 0.5f, 1);
+        createBullet(rendererGL.spriteAnimations.getFrame("Bullet_Bullet", 0), entityManager, shootPoint.x, shootPoint.y, shootVelocity.x, shootVelocity.y, DamageType::Player, DamageType::Enemy, 0.2f, 1);
         player.fireTimer = 0.0f;
       }
     }
